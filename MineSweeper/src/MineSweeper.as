@@ -12,7 +12,7 @@ package
 	import starling.events.Event;
 	import scene.Main;
 	
-	[SWF(backgroundColor="#AAAAAA", frameRate="60")]  
+	[SWF(backgroundColor="#FFFFFF", frameRate="60")]  
 	public class MineSweeper extends Sprite   
 	{  
 		public static const WIDTH:int = 320;  
