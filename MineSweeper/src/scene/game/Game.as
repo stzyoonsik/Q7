@@ -77,7 +77,7 @@ package scene.game
 			initBoard();
 			var minePos:Vector.<int> = plantMine();
 			trace(minePos);
-			//allocateMine(minePos);
+			allocateMine(minePos);
 			allocateNumber(minePos);
 			addChild(_gameBoard);
 		}
@@ -157,7 +157,6 @@ package scene.game
 					image.height = image.width;
 					image.x = j * image.width;
 					image.y = i * image.height;
-					//image.addEventListener(TouchEvent.TOUCH, onTouchBlock);
 					
 					
 					_image[i][j] = image;
