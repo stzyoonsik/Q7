@@ -46,6 +46,7 @@ package scene.game
 			{
 				trace("custom board");
 				_board = new Board(_atlas, data[0], data[1], data[2]);
+				_board.addEventListener("game_over", onGameOver);
 				//_board.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 				addChild(_board);
 				
@@ -72,6 +73,11 @@ package scene.game
 //				_cover = null;
 //				removeChild(_cover);
 //			}
+		}
+		
+		public function onGameOver():void
+		{
+			trace("GAME OVER");
 		}
 		
 //		private function onScrollGameBoard(event:TouchEvent):void

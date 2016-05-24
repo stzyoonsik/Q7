@@ -23,7 +23,7 @@ package scene.custom
 		{
 			_maxRow = 10;
 			_maxCol = 10;
-			_numberOfMine = 20;
+			_numberOfMine = 10;
 			
 			_textField = new TextField(200,100, "START");
 			_textField.border = true;

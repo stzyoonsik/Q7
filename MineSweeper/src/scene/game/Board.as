@@ -27,7 +27,6 @@ package scene.game
 			_maxRow = maxRow + 2;
 			_maxCol = maxCol + 2;
 			_numberOfMine = mineNum;
-			
 			init();
 		}
 		
@@ -48,9 +47,35 @@ package scene.game
 		{
 			initBoard();
 			
+			
 			var minePos:Vector.<int> = plantMine();
 			allocateMine(minePos);			
 			allocateNumber(minePos);
+			
+			printData();
+			printName();
+		}
+		
+		private function printData():void
+		{
+			for(var i:int = 0; i < _maxRow; ++i)
+			{
+				for(var j:int = 0; j < _maxCol; ++j)
+				{
+					trace("[data] " + i, j, _data[i][j]);
+				}				
+			}
+		}
+		
+		private function printName():void
+		{
+			for(var i:int = 0; i < _maxRow; ++i)
+			{
+				for(var j:int = 0; j < _maxCol; ++j)
+				{					
+					trace("[name] " + i, j, _image[i][j].name);	
+				}	
+			}
 		}
 		
 		/**
@@ -68,15 +93,17 @@ package scene.game
 				_colImage = new Array();
 				for(var j:int = 0; j < _maxCol; ++j)
 				{
-					_colData[j] = 0;
-					_colImage[j] = null;
+					_colData[j] = -2;
+					var image:Image = new Image(null);
+					image.name = "border";						
+					_colImage[j] = image;
 				}
 				_data[i] = _colData;
 				_image[i] = _colImage;
 			}
 			
-			releaseObject(_colData);
-			releaseObject(_colImage);
+			//releaseObject(_colData);
+			//releaseObject(_colImage);
 		}
 		
 		/**
@@ -93,7 +120,8 @@ package scene.game
 					if(minePos.indexOf((i * _maxCol) + j) != -1)
 					{
 						//var texture:Texture = _atlas.getTexture("mine");
-						_data[i][j] = -2;
+						_data[i][j] = -1;
+						//_image[i][j].name = "mine";
 						
 						//putImage(texture, i, j);
 					}
@@ -116,13 +144,13 @@ package scene.game
 				{
 					if(minePos.indexOf((i * _maxCol) + j) != -1)
 					{
-						continue;
+						_image[i][j].name = "mine";
 					}
 					else
 					{
 						_data[i][j] = getMineNumber(i, j);
-						//var texture:Texture = _atlas.getTexture(getMineNumber(i, j).toString());
-						
+						_image[i][j].name = _data[i][j].toString();
+						//var texture:Texture = _atlas.getTexture(getMineNumber(i, j).toString());						
 						//putImage(texture, i, j);						
 					}					
 				}				
@@ -137,17 +165,17 @@ package scene.game
 		 * @return 주위의 지뢰의 갯수
 		 * 
 		 */
-		private function getMineNumber(i:int, j:int):int
+		private function getMineNumber(row:int, col:int):int
 		{
 			var count:int;
-			if(_data[i-1][j-1] == -2) { count++; }
-			if(_data[i-1][j] == -2)   { count++; }
-			if(_data[i-1][j+1] == -2) { count++; }
-			if(_data[i][j-1] == -2)   { count++; }
-			if(_data[i][j+1] == -2)   { count++; }
-			if(_data[i+1][j-1] == -2) { count++; }
-			if(_data[i+1][j] == -2)   { count++; }
-			if(_data[i+1][j+1] == -2) { count++; }			
+			if(_data[row-1][col-1] == -1) { count++; }
+			if(_data[row-1][col] == -1)   { count++; }
+			if(_data[row-1][col+1] == -1) { count++; }
+			if(_data[row][col-1] == -1)   { count++; }
+			if(_data[row][col+1] == -1)   { count++; }
+			if(_data[row+1][col-1] == -1) { count++; }
+			if(_data[row+1][col] == -1)   { count++; }
+			if(_data[row+1][col+1] == -1) { count++; }		
 			
 			return count;
 		}
@@ -209,11 +237,14 @@ package scene.game
 						if(touch.phase == TouchPhase.ENDED)
 						{
 							removeEventListener(Event.ENTER_FRAME, onHoverCover);
+							//일반 터치
 							if(_count < MAX_HOVER_COUNT)
 							{
-								if(_data[i][j] == -2)
+								trace("[Click] " + i, j, _image[i][j].name);
+								if(_data[i][j] == -1)
 								{
 									_image[i][j].texture = _atlas.getTexture("mine");
+									dispatchEvent(new Event("game_over"));
 								}
 								else
 								{
@@ -221,7 +252,12 @@ package scene.game
 									{
 										openNearZeroBlocks(i, j);
 									}
-									_image[i][j].texture = _atlas.getTexture(_data[i][j].toString());
+									else
+									{
+										_image[i][j].name = "opened";
+										_image[i][j].texture = _atlas.getTexture(_data[i][j].toString());
+									}
+									
 								}								
 							}
 						}
@@ -238,7 +274,6 @@ package scene.game
 		private function onHoverCover(event:Event):void
 		{
 			_count++;
-			trace(_count);
 			if(_count > MAX_HOVER_COUNT)
 			{
 				var texture:Texture = _atlas.getTexture("flag");
@@ -246,9 +281,44 @@ package scene.game
 			}
 		}
 		
+		/**
+		 * 선택한 블록에 가로,세로로 인접한 (대각선 제외) 모든 0을 오픈해주는 메소드
+		 * @param row 행
+		 * @param col 열
+		 * 
+		 */
 		private function openNearZeroBlocks(row:int, col:int):void
-		{
-			
+		{			
+			if(_data[row][col] == -2)
+			{
+				return;
+			}
+			else if(_data[row][col] == 0)
+			{							
+				_image[row][col].name = "opened";
+				_image[row][col].texture = _atlas.getTexture("0");
+				
+				if(_data[row-1][col] != -2 && _data[row-1][col] != -1 && _image[row-1][col].name != "opened")  
+				{
+					_image[row-1][col].texture = _atlas.getTexture(_data[row-1][col].toString());
+					openNearZeroBlocks(row-1, col);
+				}
+				if(_data[row][col-1] != -2 && _data[row][col-1] != -1 && _image[row][col-1].name != "opened")  
+				{ 
+					_image[row][col-1].texture = _atlas.getTexture(_data[row][col-1].toString());
+					openNearZeroBlocks(row, col-1); 
+				}
+				if(_data[row][col+1] != -2 && _data[row][col+1] != -1 && _image[row][col+1].name != "opened") 
+				{ 
+					_image[row][col+1].texture = _atlas.getTexture(_data[row][col+1].toString());
+					openNearZeroBlocks(row, col+1); 
+				}	
+				if(_data[row+1][col] != -2 && _data[row+1][col] != -1 && _image[row+1][col].name != "opened")
+				{
+					_image[row+1][col].texture = _atlas.getTexture(_data[row+1][col].toString());
+					openNearZeroBlocks(row+1, col); 
+				}
+			}
 		}
 
 	}
