@@ -46,24 +46,25 @@ package scene.game
 			}			
 		}
 		
-		/**
-		 * 
-		 * @param texture 텍스쳐
-		 * @param row 행
-		 * @param col 렬
-		 * 
-		 */
-		protected function putImage(texture:Texture, row:int, col:int):void
-		{
-			var image:Image = new Image(texture);
-			image.width = Main.stageWidth * 0.08;
-			image.height = image.width;
-			image.x = row * image.width;
-			image.y = col * image.height;	
-			
-			_image[row][col] = image;
-			/*_gameBoard.*/addChild(image);
-		}
+//		/**
+//		 * 
+//		 * @param texture 텍스쳐
+//		 * @param row 행
+//		 * @param col 렬
+//		 * 
+//		 */
+//		protected function putImage(texture:Texture, row:int, col:int):void
+//		{
+//			var image:Image = new Image(texture);
+//			image.width = Main.stageWidth * 0.08;
+//			image.height = image.width;
+//			image.x = row * image.width;
+//			image.y = col * image.height;	
+//			
+//			_image[row][col] = image;
+//			
+//			addChild(image);
+//		}
 		
 //		/**
 //		 * 게임 보드를 스크롤링하는 콜백메소드

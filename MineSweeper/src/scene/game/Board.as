@@ -13,29 +13,50 @@ package scene.game
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	
-	public class Board extends GameBoard
+	public class Board extends Sprite
 	{
+		private var _atlas:TextureAtlas;		
+		
+		private var _maxRow:int;
+		private var _maxCol:int;
+		
+		private var _data:Array;
+		private var _colData:Array;
+		private var _image:Array;
+		private var _colImage:Array;
+		
 		private var _numberOfMine:int;
 		private var _count:int;
 		private const MAX_HOVER_COUNT:int = 30;
 		private var _lastRow:int;
 		private var _lastCol:int;
 		
+		private var _countToClear:int;
+		
+		private var _isScrolled:Boolean;
+		
 		public function Board(atlas:TextureAtlas, maxRow:int, maxCol:int, mineNum:int, minePos:Vector.<int> = null)
 		{
 			_atlas = atlas;
+			_countToClear = maxRow * maxCol - mineNum;
 			_maxRow = maxRow + 2;
 			_maxCol = maxCol + 2;
 			_numberOfMine = mineNum;
 			init();
 		}
 		
+		public function get count():int{ return _count;	}
+		public function set count(value:int):void{ _count = value; }
+
+		public function get isScrolled():Boolean{ return _isScrolled; }
+		public function set isScrolled(value:Boolean):void{ _isScrolled = value; }
+
 		private function init():void
 		{
 			allocate();
 			this.x = Main.stageWidth * 0.02;
 			this.y = Main.stageHeight * 0.25;
-			//this.addEventListener(TouchEvent.TOUCH, onScrollBoard);
+			//addEventListener(TouchEvent.TOUCH, onScrollBoard);
 			addEventListener(TouchEvent.TOUCH, onTouchBlock);
 		}
 		
@@ -52,31 +73,31 @@ package scene.game
 			allocateMine(minePos);			
 			allocateNumber(minePos);
 			
-			printData();
-			printName();
+			//printData();
+			//printName();
 		}
 		
-		private function printData():void
-		{
-			for(var i:int = 0; i < _maxRow; ++i)
-			{
-				for(var j:int = 0; j < _maxCol; ++j)
-				{
-					trace("[data] " + i, j, _data[i][j]);
-				}				
-			}
-		}
-		
-		private function printName():void
-		{
-			for(var i:int = 0; i < _maxRow; ++i)
-			{
-				for(var j:int = 0; j < _maxCol; ++j)
-				{					
-					trace("[name] " + i, j, _image[i][j].name);	
-				}	
-			}
-		}
+//		private function printData():void
+//		{
+//			for(var i:int = 0; i < _maxRow; ++i)
+//			{
+//				for(var j:int = 0; j < _maxCol; ++j)
+//				{
+//					trace("[data] " + i, j, _data[i][j]);
+//				}				
+//			}
+//		}
+//		
+//		private function printName():void
+//		{
+//			for(var i:int = 0; i < _maxRow; ++i)
+//			{
+//				for(var j:int = 0; j < _maxCol; ++j)
+//				{					
+//					trace("[name] " + i, j, _image[i][j].name);	
+//				}	
+//			}
+//		}
 		
 		/**
 		 * 보드를 초기화 시키는 메소드 
@@ -101,9 +122,6 @@ package scene.game
 				_data[i] = _colData;
 				_image[i] = _colImage;
 			}
-			
-			//releaseObject(_colData);
-			//releaseObject(_colImage);
 		}
 		
 		/**
@@ -119,14 +137,18 @@ package scene.game
 				{
 					if(minePos.indexOf((i * _maxCol) + j) != -1)
 					{
-						//var texture:Texture = _atlas.getTexture("mine");
 						_data[i][j] = -1;
-						//_image[i][j].name = "mine";
-						
-						//putImage(texture, i, j);
 					}
 					var texture:Texture = _atlas.getTexture("block");
-					putImage(texture, i, j);
+					var image:Image = new Image(texture);
+					image.width = Main.stageWidth * 0.1;
+					image.height = image.width;
+					image.x = i * image.width;
+					image.y = j * image.height;	
+					
+					_image[i][j] = image;
+					
+					addChild(image);
 				}
 			}
 		}
@@ -149,9 +171,7 @@ package scene.game
 					else
 					{
 						_data[i][j] = getMineNumber(i, j);
-						_image[i][j].name = _data[i][j].toString();
-						//var texture:Texture = _atlas.getTexture(getMineNumber(i, j).toString());						
-						//putImage(texture, i, j);						
+						_image[i][j].name = _data[i][j].toString();		
 					}					
 				}				
 			}
@@ -228,7 +248,6 @@ package scene.game
 					{
 						_lastRow = i;
 						_lastCol = j;
-						
 						if(touch.phase == TouchPhase.BEGAN)
 						{
 							addEventListener(Event.ENTER_FRAME, onHoverCover);
@@ -236,15 +255,24 @@ package scene.game
 						}
 						if(touch.phase == TouchPhase.ENDED)
 						{
-							removeEventListener(Event.ENTER_FRAME, onHoverCover);
+							removeEventListener(Event.ENTER_FRAME, onHoverCover);							
+							
+							if(_isScrolled)
+							{
+								_count = 0;
+								_isScrolled = false;
+								return;
+							}
 							//일반 터치
 							if(_count < MAX_HOVER_COUNT)
 							{
 								trace("[Click] " + i, j, _image[i][j].name);
+								
 								if(_data[i][j] == -1)
 								{
 									_image[i][j].texture = _atlas.getTexture("mine");
 									dispatchEvent(new Event("game_over"));
+									removeEventListener(TouchEvent.TOUCH, onTouchBlock);
 								}
 								else
 								{
@@ -258,8 +286,12 @@ package scene.game
 										_image[i][j].texture = _atlas.getTexture(_data[i][j].toString());
 									}
 									
-								}								
-							}
+									if(checkClear())
+									{
+										dispatchEvent(new Event("game_clear"));
+									}
+								}
+							}							
 						}
 					}
 				}
@@ -273,11 +305,13 @@ package scene.game
 		 */
 		private function onHoverCover(event:Event):void
 		{
+			//event.
 			_count++;
 			if(_count > MAX_HOVER_COUNT)
 			{
 				var texture:Texture = _atlas.getTexture("flag");
-				_image[_lastRow][_lastCol].texture = texture;
+				if(_image[_lastRow][_lastCol].name != "opened")
+					_image[_lastRow][_lastCol].texture = texture;
 			}
 		}
 		
@@ -294,31 +328,65 @@ package scene.game
 				return;
 			}
 			else if(_data[row][col] == 0)
-			{							
+			{			
+				//_openCount++;
 				_image[row][col].name = "opened";
 				_image[row][col].texture = _atlas.getTexture("0");
 				
 				if(_data[row-1][col] != -2 && _data[row-1][col] != -1 && _image[row-1][col].name != "opened")  
-				{
+				{					
+					_image[row-1][col].name = "opened";
 					_image[row-1][col].texture = _atlas.getTexture(_data[row-1][col].toString());
 					openNearZeroBlocks(row-1, col);
 				}
 				if(_data[row][col-1] != -2 && _data[row][col-1] != -1 && _image[row][col-1].name != "opened")  
 				{ 
+					_image[row][col-1].name = "opened";
 					_image[row][col-1].texture = _atlas.getTexture(_data[row][col-1].toString());
 					openNearZeroBlocks(row, col-1); 
 				}
 				if(_data[row][col+1] != -2 && _data[row][col+1] != -1 && _image[row][col+1].name != "opened") 
 				{ 
+					_image[row][col+1].name = "opened";
 					_image[row][col+1].texture = _atlas.getTexture(_data[row][col+1].toString());
 					openNearZeroBlocks(row, col+1); 
 				}	
 				if(_data[row+1][col] != -2 && _data[row+1][col] != -1 && _image[row+1][col].name != "opened")
 				{
+					_image[row+1][col].name = "opened";
 					_image[row+1][col].texture = _atlas.getTexture(_data[row+1][col].toString());
 					openNearZeroBlocks(row+1, col); 
 				}
 			}
+		}
+		
+		
+		/**
+		 * 게임을 성공적으로 마쳤는지 검사하는 메소드 
+		 * @return 클리어 했으면 true 아니면 false
+		 * 
+		 */
+		private function checkClear():Boolean
+		{
+			var count:int;
+			
+			for(var i:int = 1; i < _maxRow - 1; ++i)
+			{
+				for(var j:int = 1; j < _maxCol -1; ++j)
+				{
+					if(_image[i][j].name == "opened")
+					{
+						count++;
+					}
+				}
+			}
+			
+			if(count >= _countToClear)
+			{
+				return true;
+			}
+			
+			return false;					
 		}
 
 	}

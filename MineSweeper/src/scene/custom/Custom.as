@@ -22,7 +22,7 @@ package scene.custom
 		public function Custom()
 		{
 			_maxRow = 10;
-			_maxCol = 10;
+			_maxCol = 20;
 			_numberOfMine = 10;
 			
 			_textField = new TextField(200,100, "START");
