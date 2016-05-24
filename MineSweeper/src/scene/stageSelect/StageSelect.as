@@ -1,4 +1,4 @@
-package scene.title
+package scene.stageSelect
 {
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -9,16 +9,16 @@ package scene.title
 	
 	import util.SceneType;
 
-	public class Title extends Sprite
+	public class StageSelect extends Sprite
 	{
 		private var _textField:TextField;
-		
-		public function Title()
+		public function StageSelect()
 		{
-			_textField = new TextField(200,100,"click");
+			_textField = new TextField(200,100,"초급");
 			_textField.border = true;
 			_textField.addEventListener(TouchEvent.TOUCH, onTouchTextField);
 			addChild(_textField);
+			
 		}
 		
 		public function release():void
@@ -29,6 +29,7 @@ package scene.title
 				_textField = null;
 				
 			}
+			
 		}
 		
 		private function onTouchTextField(event:TouchEvent):void
@@ -36,10 +37,9 @@ package scene.title
 			var touch:Touch = event.getTouch(_textField, TouchPhase.ENDED);
 			if(touch)
 			{
-				dispatchEvent(new Event(SceneType.MODE_SELECT));
+				dispatchEvent(new Event(SceneType.GAME));
 			}
 			
 		}
-		
 	}
 }
