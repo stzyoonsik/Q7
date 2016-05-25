@@ -61,7 +61,7 @@ package scene.game
 				_board = new Board(_atlas, data[0], data[1], data[2], data[3]);
 				_board.addEventListener("game_over", onGameOver);
 				_board.addEventListener("game_clear", onGameClear);
-				_board.boardSprite.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+				_board/*.boardSprite*/.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 				_board.addEventListener("mineFinder", onTouchMineFinder);
 				_board.addEventListener("getMineFinder", onGetMineFinder);
 				addChild(_board);
@@ -103,9 +103,11 @@ package scene.game
 			_board.removeEventListener("game_clear", onGameClear);
 			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
-			_time.timer.stop();
+			//아이템 안의 이벤트 제거해야함
+			
 			//타이머 안의 이벤트 제거해야함
 			
+			_time.timer.stop();
 		}
 		
 		public function onGameClear():void
@@ -137,28 +139,28 @@ package scene.game
 					{
 						_board.isScrolled = true;
 						_board.count = 0;
-						_board.boardSprite.x += delta.x;
-						_board.boardSprite.y += delta.y;
+						_board.x += delta.x;
+						_board.y += delta.y;
 					}
 					
-					if(_board.boardSprite.x > Main.stageWidth * 0.4)
+					if(_board.x > Main.stageWidth * 0.4)
 					{
-						_board.boardSprite.x = Main.stageWidth * 0.4;
+						_board.x = Main.stageWidth * 0.4;
 					}
 					
-					if(_board.boardSprite.x + _board.boardSprite.width < Main.stageWidth * 0.4)
+					if(_board.x + _board.width < Main.stageWidth * 0.4)
 					{
-						_board.boardSprite.x = Main.stageWidth * 0.4 - _board.boardSprite.width;
+						_board.x = Main.stageWidth * 0.4 - _board.width;
 					}
 					
-					if(_board.boardSprite.y > Main.stageHeight * 0.6)
+					if(_board.y > Main.stageHeight * 0.6)
 					{
-						_board.boardSprite.y = Main.stageHeight * 0.6;
-					}
+						_board.y = Main.stageHeight * 0.6;
+					}		
 					
-					if(_board.boardSprite.y + _board.height < Main.stageHeight * 0.3)
+					if(_board.y + _board.height < Main.stageHeight * 0.3)
 					{
-						_board.boardSprite.y = Main.stageHeight * 0.3 - _board.boardSprite.height;
+						_board.y = Main.stageHeight * 0.3 - _board.height;
 					}
 				}
 				

@@ -41,9 +41,9 @@ package scene.game
 		private var _numberOfMineFinder:int;
 		private var _chanceToGetItem:Number;
 		
-		private var _firstTouch:Boolean;
+		private var _isFirstTouch:Boolean;
 		
-		private var _boardSprite:Sprite;
+		//private var _boardSprite:Sprite;
 		
 		
 		public function Board(atlas:TextureAtlas, maxRow:int, maxCol:int, mineNum:int, finderNum:int, chanceToGetItem:Number = 0.0)
@@ -62,7 +62,7 @@ package scene.game
 
 		public function set isMineFinderSelected(value:Boolean):void { _isMineFinderSelected = value; }
 
-		public function get boardSprite():Sprite { return _boardSprite; }
+		//public function get boardSprite():Sprite { return _boardSprite; }
 
 		public function get count():int{ return _count;	}
 		public function set count(value:int):void{ _count = value; }
@@ -72,7 +72,7 @@ package scene.game
 
 		private function init():void
 		{
-			_boardSprite = new Sprite();
+			//_boardSprite = new Sprite();
 			allocate();
 			this.x = Main.stageWidth * 0.02;
 			this.y = Main.stageHeight * 0.25;
@@ -86,12 +86,8 @@ package scene.game
 		private function allocate():void
 		{
 			initBoard();
-			
-			//var minePos:Vector.<int> = plantMine();
-			//allocateMine(minePos);			
-			//allocateNumber(minePos);
-			
-			addChild(_boardSprite);
+			allocateBlock();			
+			//addChild(_boardSprite);
 			//printData();
 			//printName();
 		}
@@ -143,6 +139,26 @@ package scene.game
 			}
 		}
 		
+		private function allocateBlock():void
+		{
+			for(var i:int = 1; i < _maxRow - 1; ++i)
+			{
+				for(var j:int = 1; j < _maxCol - 1; ++j)
+				{
+					var texture:Texture = _atlas.getTexture("block");
+					var image:Image = new Image(texture);
+					image.width = Main.stageWidth * 0.1;
+					image.height = image.width;
+					image.x = i * image.width;
+					image.y = j * image.height;	
+					
+					_image[i][j] = image;
+					
+					/*_boardSprite.*/addChild(image);
+				}
+			}
+			
+		}
 		/**
 		 * 데이터에 저장된 값을 바탕으로 화면에 지뢰를 띄워주는 메소드 
 		 * @param minePos
@@ -158,16 +174,7 @@ package scene.game
 					{
 						_data[i][j] = -1;
 					}
-					var texture:Texture = _atlas.getTexture("block");
-					var image:Image = new Image(texture);
-					image.width = Main.stageWidth * 0.1;
-					image.height = image.width;
-					image.x = i * image.width;
-					image.y = j * image.height;	
 					
-					_image[i][j] = image;
-					
-					_boardSprite.addChild(image);
 				}
 			}
 		}
@@ -225,7 +232,7 @@ package scene.game
 		 * @return 지뢰가 생성된 인덱스가 담긴 배열
 		 * 
 		 */
-		private function plantMine():Vector.<int>			
+		private function plantMine(inPoint:Point):Vector.<int>			
 		{
 			var minePos:Vector.<int> = new Vector.<int>();
 			var count:int;
@@ -233,6 +240,10 @@ package scene.game
 			while(count < _numberOfMine)
 			{
 				var random:int = int(Math.random() * _maxRow * _maxCol);
+				if(random == (inPoint.y * _maxCol) + inPoint.x)
+				{			
+					continue;
+				}
 				
 				for(var i:int = 1; i < _maxRow - 1; ++i)
 				{
@@ -240,6 +251,7 @@ package scene.game
 					{
 						if(random == i * _maxCol + j)
 						{
+							//이미 지뢰인 곳인지 검사
 							if(minePos.indexOf(i * _maxCol + j) == -1)
 							{
 								minePos.push(random);
@@ -285,8 +297,17 @@ package scene.game
 							}
 							//일반 터치
 							if(_count < MAX_HOVER_COUNT)
-							{
+							{								
 								trace("[Click] " + i, j, _image[i][j].name);
+								//처음 터치가 있고 난 후 지뢰를 랜덤으로 뿌림
+								if(!_isFirstTouch)
+								{
+									var minePos:Vector.<int> = plantMine(new Point(j,i));
+									allocateMine(minePos);			
+									allocateNumber(minePos);
+									_isFirstTouch = true;
+								}
+								
 								//지뢰탐기지 사용 상태
 								if(_isMineFinderSelected && _numberOfMineFinder > 0)
 								{

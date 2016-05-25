@@ -38,8 +38,6 @@ package scene.custom
 			_data.push(_maxRow);
 			_data.push(_numberOfMine);
 			_data.push(_numberOfMineFinder);
-			
-			
 		}
 		
 		public function release():void
