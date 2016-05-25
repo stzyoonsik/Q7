@@ -14,6 +14,7 @@ package scene.custom
 		private var _maxRow:int;
 		private var _maxCol:int;
 		private var _numberOfMine:int;
+		private var _numberOfMineFinder:int;
 		
 		private var _data:Vector.<int>;
 		
@@ -22,8 +23,9 @@ package scene.custom
 		public function Custom()
 		{
 			_maxRow = 10;
-			_maxCol = 20;
+			_maxCol = 10;
 			_numberOfMine = 10;
+			_numberOfMineFinder = 3;
 			
 			_textField = new TextField(200,100, "START");
 			_textField.border = true;
@@ -35,6 +37,7 @@ package scene.custom
 			_data.push(_maxCol);
 			_data.push(_maxRow);
 			_data.push(_numberOfMine);
+			_data.push(_numberOfMineFinder);
 			
 			
 		}
