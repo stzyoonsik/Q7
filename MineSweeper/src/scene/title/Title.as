@@ -1,5 +1,7 @@
 package scene.title
 {
+	import starling.display.DisplayObject;
+	import starling.display.DisplayObjectContainer;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -9,13 +11,14 @@ package scene.title
 	
 	import util.SceneType;
 
-	public class Title extends Sprite
+	public class Title extends DisplayObjectContainer
 	{
 		private var _textField:TextField;
 		
 		public function Title()
 		{
-			_textField = new TextField(200,100,"click");
+			_textField = new TextField(200,100, "click");
+			_textField.autoScale = true;
 			_textField.border = true;
 			_textField.addEventListener(TouchEvent.TOUCH, onTouchTextField);
 			addChild(_textField);

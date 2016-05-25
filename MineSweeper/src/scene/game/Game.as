@@ -1,11 +1,9 @@
 package scene.game
 {	
-	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	
 	import scene.Main;
 	
-	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -27,7 +25,6 @@ package scene.game
 		private var _endedPos:Point;
 		
 		private var _time:Time;
-		//private var _cover:Cover;
 		
 		public function Game(data:Object)
 		{
@@ -58,10 +55,10 @@ package scene.game
 			if(data is Vector.<int>)
 			{
 				trace("custom board");
-				_board = new Board(_atlas, data[0], data[1], data[2], data[3]);
+				_board = new Board(_atlas, data[0], data[1], data[2], data[3], data[4]);
 				_board.addEventListener("game_over", onGameOver);
 				_board.addEventListener("game_clear", onGameClear);
-				_board/*.boardSprite*/.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+				_board.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 				_board.addEventListener("mineFinder", onTouchMineFinder);
 				_board.addEventListener("getMineFinder", onGetMineFinder);
 				addChild(_board);

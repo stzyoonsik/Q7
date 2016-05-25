@@ -11,10 +11,13 @@ package scene.custom
 
 	public class Custom extends Sprite
 	{
+		private var _slider:Slider;
+		
 		private var _maxRow:int;
 		private var _maxCol:int;
 		private var _numberOfMine:int;
 		private var _numberOfMineFinder:int;
+		private var _chanceToGetItem:int;
 		
 		private var _data:Vector.<int>;
 		
@@ -22,14 +25,18 @@ package scene.custom
 		
 		public function Custom()
 		{
+			_slider = new Slider();
+			addChild(_slider);
+			
 			_maxRow = 10;
 			_maxCol = 10;
 			_numberOfMine = 10;
 			_numberOfMineFinder = 3;
+			_chanceToGetItem = 10;
 			
 			_textField = new TextField(200,100, "START");
 			_textField.border = true;
-			_textField.y = 200;
+			_textField.y = 350;
 			_textField.addEventListener(TouchEvent.TOUCH, onTouchStart);
 			addChild(_textField);
 			
@@ -38,6 +45,7 @@ package scene.custom
 			_data.push(_maxRow);
 			_data.push(_numberOfMine);
 			_data.push(_numberOfMineFinder);
+			_data.push(_chanceToGetItem);
 		}
 		
 		public function release():void

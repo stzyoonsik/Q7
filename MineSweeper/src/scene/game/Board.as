@@ -10,7 +10,6 @@ package scene.game
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	
@@ -43,9 +42,6 @@ package scene.game
 		
 		private var _isFirstTouch:Boolean;
 		
-		//private var _boardSprite:Sprite;
-		
-		
 		public function Board(atlas:TextureAtlas, maxRow:int, maxCol:int, mineNum:int, finderNum:int, chanceToGetItem:Number = 0.0)
 		{
 			_atlas = atlas;
@@ -54,15 +50,13 @@ package scene.game
 			_maxCol = maxCol + 2;
 			_numberOfMine = mineNum;
 			_numberOfMineFinder = finderNum;
-			_chanceToGetItem = chanceToGetItem;
+			_chanceToGetItem = Number(chanceToGetItem / 100);
 			init();
 		}
 		
 		public function get numberOfMineFinder():int { return _numberOfMineFinder; }
 
 		public function set isMineFinderSelected(value:Boolean):void { _isMineFinderSelected = value; }
-
-		//public function get boardSprite():Sprite { return _boardSprite; }
 
 		public function get count():int{ return _count;	}
 		public function set count(value:int):void{ _count = value; }
@@ -72,9 +66,8 @@ package scene.game
 
 		private function init():void
 		{
-			//_boardSprite = new Sprite();
 			allocate();
-			this.x = Main.stageWidth * 0.02;
+			this.x = -Main.stageWidth * 0.1;
 			this.y = Main.stageHeight * 0.25;
 			addEventListener(TouchEvent.TOUCH, onTouchBlock);
 		}
@@ -87,7 +80,6 @@ package scene.game
 		{
 			initBoard();
 			allocateBlock();			
-			//addChild(_boardSprite);
 			//printData();
 			//printName();
 		}
@@ -154,7 +146,7 @@ package scene.game
 					
 					_image[i][j] = image;
 					
-					/*_boardSprite.*/addChild(image);
+					addChild(image);
 				}
 			}
 			
@@ -490,7 +482,6 @@ package scene.game
 		 */
 		private function detectMine(inPoint:Point, inTargetPoints:Vector.<Point> = null):Vector.<Point>
 		{
-			//var point:Point = new Point(0,0);
 			var result:Vector.<Point> = new Vector.<Point>();
 			
 			if (inTargetPoints == null) 

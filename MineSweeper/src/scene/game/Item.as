@@ -23,6 +23,7 @@ package scene.game
 			_atlas = atlas;
 			_numberOfMineFinder = finderNum;
 			_mineFinder = new Button(_atlas.getTexture("mineFinder"), _numberOfMineFinder.toString());	
+			//_mineFinder.
 			_mineFinder.width = Main.stageWidth * 0.15;
 			_mineFinder.height = _mineFinder.width;
 			_mineFinder.x = Main.stageWidth * 0.7;
