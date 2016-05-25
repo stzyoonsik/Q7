@@ -10,6 +10,7 @@ package scene.game
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	
@@ -26,6 +27,7 @@ package scene.game
 		private var _colImage:Array;
 		
 		private var _numberOfMine:int;
+		private var _remainedMine:int = _numberOfMine;
 		private var _count:int;
 		private const MAX_HOVER_COUNT:int = 30;
 		private var _lastRow:int;
@@ -35,16 +37,33 @@ package scene.game
 		
 		private var _isScrolled:Boolean;
 		
-		public function Board(atlas:TextureAtlas, maxRow:int, maxCol:int, mineNum:int, minePos:Vector.<int> = null)
+		private var _isMineFinderSelected:Boolean;
+		private var _numberOfMineFinder:int;
+		private var _chanceToGetItem:Number;
+		
+		private var _firstTouch:Boolean;
+		
+		private var _boardSprite:Sprite;
+		
+		
+		public function Board(atlas:TextureAtlas, maxRow:int, maxCol:int, mineNum:int, finderNum:int, chanceToGetItem:Number = 0.0)
 		{
 			_atlas = atlas;
 			_countToClear = maxRow * maxCol - mineNum;
 			_maxRow = maxRow + 2;
 			_maxCol = maxCol + 2;
 			_numberOfMine = mineNum;
+			_numberOfMineFinder = finderNum;
+			_chanceToGetItem = chanceToGetItem;
 			init();
 		}
 		
+		public function get numberOfMineFinder():int { return _numberOfMineFinder; }
+
+		public function set isMineFinderSelected(value:Boolean):void { _isMineFinderSelected = value; }
+
+		public function get boardSprite():Sprite { return _boardSprite; }
+
 		public function get count():int{ return _count;	}
 		public function set count(value:int):void{ _count = value; }
 
@@ -53,10 +72,10 @@ package scene.game
 
 		private function init():void
 		{
+			_boardSprite = new Sprite();
 			allocate();
 			this.x = Main.stageWidth * 0.02;
 			this.y = Main.stageHeight * 0.25;
-			//addEventListener(TouchEvent.TOUCH, onScrollBoard);
 			addEventListener(TouchEvent.TOUCH, onTouchBlock);
 		}
 		
@@ -68,11 +87,11 @@ package scene.game
 		{
 			initBoard();
 			
+			//var minePos:Vector.<int> = plantMine();
+			//allocateMine(minePos);			
+			//allocateNumber(minePos);
 			
-			var minePos:Vector.<int> = plantMine();
-			allocateMine(minePos);			
-			allocateNumber(minePos);
-			
+			addChild(_boardSprite);
 			//printData();
 			//printName();
 		}
@@ -148,7 +167,7 @@ package scene.game
 					
 					_image[i][j] = image;
 					
-					addChild(image);
+					_boardSprite.addChild(image);
 				}
 			}
 		}
@@ -166,13 +185,14 @@ package scene.game
 				{
 					if(minePos.indexOf((i * _maxCol) + j) != -1)
 					{
-						_image[i][j].name = "mine";
+						//_image[i][j].name = "mine";
 					}
 					else
 					{
 						_data[i][j] = getMineNumber(i, j);
-						_image[i][j].name = _data[i][j].toString();		
-					}					
+						//_image[i][j].name = _data[i][j].toString();		
+					}		
+					_image[i][j].name = "block";
 				}				
 			}
 		}		
@@ -212,7 +232,7 @@ package scene.game
 			
 			while(count < _numberOfMine)
 			{
-				var random:int = int(Math.random() * 100);
+				var random:int = int(Math.random() * _maxRow * _maxCol);
 				
 				for(var i:int = 1; i < _maxRow - 1; ++i)
 				{
@@ -267,30 +287,58 @@ package scene.game
 							if(_count < MAX_HOVER_COUNT)
 							{
 								trace("[Click] " + i, j, _image[i][j].name);
-								
-								if(_data[i][j] == -1)
+								//지뢰탐기지 사용 상태
+								if(_isMineFinderSelected && _numberOfMineFinder > 0)
 								{
-									_image[i][j].texture = _atlas.getTexture("mine");
-									dispatchEvent(new Event("game_over"));
-									removeEventListener(TouchEvent.TOUCH, onTouchBlock);
+									var checkedPoints:Vector.<Point> = detectMine(new Point(i, j), IndexChecker.CROSS);
+									for each(var target:Point in checkedPoints)
+									{
+										showFlag(target);	
+									}
+									_numberOfMineFinder--;
+									_isMineFinderSelected = true;
+									dispatchEvent(new Event("mineFinder")); 
+									return;
 								}
 								else
 								{
-									if(_data[i][j] == 0)
+									if(_data[i][j] == -1)
 									{
-										openNearZeroBlocks(i, j);
+										_image[i][j].texture = _atlas.getTexture("mine");
+										//게임오버
+										dispatchEvent(new Event("game_over"));
+										removeEventListener(TouchEvent.TOUCH, onTouchBlock);
 									}
 									else
 									{
-										_image[i][j].name = "opened";
-										_image[i][j].texture = _atlas.getTexture(_data[i][j].toString());
+										if(_image[i][j].name != "opened")
+										{
+											//지뢰탐지기 아이템을 획득할 확률
+											if(getMineFinder(_chanceToGetItem))
+											{
+												_numberOfMineFinder++;
+												dispatchEvent(new Event("getMineFinder"));
+												trace("아이템 획득 " + _numberOfMineFinder);
+											}	
+										}
+										if(_data[i][j] == 0)
+										{
+											openNearZeroBlocks(i, j);
+										}
+										else
+										{
+											_image[i][j].name = "opened";
+											_image[i][j].texture = _atlas.getTexture(_data[i][j].toString());
+										}
+										
+										if(checkClear())
+										{
+											//게임클리어
+											dispatchEvent(new Event("game_clear"));
+											removeEventListener(TouchEvent.TOUCH, onTouchBlock);
+										}
 									}
-									
-									if(checkClear())
-									{
-										dispatchEvent(new Event("game_clear"));
-									}
-								}
+								}								
 							}							
 						}
 					}
@@ -305,13 +353,26 @@ package scene.game
 		 */
 		private function onHoverCover(event:Event):void
 		{
-			//event.
 			_count++;
-			if(_count > MAX_HOVER_COUNT)
+			if(_count == MAX_HOVER_COUNT)
 			{
-				var texture:Texture = _atlas.getTexture("flag");
+				//한번만 들어와야함
 				if(_image[_lastRow][_lastCol].name != "opened")
-					_image[_lastRow][_lastCol].texture = texture;
+				{
+					if(_image[_lastRow][_lastCol].name == "flag")
+					{
+						_image[_lastRow][_lastCol].texture = _atlas.getTexture("block");
+						_image[_lastRow][_lastCol].name = "block";
+						_remainedMine++;
+					}
+					else
+					{
+						_image[_lastRow][_lastCol].texture = _atlas.getTexture("flag");
+						_image[_lastRow][_lastCol].name = "flag";
+						_remainedMine--;
+					}					
+				}	
+				//_count = 0;
 			}
 		}
 		
@@ -387,6 +448,81 @@ package scene.game
 			}
 			
 			return false;					
+		}
+		
+		/**
+		 * 해당 인덱스가 지뢰인지 아닌지 검사하는 메소드
+		 * @param inPoint 비교 인덱스
+		 * @return 지뢰이면 true 아니면 false
+		 * 
+		 */
+		private function isMine(inPoint:Point):Boolean
+		{
+			return _data[inPoint.y][inPoint.x] == -1
+		}
+		
+		/**
+		 * 특정 인덱스 기준으로 targetIndex의 지뢰여부 확인 함수
+		 * @param inIndex 선택한 인덱스
+		 * @param detectTargetIndex
+		 * @return 지뢰 좌표가 담긴 배열 
+		 */
+		private function detectMine(inPoint:Point, inTargetPoints:Vector.<Point> = null):Vector.<Point>
+		{
+			//var point:Point = new Point(0,0);
+			var result:Vector.<Point> = new Vector.<Point>();
+			
+			if (inTargetPoints == null) 
+			{
+				inTargetPoints = new Vector.<Point>;
+				inTargetPoints.push (new Point(0, 0));
+			}				
+			
+			for each (var target:Point in inTargetPoints) 
+			{				
+				var targetPoint:Point = new Point(inPoint.y + target.y, inPoint.x + target.x);
+				
+				if(isMine(targetPoint))
+				{
+					result.push(targetPoint);
+				}	
+			}
+			
+			return result;
+		}
+		
+		/**
+		 * 지뢰가 탐지된 영역의 이미지를 깃발로 바꿔주는 메소드
+		 * @param inPoint 좌표
+		 * 
+		 */
+		private function showFlag(inPoint:Point):void
+		{
+			_image[inPoint.y][inPoint.x].texture = _atlas.getTexture("flag");
+			_image[inPoint.y][inPoint.x].name = "flag";
+			_remainedMine--;
+		}
+		
+		/**
+		 *  
+		 * @param chance 0~1 사이 확률
+		 * 
+		 */
+		private function getMineFinder(chance:Number):Boolean
+		{
+			trace(chance);
+			if(chance < 0 || chance > 1)
+			{
+				trace("chance should be between 0 and 1");
+				return false;
+			}
+				
+			if(Math.random() <= chance)
+			{
+				return true;
+			}
+			
+			return false;
 		}
 
 	}

@@ -1,11 +1,13 @@
 package scene.game
 {	
+	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	
 	import scene.Main;
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
+	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
@@ -19,9 +21,12 @@ package scene.game
 		private var _atlas:TextureAtlas;
 		
 		private var _board:Board;
+		private var _item:Item;
 		
 		private var _beginPos:Point;
 		private var _endedPos:Point;
+		
+		private var _time:Time;
 		//private var _cover:Cover;
 		
 		public function Game(data:Object)
@@ -31,11 +36,9 @@ package scene.game
 			//스테이지 선택씬에서 왔으면 JSON 읽어서 
 			//사용자 정의씬에서 왔으면 event.data 읽어서
 			initBoard(data);
+			initItem(data[3]);
+			initTime();
 			
-//			var image:Image = new Image(_atlas.getTexture("0"));
-//			image.width = Main.stageWidth;
-//			image.height = Main.stageHeight * 0.25;
-//			addChild(image);
 		}
 		
 		/**
@@ -44,8 +47,8 @@ package scene.game
 		 */
 		private function load():void
 		{			
-			var xml:XML = XML(new EmbeddedAssets.Game_Xml());
-			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.Game_SpriteSheet);
+			var xml:XML = XML(new EmbeddedAssets.GameXml());
+			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.GameSprite);
 			_atlas = new TextureAtlas(texture, xml);
 		}
 		
@@ -55,21 +58,33 @@ package scene.game
 			if(data is Vector.<int>)
 			{
 				trace("custom board");
-				_board = new Board(_atlas, data[0], data[1], data[2]);
+				_board = new Board(_atlas, data[0], data[1], data[2], data[3]);
 				_board.addEventListener("game_over", onGameOver);
 				_board.addEventListener("game_clear", onGameClear);
-				_board.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+				_board.boardSprite.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+				_board.addEventListener("mineFinder", onTouchMineFinder);
+				_board.addEventListener("getMineFinder", onGetMineFinder);
 				addChild(_board);
-				
-				//_cover = new Cover(_atlas, data[0], data[1]);
-				//_cover.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
-				//addChild(_cover);
 			}
 			
 			else if(data is int)
 			{
 				
 			}
+		}
+		
+		private function initItem(finderNum:int):void
+		{
+			_item = new Item(_atlas, finderNum);
+			_item.addEventListener("mineFinder", onTouchMineFinder);
+			addChild(_item);
+		}
+		
+		private function initTime():void
+		{
+			_time = new Time(_atlas);
+			_time.timer.start();
+			addChild(_time);
 		}
 		
 		public function release():void
@@ -79,11 +94,6 @@ package scene.game
 				_board = null;
 				removeChild(_board);
 			}
-//			if(_cover)
-//			{
-//				_cover = null;
-//				removeChild(_cover);
-//			}
 		}
 		
 		public function onGameOver():void
@@ -93,11 +103,19 @@ package scene.game
 			_board.removeEventListener("game_clear", onGameClear);
 			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
+			_time.timer.stop();
+			//타이머 안의 이벤트 제거해야함
+			
 		}
 		
 		public function onGameClear():void
 		{
 			trace("GAME CLEAR");
+			_board.removeEventListener("game_over", onGameOver);
+			_board.removeEventListener("game_clear", onGameClear);
+			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+			
+			_time.timer.stop();
 		}
 		
 		private function onScrollGameBoard(event:TouchEvent):void
@@ -115,43 +133,68 @@ package scene.game
 					var previousPos:Point = touch.getPreviousLocation(parent);
 					var delta:Point = currentPos.subtract(previousPos);
 					
-					//if(delta.x > Main.stageWidth * 0.001 || delta.y > Main.stageHeight * 0.001)
-					//{
 					if(Math.abs(currentPos.x - _beginPos.x) > Main.stageWidth * 0.1 || Math.abs(currentPos.y - _beginPos.y) > Main.stageHeight * 0.1)
 					{
 						_board.isScrolled = true;
-						//_board.count = 0;
-						_board.x += delta.x;
-						_board.y += delta.y;
+						_board.count = 0;
+						_board.boardSprite.x += delta.x;
+						_board.boardSprite.y += delta.y;
 					}
 					
-					//_board.isScrolled = true;
-					//}
-					//				_board.x += delta.x;
-					//				_board.y += delta.y;
-					
-					if(_board.x > Main.stageWidth * 0.4)
+					if(_board.boardSprite.x > Main.stageWidth * 0.4)
 					{
-						_board.x = Main.stageWidth * 0.4;
+						_board.boardSprite.x = Main.stageWidth * 0.4;
 					}
 					
-					if(_board.x + _board.width < Main.stageWidth * 0.4)
+					if(_board.boardSprite.x + _board.boardSprite.width < Main.stageWidth * 0.4)
 					{
-						_board.x = Main.stageWidth * 0.4 - _board.width;
+						_board.boardSprite.x = Main.stageWidth * 0.4 - _board.boardSprite.width;
 					}
 					
-					if(_board.y > Main.stageHeight * 0.6)
+					if(_board.boardSprite.y > Main.stageHeight * 0.6)
 					{
-						_board.y = Main.stageHeight * 0.6;
+						_board.boardSprite.y = Main.stageHeight * 0.6;
 					}
 					
-					if(_board.y + _board.height < Main.stageHeight * 0.3)
+					if(_board.boardSprite.y + _board.height < Main.stageHeight * 0.3)
 					{
-						_board.y = Main.stageHeight * 0.3 - _board.height;
+						_board.boardSprite.y = Main.stageHeight * 0.3 - _board.boardSprite.height;
 					}
 				}
 				
 			}
+		}
+		
+		/**
+		 *  
+		 * @param event
+		 * 
+		 */
+		private function onTouchMineFinder(event:Event):void
+		{
+			_item.mineFinder.text = _board.numberOfMineFinder.toString();
+			if(_board.numberOfMineFinder > 0)
+			{							
+				_board.isMineFinderSelected = _item.isMineFinderSelected;
+				if(_item.isMineFinderSelected)
+				{
+					_item.mineFinder.alpha = 0.5;	
+				}
+				else
+				{
+					_item.mineFinder.alpha = 1;			
+				}
+			}
+			else 
+			{
+				_item.mineFinder.alpha = 1;				
+				_board.isMineFinderSelected = false;
+			}
+		}
+		
+		private function onGetMineFinder(event:Event):void
+		{
+			_item.mineFinder.text = _board.numberOfMineFinder.toString();
 		}
 	}
 
