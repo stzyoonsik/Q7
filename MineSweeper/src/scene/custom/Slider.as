@@ -45,6 +45,17 @@ package scene.custom
 		private var _itemSlider:Quad;
 		private var _chanceSlider:Quad;
 		
+		
+		public function get chance():int { return _chance; }
+		
+		public function get itemNum():int {	return _itemNum; }
+		
+		public function get mineNum():int { return _mineNum; }
+		
+		public function get col():int {	return _col; }
+		
+		public function get row():int {	return _row; }
+		
 		public function Slider()
 		{
 			_row = 16;
@@ -59,7 +70,8 @@ package scene.custom
 			initTextField();
 		}
 		
-		
+	
+
 		private function initQuad():void
 		{
 			for(var i:int = 0; i < 5; ++i)
@@ -230,17 +242,17 @@ package scene.custom
 		private function changeValue(target:DisplayObject, min:int, max:int):int
 		{			
 			var value:Number = (target.x - Main.stageWidth * 0.25) / Main.stageWidth * 2;
-			value = Math.round((value * (max - min)) + min);
+			value = Math.round((value * (max - min)) + min);			
 			
 			return value;
 		}
 		
 		private function replaceSlider(target:DisplayObject, value:int, min:int, max:int):Number
 		{
-			var temp:Number = value / max;
-			temp = (temp * Main.stageWidth * 0.5) + Main.stageWidth * 0.25;
-			trace(temp);
-			return temp;	
+			var result:Number = value / max;
+			result = (result * Main.stageWidth * 0.5) + Main.stageWidth * 0.25;
+			
+			return result;	
 		}
 		
 		private function checkMineNumAndItemNum():void
