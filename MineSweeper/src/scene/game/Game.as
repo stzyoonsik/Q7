@@ -1,9 +1,13 @@
 package scene.game
 {	
+	import flash.desktop.NativeApplication;
+	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
+	import flash.ui.Keyboard;
 	
 	import scene.Main;
 	
+	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -11,31 +15,51 @@ package scene.game
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
+	import util.IOMgr;
+	import util.SceneType;
 	
 	public class Game extends Sprite
 	{ 
 		private var _atlas:TextureAtlas;
 		
 		private var _board:Board;
+		private var _time:Time;
 		private var _item:Item;
+		private var _exitPopup:ExitPopup;
 		
 		private var _beginPos:Point;
 		private var _endedPos:Point;
 		
-		private var _time:Time;
+	
 		
 		public function Game(data:Object)
 		{
 			load();
 			
-			//스테이지 선택씬에서 왔으면 JSON 읽어서 
-			//사용자 정의씬에서 왔으면 event.data 읽어서
-			initBoard(data);
-			initItem(data[3]);
-			initTime();
+			initBoard(data);			
 			
+			_exitPopup = new ExitPopup();
+			_exitPopup.addEventListener("exit", onExit);
+			_exitPopup.addEventListener("resume", onResume);
+			addChild(_exitPopup);
+			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+		}
+		
+		private function onTouchKeyBoard(event:KeyboardEvent):void
+		{
+			
+			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
+			{
+				event.preventDefault();
+				if(_exitPopup)
+					_exitPopup.visible = true;
+				if(_time)
+					_time.timer.stop();
+			}
 		}
 		
 		/**
@@ -55,18 +79,48 @@ package scene.game
 			if(data is Vector.<int>)
 			{
 				trace("custom board");
-				_board = new Board(_atlas, data[0], data[1], data[2], data[3], data[4]);
+				_board = new Board(false, _atlas, data[0], data[1], data[2], data[3], data[4]);
+				
+				addChild(_board);
+				
+				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
+				addChild(quad);
+				
+				initItem(data[3]);
+				initTime(0);
+			}
+			
+			//이어하기
+			else if(data is int && data == 0)
+			{
+				/**
+				 * 0 (data.row - 2);
+				 * 1 (data.col - 2);
+				 * 2 (data.mineNum);
+				 * 3 (data.itemNum);
+				 * 4 (data.chance);
+				 * 5 (data.data);
+				 * 6 (data.image);
+				 * 7 (data.time);
+				 * */
+				var datas:Vector.<Object> = IOMgr.instance.load();
+				_board = new Board(true, _atlas, int(datas[0]), int(datas[1]), int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array);
+				addChild(_board);
+				
+				quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
+				addChild(quad);
+				
+				initItem(int(datas[3]));
+				initTime(int(datas[7]));
+			}
+			
+			if(_board)
+			{
 				_board.addEventListener("game_over", onGameOver);
 				_board.addEventListener("game_clear", onGameClear);
 				_board.addEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 				_board.addEventListener("mineFinder", onTouchMineFinder);
 				_board.addEventListener("getMineFinder", onGetMineFinder);
-				addChild(_board);
-			}
-			
-			else if(data is int)
-			{
-				
 			}
 		}
 		
@@ -77,20 +131,45 @@ package scene.game
 			addChild(_item);
 		}
 		
-		private function initTime():void
+		private function initTime(time:int):void
 		{
-			_time = new Time(_atlas);
+			_time = new Time(_atlas, time);
 			_time.timer.start();
 			addChild(_time);
 		}
 		
 		public function release():void
 		{
+			if(_atlas != null)
+			{
+				_atlas = null;
+			}
 			if(_board)
 			{
 				_board = null;
 				removeChild(_board);
 			}
+			
+			if(_time)
+			{
+				_time = null;
+				removeChild(_time);
+			}
+			
+			if(_item)
+			{
+				_item = null;
+				removeChild(_item);
+			}
+			
+			if(_exitPopup)
+			{
+				_exitPopup = null;
+				removeChild(_exitPopup);
+			}
+			
+			_beginPos = null;
+			_endedPos = null;
 		}
 		
 		public function onGameOver():void
@@ -135,7 +214,7 @@ package scene.game
 					if(Math.abs(currentPos.x - _beginPos.x) > Main.stageWidth * 0.1 || Math.abs(currentPos.y - _beginPos.y) > Main.stageHeight * 0.1)
 					{
 						_board.isScrolled = true;
-						_board.count = 0;
+						_board.hoverCount = 0;
 						_board.x += delta.x;
 						_board.y += delta.y;
 					}
@@ -194,6 +273,19 @@ package scene.game
 		private function onGetMineFinder(event:Event):void
 		{
 			_item.mineFinder.text = _board.numberOfMineFinder.toString();
+		}
+		
+		private function onExit(event:Event):void
+		{
+			if(_board)
+				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _time.realTime);			
+			
+			dispatchEvent(new Event(SceneType.MODE_SELECT));
+		}
+		
+		private function onResume(event:Event):void
+		{
+			_time.timer.start();
 		}
 	}
 
