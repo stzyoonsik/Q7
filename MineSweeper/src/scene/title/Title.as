@@ -1,7 +1,5 @@
 package scene.title
 {
-	import starling.display.DisplayObject;
-	import starling.display.DisplayObjectContainer;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -9,9 +7,10 @@ package scene.title
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	
+	import util.IOMgr;
 	import util.SceneType;
 
-	public class Title extends DisplayObjectContainer
+	public class Title extends Sprite
 	{
 		private var _textField:TextField;
 		
@@ -39,6 +38,7 @@ package scene.title
 			var touch:Touch = event.getTouch(_textField, TouchPhase.ENDED);
 			if(touch)
 			{
+				//IOMgr.instance.load();
 				dispatchEvent(new Event(SceneType.MODE_SELECT));
 			}
 			
