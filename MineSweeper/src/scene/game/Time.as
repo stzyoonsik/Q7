@@ -15,6 +15,9 @@ package scene.game
 		private var _second:int;
 		private var _minute:int;
 		
+		private var _addTime:int
+		private var _realTime:int;
+		
 		private var _timer:Timer;
 		
 		private var _10minuteImage:Image;
@@ -22,12 +25,16 @@ package scene.game
 		private var _10secondImage:Image;
 		private var _1secondImage:Image;
 		
+		public function get realTime():int { return _realTime; }
+		public function set realTime(value:int):void { _realTime = value; }
+
 		public function get timer():Timer {	return _timer; }
 		public function set timer(value:Timer):void { _timer = value; }
 		
-		public function Time(atlas:TextureAtlas)
+		public function Time(atlas:TextureAtlas, addTime:int)
 		{
 			_atlas = atlas;
+			_addTime = addTime;
 			init();
 			
 			_timer = new Timer(1000);
@@ -69,9 +76,12 @@ package scene.game
 		 */
 		private function onTimer(event:TimerEvent):void
 		{
-			//trace("[timer] " + _timer.currentCount);			
-			_second = _timer.currentCount % 60;
-			_minute = _timer.currentCount / 60;
+			//trace("[timer] " + _timer.currentCount);	
+			_realTime = _timer.currentCount + _addTime;
+			_second = _realTime % 60;
+			_minute = _realTime / 60;
+			//_second = (_timer.currentCount + _addTime) % 60;
+			//_minute = (_timer.currentCount + _addTime) / 60;
 			changeImage();
 			//trace(_minute + " : " + _second); 
 		}
