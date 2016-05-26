@@ -15,23 +15,32 @@ package scene.modeSelect
 
 	public class ModeSelect extends Sprite
 	{
+		private var _resume:Button;
 		private var _normal:Button;
 		private var _custom:Button;
 		
 		public function ModeSelect()
 		{
-			_normal = setButton(_normal, Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "일반", Color.SILVER);
-			_custom = setButton(_custom, Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "커스텀", Color.SILVER);		
+			_resume = setButton(_resume, Main.stageWidth * 0.5, Main.stageHeight * 0.2, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "이어하기", Color.SILVER);
+			_normal = setButton(_normal, Main.stageWidth * 0.5, Main.stageHeight * 0.4, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "일반", Color.SILVER);
+			_custom = setButton(_custom, Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "커스텀", Color.SILVER);		
 			
+			_resume.addEventListener(TouchEvent.TOUCH, onTouchMode);
 			_normal.addEventListener(TouchEvent.TOUCH, onTouchMode);
 			_custom.addEventListener(TouchEvent.TOUCH, onTouchMode);
 			
+			addChild(_resume);
 			addChild(_normal);
 			addChild(_custom);
 		}
 		
 		public function release():void
 		{
+			if(_resume)
+			{
+				_resume.removeEventListener(TouchEvent.TOUCH, onTouchMode);
+				_resume = null;
+			}
 			if(_normal)
 			{
 				_normal.removeEventListener(TouchEvent.TOUCH, onTouchMode);
@@ -58,7 +67,13 @@ package scene.modeSelect
 		
 		private function onTouchMode(event:TouchEvent):void
 		{
-			var touch:Touch = event.getTouch(_normal, TouchPhase.ENDED);
+			var touch:Touch = event.getTouch(_resume, TouchPhase.ENDED);
+			if(touch)
+			{
+				dispatchEvent(new Event(SceneType.GAME, false, 0));
+			}
+			
+			touch = event.getTouch(_normal, TouchPhase.ENDED);
 			if(touch)
 			{
 				dispatchEvent(new Event(SceneType.STAGE_SELECT));
