@@ -1,5 +1,9 @@
 package scene.stageSelect
 {
+	import flash.desktop.NativeApplication;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
+	
 	import scene.Main;
 	
 	import starling.display.Button;
@@ -48,6 +52,8 @@ package scene.stageSelect
 			addChild(_normal);
 			addChild(_hard);
 			addChild(_veryHard);
+			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		public function release():void
@@ -57,7 +63,8 @@ package scene.stageSelect
 //				_textField.removeEventListener(TouchEvent.TOUCH, onTouchTextField);
 //				_textField = null;
 //				
-//			}			
+//			}		
+			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, color:uint):Button
@@ -141,6 +148,16 @@ package scene.stageSelect
 				dispatchEvent(new Event(SceneType.GAME, false, _data));
 			}
 			
+		}
+		
+		private function onTouchKeyBoard(event:KeyboardEvent):void
+		{
+			
+			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
+			{
+				event.preventDefault();
+				dispatchEvent(new Event(SceneType.MODE_SELECT));
+			}
 		}
 		
 		

@@ -33,6 +33,12 @@ package scene.custom
 		private var _itemNum:int;
 		private var _chance:int;
 		
+		private var _rowText:TextField;
+		private var _colText:TextField;
+		private var _mineNumText:TextField;
+		private var _itemNumText:TextField;
+		private var _chanceText:TextField;
+		
 		private var _rowTextField:TextField;
 		private var _colTextField:TextField;
 		private var _mineNumTextField:TextField;
@@ -115,6 +121,20 @@ package scene.custom
 		
 		private function initTextField():void
 		{
+			_rowText     = setTextField(_rowText, Main.stageWidth * 0.15, Main.stageHeight * 0.2, 100, 20, "가로", false);
+			_colText 	 = setTextField(_colText, Main.stageWidth * 0.15, Main.stageHeight * 0.3, 100, 20, "세로", false);
+			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.4, 100, 20, "지뢰", false);
+			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.5, 100, 20, "아이템", false);
+			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.15, Main.stageHeight * 0.6, 100, 20, "아이템 확률", false);
+			
+			addChild(_rowText);
+			addChild(_colText);
+			addChild(_mineNumText);
+			addChild(_itemNumText);
+			addChild(_chanceText);
+			
+			
+			
 			_rowTextField	  = setTextField(_rowTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.2, 40, 20, _row.toString(), true);
 			_colTextField 	  = setTextField(_colTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.3, 40, 20, _col.toString(), true);
 			_mineNumTextField = setTextField(_mineNumTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.4, 40, 20, _mineNum.toString(), true);

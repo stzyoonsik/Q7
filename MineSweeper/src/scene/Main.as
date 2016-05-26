@@ -51,13 +51,17 @@ package scene
 						removeChild(_title);
 						_title = null;
 					}	
-					
+					else if(_stageSelect)
+					{
+						releaseStageSelect();
+					}
+					else if(_custom)
+					{
+						releaseCustom();
+					}					
 					else if(_game)
 					{
-						_game.release();
-						_game.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
-						removeChild(_game);
-						_game = null;
+						releaseGame();
 					}
 					
 					_modeSelect = new ModeSelect();
@@ -73,15 +77,12 @@ package scene
 				{
 					if(_modeSelect)
 					{
-						_modeSelect.release();
-						_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
-						_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
-						removeChild(_modeSelect);
-						_modeSelect = null;
+						releaseModeSelect();
 					}
 					
 					_stageSelect = new StageSelect();
 					_stageSelect.addEventListener(SceneType.GAME, onChangeScene);
+					_stageSelect.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 					addChild(_stageSelect);
 					trace("StageSelect");
 					break;
@@ -91,15 +92,12 @@ package scene
 				{
 					if(_modeSelect)
 					{
-						_modeSelect.release();
-						_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
-						_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
-						removeChild(_modeSelect);
-						_modeSelect = null;
+						releaseModeSelect();
 					}
 					
 					_custom = new Custom();
 					_custom.addEventListener(SceneType.GAME, onChangeScene);
+					_custom.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 					addChild(_custom);
 					trace("Custom");
 					break;
@@ -109,36 +107,17 @@ package scene
 				{
 					if(_modeSelect)
 					{
-						_modeSelect.release();
-						_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
-						_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
-						removeChild(_modeSelect);
-						_modeSelect = null;
+						releaseModeSelect();
 					}
 					else if(_stageSelect)
 					{
-						_stageSelect.release();
-						_stageSelect.removeEventListener(SceneType.GAME, onChangeScene);
-						removeChild(_stageSelect);
-						_stageSelect = null;
-						
-						//_game = new Game(event.data);	
-						//_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
-						//addChild(_game);
-						//trace("Game");
+						releaseStageSelect();
 					}					
 					else if(_custom)
 					{
-						_custom.release();
-						_custom.removeEventListener(SceneType.GAME, onChangeScene);
-						removeChild(_custom);
-						_custom = null;
-						
-//						_game = new Game(event.data);
-//						_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
-//						addChild(_game);
-//						trace("Game");
+						releaseCustom();
 					}
+				
 					_game = new Game(event.data);
 					_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 					addChild(_game);
@@ -148,6 +127,42 @@ package scene
 				}
 					
 			}
+		}
+		
+		private function releaseModeSelect():void
+		{
+			_modeSelect.release();
+			_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
+			_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
+			_modeSelect.removeEventListener(SceneType.GAME, onChangeScene);
+			removeChild(_modeSelect);
+			_modeSelect = null;
+		}
+		
+		private function releaseStageSelect():void
+		{
+			_stageSelect.release();
+			_stageSelect.removeEventListener(SceneType.GAME, onChangeScene);
+			_stageSelect.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			removeChild(_stageSelect);
+			_stageSelect = null;
+		}	
+		
+		private function releaseCustom():void
+		{
+			_custom.release();
+			_custom.removeEventListener(SceneType.GAME, onChangeScene);
+			_custom.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			removeChild(_custom);
+			_custom = null;
+		}
+		
+		private function releaseGame():void
+		{
+			_game.release();
+			_game.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			removeChild(_game);
+			_game = null;
 		}
 	}
 }

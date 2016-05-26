@@ -10,6 +10,7 @@ package scene.game
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	
@@ -42,6 +43,7 @@ package scene.game
 		private var _isMineFinderSelected:Boolean;
 		private var _numberOfMineFinder:int;
 		private var _chanceToGetItem:Number;
+		private var _effect:TextField;
 		
 		private var _isFirstTouch:Boolean;
 		private var _resumeDatas:Array;

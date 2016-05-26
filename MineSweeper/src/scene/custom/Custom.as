@@ -1,5 +1,9 @@
 package scene.custom
 {
+	import flash.desktop.NativeApplication;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
+	
 	import scene.Main;
 	
 	import starling.display.Button;
@@ -40,6 +44,8 @@ package scene.custom
 			_startButton.addEventListener(TouchEvent.TOUCH, onTouchStart);
 			addChild(_startButton);
 			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+			
 		}
 		
 		public function release():void
@@ -53,6 +59,8 @@ package scene.custom
 			{				
 				_slider = null;
 			}
+			
+			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		private function onTouchStart(event:TouchEvent):void
@@ -74,6 +82,17 @@ package scene.custom
 				_data.push(_chanceToGetItem);
 				
 				dispatchEvent(new Event(SceneType.GAME, false, _data));
+			}
+		}
+		
+		private function onTouchKeyBoard(event:KeyboardEvent):void
+		{
+			
+			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
+			{
+				event.preventDefault();
+				dispatchEvent(new Event(SceneType.MODE_SELECT));
+				trace("[Custom] back");
 			}
 		}
 	}

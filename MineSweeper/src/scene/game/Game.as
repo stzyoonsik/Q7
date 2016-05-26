@@ -170,6 +170,8 @@ package scene.game
 			
 			_beginPos = null;
 			_endedPos = null;
+			
+			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		public function onGameOver():void
@@ -179,7 +181,7 @@ package scene.game
 			_board.removeEventListener("game_clear", onGameClear);
 			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
-			//아이템 안의 이벤트 제거해야함
+			//아이템 안의 이벤트 제거해야함 release 함수 만들자
 			
 			//타이머 안의 이벤트 제거해야함
 			

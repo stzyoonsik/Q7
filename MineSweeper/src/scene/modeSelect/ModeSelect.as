@@ -1,5 +1,9 @@
 package scene.modeSelect
 {
+	import flash.desktop.NativeApplication;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
+	
 	import scene.Main;
 	
 	import starling.display.Button;
@@ -32,6 +36,8 @@ package scene.modeSelect
 			addChild(_resume);
 			addChild(_normal);
 			addChild(_custom);
+			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		public function release():void
@@ -52,6 +58,7 @@ package scene.modeSelect
 				_custom = null;				
 			}
 			
+			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, color:uint):Button
@@ -84,6 +91,16 @@ package scene.modeSelect
 			{
 				dispatchEvent(new Event(SceneType.CUSTOM));
 			}			
+		}
+		
+		private function onTouchKeyBoard(event:KeyboardEvent):void
+		{
+			
+			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
+			{
+				event.preventDefault();
+				//종료팝업 ane
+			}
 		}
 	}
 }
