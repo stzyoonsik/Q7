@@ -49,11 +49,21 @@ package scene
 						_title.release();
 						_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 						removeChild(_title);
-					}					
+						_title = null;
+					}	
+					
+					else if(_game)
+					{
+						_game.release();
+						_game.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+						removeChild(_game);
+						_game = null;
+					}
 					
 					_modeSelect = new ModeSelect();
 					_modeSelect.addEventListener(SceneType.STAGE_SELECT, onChangeScene);
 					_modeSelect.addEventListener(SceneType.CUSTOM, onChangeScene);
+					_modeSelect.addEventListener(SceneType.GAME, onChangeScene);
 					addChild(_modeSelect);
 					trace("ModeSelect");
 					break;
@@ -67,6 +77,7 @@ package scene
 						_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
 						_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
 						removeChild(_modeSelect);
+						_modeSelect = null;
 					}
 					
 					_stageSelect = new StageSelect();
@@ -84,6 +95,7 @@ package scene
 						_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
 						_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
 						removeChild(_modeSelect);
+						_modeSelect = null;
 					}
 					
 					_custom = new Custom();
@@ -95,61 +107,47 @@ package scene
 				
 				case SceneType.GAME :
 				{
-					if(_stageSelect)
+					if(_modeSelect)
+					{
+						_modeSelect.release();
+						_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
+						_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
+						removeChild(_modeSelect);
+						_modeSelect = null;
+					}
+					else if(_stageSelect)
 					{
 						_stageSelect.release();
 						_stageSelect.removeEventListener(SceneType.GAME, onChangeScene);
 						removeChild(_stageSelect);
+						_stageSelect = null;
 						
-						_game = new Game(event.data);					
-						addChild(_game);
-						trace("Game");
-					}
-					
-					if(_custom)
+						//_game = new Game(event.data);	
+						//_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+						//addChild(_game);
+						//trace("Game");
+					}					
+					else if(_custom)
 					{
 						_custom.release();
 						_custom.removeEventListener(SceneType.GAME, onChangeScene);
 						removeChild(_custom);
+						_custom = null;
 						
-						_game = new Game(event.data);					
-						addChild(_game);
-						trace("Game");
+//						_game = new Game(event.data);
+//						_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+//						addChild(_game);
+//						trace("Game");
 					}
-					
+					_game = new Game(event.data);
+					_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+					addChild(_game);
+					trace("Game");
 					
 					break;
 				}
 					
 			}
-			
-			
-//			if(event.type == "stageSelect")
-//			{
-//				if(_title)
-//				{
-//					_title.removeEventListener("stageSelect", onChangeScene);
-//					removeChild(_title);
-//				}
-//				
-//				
-//				_stageSelect = new StageSelect();
-//				_stageSelect.addEventListener("game", onChangeScene);
-//				addChild(_stageSelect);
-//			}
-//			
-//			else if(event.type == "game")
-//			{
-//				if(_stageSelect)
-//				{
-//					_stageSelect.removeEventListener("game", onChangeScene);
-//					removeChild(_stageSelect);
-//				}
-//				
-//				
-//				_game = new Game();
-//				addChild(_game);
-//			}
 		}
 	}
 }
