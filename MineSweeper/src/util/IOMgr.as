@@ -32,7 +32,7 @@ package util
 		//private var _path:File = File.applicationStorageDirectory.resolvePath("data");
 		private var _path:File = File.documentsDirectory.resolvePath("data");
 		
-		public function save(row:int, col:int, mineNum:int, itemNum:int, chance:int, datas:Array, images:Array, items:Array, time:int):void
+		public function save(row:int = 0, col:int = 0, mineNum:int = 0, itemNum:int = 0, chance:int = 0, datas:Array = null, images:Array = null, items:Array = null, time:int = 0):void
 		{
 			var value:String = "";
 			var imageName:String = "";
@@ -74,16 +74,16 @@ package util
 			stream.open(file, FileMode.WRITE);
 			stream.writeUTFBytes(data);
 			stream.close();
-			
-			data = null;
-			stream = null;
-			file = null;
 		}
 		
 		public function load():Vector.<Object>
 		{
 			var stream:FileStream = new FileStream();
 			var file:File = new File(_path.resolvePath("lastGame.json").url);
+			
+			if(!file.exists)
+				return null;
+			
 			stream.open(file, FileMode.READ);
 			
 			var str:String = stream.readUTFBytes(stream.bytesAvailable);
@@ -104,10 +104,15 @@ package util
 			
 			stream.close();
 			
-			stream = null;
-			file = null;
-			
 			return datas;
+		}
+		
+		public function remove():void
+		{
+			var file:File = new File(_path.resolvePath("lastGame.json").url);
+			
+			if(file.exists)
+				file.deleteFile();
 		}
 	}
 }
