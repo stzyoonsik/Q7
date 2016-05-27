@@ -47,6 +47,25 @@ package scene.game
 			this.visible = false;
 		}
 		
+		public function release():void
+		{
+			if(_yes)
+			{
+				_yes.dispose();
+				_yes.removeEventListener(TouchEvent.TOUCH, onTouchYes);
+				_yes = null;
+			}
+			
+			if(_no)
+			{
+				_no.dispose();
+				_no.removeEventListener(TouchEvent.TOUCH, onTouchNo);
+				_no = null;
+			}
+			
+			removeChildren();
+		}
+		
 		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, color:uint):Button
 		{
 			var texture:Texture = Texture.fromColor(width, height, color);
