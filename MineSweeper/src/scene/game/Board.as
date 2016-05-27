@@ -23,9 +23,7 @@ package scene.game
 		private var _maxCol:int;
 		
 		private var _datas:Array;
-		private var _colDatas:Array;
 		private var _images:Array;
-		private var _colImages:Array;
 		private var _items:Array;
 		
 		private var _numberOfMine:int;
@@ -155,20 +153,20 @@ package scene.game
 			
 			for(var y:int = 0; y < _maxCol; ++y)
 			{
-				_colDatas = new Array();
-				_colImages = new Array();
+				var colDatas:Array = new Array();
+				var colImages:Array = new Array();
 				var colItems:Array = new Array();
 				
 				for(var x:int = 0; x < _maxRow; ++x)
 				{
-					_colDatas[x] = -2;
+					colDatas[x] = -2;
 					var image:Image = new Image(null);
 					image.name = "border";						
-					_colImages[x] = image;
+					colImages[x] = image;
 					colItems[x] = 0;
 				}
-				_datas[y] = _colDatas;
-				_images[y] = _colImages;
+				_datas[y] = colDatas;
+				_images[y] = colImages;
 				_items[y] = colItems;
 			}			
 		}
@@ -402,7 +400,7 @@ package scene.game
 									else
 									{
 										//여기에서 아이템 검사
-										if(checkItem(x,y))
+										if(checkItem(new Point(x,y)))
 										{
 											_items[y][x] = 0;
 											trace("아이템 획득");
@@ -423,7 +421,7 @@ package scene.game
 //										}
 										if(_datas[y][x] == 0)
 										{
-											openNearZeroBlocks(x, y);
+											openNearZeroBlocks(new Point(x, y));
 										}
 										else
 										{
@@ -483,100 +481,76 @@ package scene.game
 		 * @param col 열
 		 * 
 		 */
-		private function openNearZeroBlocks(x:int, y:int):void
+		private function openNearZeroBlocks(inPoint:Point):void
 		{			
-			if(_datas[y][x] == -2)
+			if(_datas[inPoint.y][inPoint.x] == -2)
 			{
 				return;
 			}
-			else if(_datas[y][x] == 0)
+			
+			
+			else if(_datas[inPoint.y][inPoint.x] == 0)
 			{			
-				if(checkItem(x,y))
+				if(checkItem(inPoint))
 				{
-					getItem(x,y);
+					getItem(inPoint);
 				}
-				openBlock(x,y);
+				openBlock(inPoint);
 				
-				if(_datas[y-1][x] != -2 && _datas[y-1][x] != -1 && _images[y-1][x].name != "opened")  
-				{		
-					openBlock(x, y-1);
-					openNearZeroBlocks(x, y-1);
-				}
-				if(_datas[y][x-1] != -2 && _datas[y][x-1] != -1 && _images[y][x-1].name != "opened")  
-				{ 
-					openBlock(x-1, y);
-					openNearZeroBlocks(x-1, y); 
-				}
-				if(_datas[y][x+1] != -2 && _datas[y][x+1] != -1 && _images[y][x+1].name != "opened") 
-				{ 
-					openBlock(x+1, y); 
-					openNearZeroBlocks(x+1, y); 
-				}	
-				if(_datas[y+1][x] != -2 && _datas[y+1][x] != -1 && _images[y+1][x].name != "opened")
+				checkZeroBlock(new Point(inPoint.x, inPoint.y), IndexChecker.SQUARE);
+			}
+		
+		}
+		
+		/**
+		 *  
+		 * @param inPoint x,y 좌표
+		 * @param inTargetPoints
+		 * 
+		 */
+		private function checkZeroBlock(inPoint:Point, inTargetPoints:vector.<Point> = null):void
+		{
+			for each (var target:Point in inTargetPoints) 
+			{				
+				var targetPoint:Point = new Point(inPoint.x + target.x, inPoint.y + target.y);
+				if(checkBlock(targetPoint))
 				{
-					openBlock(x, y+1);
-					openNearZeroBlocks(x, y+1); 
-				}
-				
-				
-				
-				
-				if(_datas[y-1][x-1] != -2 && _datas[y-1][x-1] != -1 && _images[y-1][x-1].name != "opened")
-				{
-					openBlock(x-1, y-1);
-					if(checkItem(x-1,y-1))
-					{
-						getItem(x-1,y-1);
-					}
-				}
-				
-				if(_datas[y-1][x+1] != -2 && _datas[y-1][x+1] != -1 && _images[y-1][x+1].name != "opened")
-				{
-					openBlock(x-1, y+1);
-					if(checkItem(x+1,y-1))
-					{
-						getItem(x+1,y-1);
-					}
-				}
-				
-				if(_datas[y+1][x-1] != -2 && _datas[y+1][x-1] != -1 && _images[y+1][x-1].name != "opened")
-				{
-					openBlock(x+1, y-1);
-					if(checkItem(x-1,y+1))
-					{
-						getItem(x-1,y+1);
-					}
-				}
-				
-				if(_datas[y+1][x+1] != -2 && _datas[y+1][x+1] != -1 && _images[y+1][x+1].name != "opened")
-				{
-					openBlock(x+1, y+1);
-					if(checkItem(x+1,y+1))
-					{
-						getItem(x+1,y+1);
-					}
-				}
+					openBlock(targetPoint);
+					openNearZeroBlocks(targetPoint);
+				}				
 			}
 		}
 		
-		private function openBlock(x:int, y:int):void
+		/**
+		 * 벽도 아니고 지뢰도 아니고 열려있는 상태도 아니면 true를 리턴
+		 * @param x 좌표
+		 * @param y 좌표
+		 * @return 
+		 * 
+		 */
+		private function checkBlock(inPoint:Point):Boolean
 		{
-			_images[y][x].name = "opened";
-			_images[y][x].texture = _atlas.getTexture(_datas[y][x].toString());
+			return _datas[inPoint.y][inPoint.x] != -2 && _datas[inPoint.y][inPoint.x] != -1 && _images[inPoint.y][inPoint.x].name != "opened";				
 		}
 		
-		private function checkItem(x:int, y:int):Boolean
+		private function openBlock(inPoint:Point):void
 		{
-			return _items[y][x] != 0;
+			_images[inPoint.y][inPoint.x].name = "opened";
+			_images[inPoint.y][inPoint.x].texture = _atlas.getTexture(_datas[inPoint.y][inPoint.x].toString());
 		}
 		
-		private function getItem(x,y):void
+		private function checkItem(inPoint:Point):Boolean
 		{
-			_items[y][x] = 0;
+			return _items[inPoint.y][inPoint.x] != 0;
+		}
+		
+		private function getItem(inPoint:Point):void
+		{
+			_items[inPoint.y][inPoint.x] = 0;
 			trace("아이템 획득");
 			_numberOfMineFinder++;
 			dispatchEvent(new Event("getMineFinder"));
-			_images[y][x].alpha = 0.5;
+			_images[inPoint.y][inPoint.x].alpha = 0.5;
 		}
 		
 		
@@ -618,6 +592,8 @@ package scene.game
 		{
 			return _datas[inPoint.y][inPoint.x] == -1
 		}
+		
+	
 		
 		/**
 		 * 특정 인덱스 기준으로 targetIndex의 지뢰여부 확인 함수
