@@ -32,10 +32,11 @@ package util
 		//private var _path:File = File.applicationStorageDirectory.resolvePath("data");
 		private var _path:File = File.documentsDirectory.resolvePath("data");
 		
-		public function save(row:int, col:int, mineNum:int, itemNum:int, chance:int, datas:Array, images:Array, time:int):void
+		public function save(row:int, col:int, mineNum:int, itemNum:int, chance:int, datas:Array, images:Array, items:Array, time:int):void
 		{
 			var value:String = "";
 			var imageName:String = "";
+			var item:String = "";
 			
 			for(var i:int = 0; i<row; ++i)
 			{
@@ -46,11 +47,13 @@ package util
 					{
 						value = value.concat(datas[i][j].toString());
 						imageName = imageName.concat("\"" + images[i][j].name + "\"");
+						item = item.concat(items[i][j].toString());
 					}
 					else
 					{
 						value = value.concat("," + datas[i][j].toString());
 						imageName = imageName.concat(",\"" + images[i][j].name + "\"");
+						item = item.concat("," + items[i][j].toString());
 					}
 				}
 				
@@ -63,6 +66,7 @@ package util
 								+ "\t\"chance\" : " + chance.toString() + ",\n"
 								+ "\t\"data\" : [" + value + "],\n"
 								+ "\t\"image\" : [" + imageName + "],\n"
+								+ "\t\"item\" : [" + item + "],\n"
 								+ "\t\"time\" : " + time.toString() + "\n}";
 			
 			var stream:FileStream = new FileStream();
@@ -95,6 +99,7 @@ package util
 			datas.push(data.chance);
 			datas.push(data.data);
 			datas.push(data.image);
+			datas.push(data.item);
 			datas.push(data.time);
 			
 			stream.close();

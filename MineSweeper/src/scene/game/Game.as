@@ -104,14 +104,14 @@ package scene.game
 				 * 7 (data.time);
 				 * */
 				var datas:Vector.<Object> = IOMgr.instance.load();
-				_board = new Board(true, _atlas, int(datas[0]), int(datas[1]), int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array);
+				_board = new Board(true, _atlas, int(datas[0]), int(datas[1]), int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array, datas[7] as Array);
 				addChild(_board);
 				
 				quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
 				addChild(quad);
 				
 				initItem(int(datas[3]));
-				initTime(int(datas[7]));
+				initTime(int(datas[8]));
 			}
 			
 			if(_board)
@@ -280,7 +280,7 @@ package scene.game
 		private function onExit(event:Event):void
 		{
 			if(_board)
-				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _time.realTime);			
+				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);			
 			
 			dispatchEvent(new Event(SceneType.MODE_SELECT));
 		}

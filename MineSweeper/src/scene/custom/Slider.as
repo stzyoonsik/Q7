@@ -121,11 +121,11 @@ package scene.custom
 		
 		private function initTextField():void
 		{
-			_rowText     = setTextField(_rowText, Main.stageWidth * 0.15, Main.stageHeight * 0.2, 100, 20, "가로", false);
-			_colText 	 = setTextField(_colText, Main.stageWidth * 0.15, Main.stageHeight * 0.3, 100, 20, "세로", false);
-			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.4, 100, 20, "지뢰", false);
-			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.5, 100, 20, "아이템", false);
-			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.15, Main.stageHeight * 0.6, 100, 20, "아이템 확률", false);
+			_rowText     = setTextField(_rowText, Main.stageWidth * 0.15, Main.stageHeight * 0.2, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "가로", true);
+			_colText 	 = setTextField(_colText, Main.stageWidth * 0.15, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "세로", true);
+			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "지뢰", true);
+			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템", true);
+			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.15, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 확률", true);
 			
 			addChild(_rowText);
 			addChild(_colText);
