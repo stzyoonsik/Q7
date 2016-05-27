@@ -38,22 +38,21 @@ package util
 			var imageName:String = "";
 			var item:String = "";
 			
-			for(var i:int = 0; i<row; ++i)
+			for(var y:int = 0; y<col; ++y)
 			{
-				for(var j:int = 0; j<col; ++j)
-				{
-					trace(i, j);
-					if(i == 0 && j == 0)
+				for(var x:int = 0; x<row; ++x)
+				{					
+					if(y == 0 && x == 0)
 					{
-						value = value.concat(datas[i][j].toString());
-						imageName = imageName.concat("\"" + images[i][j].name + "\"");
-						item = item.concat(items[i][j].toString());
+						value = value.concat(datas[y][x].toString());
+						imageName = imageName.concat("\"" + images[y][x].name + "\"");
+						item = item.concat(items[y][x].toString());
 					}
 					else
 					{
-						value = value.concat("," + datas[i][j].toString());
-						imageName = imageName.concat(",\"" + images[i][j].name + "\"");
-						item = item.concat("," + items[i][j].toString());
+						value = value.concat("," + datas[y][x].toString());
+						imageName = imageName.concat(",\"" + images[y][x].name + "\"");
+						item = item.concat("," + items[y][x].toString());
 					}
 				}
 				

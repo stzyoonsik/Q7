@@ -43,11 +43,8 @@ package scene.game
 		{
 			load();
 			
-			
-			
 			initBoard(data);	
-			initExitPopup();
-			
+			initExitPopup();			
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
@@ -331,8 +328,12 @@ package scene.game
 		
 		private function onExit(event:Event):void
 		{
+			
 			if(_board && !_isGameEnded)
-				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);			
+			{
+				trace("items : " + _board.items);
+				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);
+			}
 			
 			dispatchEvent(new Event(SceneType.MODE_SELECT));
 		}

@@ -13,6 +13,7 @@ package scene.game
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import starling.utils.Color;
 	
 	public class Board extends Sprite
 	{
@@ -41,7 +42,6 @@ package scene.game
 		private var _numberOfMineFinder:int;				//가지고 있는 지뢰탐지기의 갯수
 		private var _maxMineFinder:int;						//게임 시작 시 생성 될 지뢰탐지기의 갯수
 		private var _chanceToGetItem:Number;
-		private var _effect:TextField;
 		
 		private var _isFirstTouch:Boolean;
 		private var _resumeDatas:Array;
@@ -56,6 +56,7 @@ package scene.game
 			
 			_atlas = atlas;
 			_countToClear = maxRow * maxCol - mineNum;
+			trace(_countToClear);
 			_maxRow = maxRow + 2;
 			_maxCol = maxCol + 2;
 			_numberOfMine = mineNum;
@@ -73,6 +74,8 @@ package scene.game
 				_resumeItems = resumeItems;
 				resume();
 			}
+			
+			initEffect();
 		}
 		
 		public function get items():Array { return _items; }
@@ -116,6 +119,21 @@ package scene.game
 			initBoard();
 			allocateBlock();			
 			
+			
+		}
+		
+		private function initEffect():void
+		{
+//			for(var i:int = 0; i < 900; ++i)
+//			{
+//				var effect:TextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.2, "아이템 획득");
+//				effect.format.color = Color.RED;
+//				effect.format.size = Main.stageWidth * 0.05;
+//				effect.visible = false;
+//				addChild(effect);
+//				
+//				_effect.push(effect);
+//			}
 			
 		}
 		
@@ -199,16 +217,17 @@ package scene.game
 		 */
 		private function allocateMineAndItem(minePos:Vector.<int>, itemPos:Vector.<int>):void
 		{
+			trace("지뢰 포지션 = " + minePos);
 			trace("아이템 포지션 = " + itemPos);
-			for(var y:int = 1; y < _maxCol - 1; ++y)
+			for(var y:int = 0; y < _maxCol; ++y)
 			{
-				for(var x:int = 1; x < _maxRow - 1; ++x)
+				for(var x:int = 0; x < _maxRow; ++x)
 				{
 					if(minePos.indexOf((y * _maxCol) + x) != -1)
 					{
 						_datas[y][x] = -1;
 					}
-					else if(itemPos.indexOf(y * _maxCol + x) != -1)
+					if(itemPos.indexOf(y * _maxCol + x) != -1)
 					{
 						_items[y][x] = 1;
 					}					
@@ -298,6 +317,7 @@ package scene.game
 		private function plantItem(minePos:Vector.<int>):Vector.<int>
 		{
 			var itemPos:Vector.<int> = new Vector.<int>();
+			//var itemPos:Vector.<Point> = new Vector.<Point>();
 			var count:int;
 			trace(_maxMineFinder);
 			while(count < _maxMineFinder)
@@ -311,14 +331,15 @@ package scene.game
 						if(random == y * _maxCol + x)
 						{
 							//현재 지점이 지뢰가 아니면
-							if(!isMine(new Point(x,y)))
+							var point:Point = new Point(x, y);
+							if(!isMine(point) && !isItem(point))
 							{
 								//중복 검사
-								if(itemPos.indexOf(y * _maxCol + x) == -1)
-								{
+								//if(itemPos.indexOf(y * _maxCol + x) == -1)
+								//{
 									itemPos.push(random);
 									count++;
-								}								
+								//}								
 							}
 						}
 					}
@@ -328,7 +349,11 @@ package scene.game
 			trace("생성된 아이템 개수 = " + itemPos.length);
 			return itemPos;
 		}
-		5
+		
+		private function isItem(inPoint:Point):Boolean
+		{
+			return _items[inPoint.y][inPoint.x] != 0;
+		}
 		/**
 		 * 터치한 지점을 열어주는 메소드
 		 * @param event 터치이벤트
@@ -392,7 +417,7 @@ package scene.game
 								{
 									if(_datas[y][x] == -1)
 									{
-										_images[y][x].texture = _atlas.getTexture("mine");
+										showAllMines(new Point(x,y));
 										//게임오버
 										dispatchEvent(new Event("game_over"));
 										removeEventListener(TouchEvent.TOUCH, onTouchBlock);
@@ -402,23 +427,9 @@ package scene.game
 										//여기에서 아이템 검사
 										if(checkItem(new Point(x,y)))
 										{
-											_items[y][x] = 0;
-											trace("아이템 획득");
-											_numberOfMineFinder++;
-											dispatchEvent(new Event("getMineFinder"));
-											_images[y][x].alpha = 0.5;
+											getItem(new Point(x,y));
 										}
 										
-//										if(_images[y][x].name != "opened")
-//										{
-//											//지뢰탐지기 아이템을 획득할 확률
-//											if(getMineFinder(_chanceToGetItem))
-//											{
-//												_numberOfMineFinder++;
-//												dispatchEvent(new Event("getMineFinder"));
-//												trace("아이템 획득 " + _numberOfMineFinder);
-//											}	
-//										}
 										if(_datas[y][x] == 0)
 										{
 											openNearZeroBlocks(new Point(x, y));
@@ -436,8 +447,8 @@ package scene.game
 											removeEventListener(TouchEvent.TOUCH, onTouchBlock);
 										}
 									}
-									printName();
-									printData();
+//									printName();
+//									printData();
 								}								
 							}							
 						}
@@ -488,13 +499,14 @@ package scene.game
 				return;
 			}
 			
+			if(checkItem(inPoint))
+			{
+				getItem(inPoint);
+			}
 			
-			else if(_datas[inPoint.y][inPoint.x] == 0)
+			if(_datas[inPoint.y][inPoint.x] == 0)
 			{			
-				if(checkItem(inPoint))
-				{
-					getItem(inPoint);
-				}
+				
 				openBlock(inPoint);
 				
 				checkZeroBlock(new Point(inPoint.x, inPoint.y), IndexChecker.SQUARE);
@@ -550,7 +562,25 @@ package scene.game
 			trace("아이템 획득");
 			_numberOfMineFinder++;
 			dispatchEvent(new Event("getMineFinder"));
-			_images[inPoint.y][inPoint.x].alpha = 0.5;
+			
+			var effect:TextField = new TextField(Main.stageWidth * 0.2, Main.stageHeight * 0.1, "아이템 획득");
+			effect.alignPivot("center", "center");
+			effect.format.color = Color.RED;
+			effect.format.size = Main.stageWidth * 0.05;
+			effect.x = inPoint.x * Main.stageWidth * 0.1 + Main.stageWidth * 0.05;
+			effect.y = inPoint.y * Main.stageWidth * 0.1 + Main.stageWidth * 0.05;
+			addChild(effect);
+			effect.addEventListener(Event.ENTER_FRAME, onGetItem);
+		}
+		
+		private function onGetItem(event:Event):void
+		{
+			(event.currentTarget as TextField).alpha -= 0.01;
+			if((event.currentTarget as TextField).alpha <= 0)
+			{
+				(event.currentTarget as TextField).removeEventListener(Event.ENTER_FRAME, onGetItem);
+				removeChild((event.currentTarget as TextField));
+			}
 		}
 		
 		
@@ -668,10 +698,10 @@ package scene.game
 			{
 				for(var x:int = 0; x < _maxRow ; ++x)
 				{
-					//trace(_resumeDatas[i * (_maxCol - 2) + j]);
 					_datas[y][x] = _resumeDatas[y * _maxCol + x];
 					_images[y][x].name = _resumeImages[y * _maxCol + x];
-					//trace(_images[i][j].name);
+					_items[y][x] = _resumeItems[y * _maxCol + x];
+					
 					if(_images[y][x].name == "opened")
 					{
 						_images[y][x].texture = _atlas.getTexture(_datas[y][x].toString());
@@ -682,6 +712,27 @@ package scene.game
 					}
 				}
 			}
+		}
+		
+		/**
+		 * 모든 지뢰의 위치를 보여주는 메소드 
+		 * @param inPoint 클릭 위치
+		 * 
+		 */
+		private function showAllMines(inPoint:Point):void
+		{
+			for(var y:int = 0; y < _maxCol ; ++y)
+			{
+				for(var x:int = 0; x < _maxRow ; ++x)
+				{
+					if(_datas[y][x] == -1)
+					{
+						_images[y][x].texture = _atlas.getTexture("mine");
+					}
+				}
+			}
+			
+			_images[inPoint.y][inPoint.x].texture = _atlas.getTexture("mine_exploded");
 		}
 
 	}

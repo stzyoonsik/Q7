@@ -75,8 +75,8 @@ package scene.custom
 				_chanceToGetItem = _slider.chance;				
 				
 				_data = new Vector.<int>();
-				_data.push(_maxCol);
 				_data.push(_maxRow);
+				_data.push(_maxCol);
 				_data.push(_numberOfMine);
 				_data.push(_numberOfMineFinder);
 				_data.push(_chanceToGetItem);
