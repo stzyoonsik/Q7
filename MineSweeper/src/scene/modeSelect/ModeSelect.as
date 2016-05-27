@@ -98,7 +98,7 @@ package scene.modeSelect
 			
 			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
 			{
-				event.preventDefault();
+				//event.preventDefault();
 				//종료팝업 ane
 			}
 		}
