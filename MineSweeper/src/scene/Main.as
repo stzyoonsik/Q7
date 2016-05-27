@@ -8,6 +8,7 @@ package scene
 	
 	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
+	import starling.display.Sprite;
 	import starling.events.Event;
 	
 	import util.SceneType;
@@ -58,11 +59,13 @@ package scene
 					else if(_custom)
 					{
 						releaseCustom();
-					}					
+					}				
 					else if(_game)
 					{
 						releaseGame();
 					}
+					
+					//releaseScenes(_title, null, _stageSelect, _custom, _game);
 					
 					_modeSelect = new ModeSelect();
 					_modeSelect.addEventListener(SceneType.STAGE_SELECT, onChangeScene);
@@ -127,6 +130,24 @@ package scene
 				}
 					
 			}
+		}
+		
+//		private function releaseScenes(title:Title, modeSelect:ModeSelect = null, stageSelect:Sprite = null, custom:Sprite = null, game:Sprite = null):void
+//		{
+//			if(title) { releaseTitle; }
+//			if(modeSelect) { releaseModeSelect; }
+//			if(stageSelect) { releaseStageSelect; }
+//			if(custom) { releaseCustom; }
+//			if(game) { releaseGame; }
+//		}
+		
+		private function releaseTitle():void
+		{
+			trace("releaseTitle");
+			_title.release();
+			_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			removeChild(_title);
+			_title = null;
 		}
 		
 		private function releaseModeSelect():void
