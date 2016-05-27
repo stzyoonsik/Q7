@@ -29,7 +29,11 @@ package scene.game
 		private var _time:Time;
 		private var _item:Item;
 		private var _exitPopup:ExitPopup;
+		private var _gameOver:GameOver;
 		
+		private var _isGameEnded:Boolean;
+		
+		//지역변수로
 		private var _beginPos:Point;
 		private var _endedPos:Point;
 		
@@ -39,12 +43,11 @@ package scene.game
 		{
 			load();
 			
-			initBoard(data);			
 			
-			_exitPopup = new ExitPopup();
-			_exitPopup.addEventListener("exit", onExit);
-			_exitPopup.addEventListener("resume", onResume);
-			addChild(_exitPopup);
+			
+			initBoard(data);	
+			initExitPopup();
+			
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
@@ -73,6 +76,14 @@ package scene.game
 			_atlas = new TextureAtlas(texture, xml);
 		}
 		
+		private function initExitPopup():void
+		{
+			_exitPopup = new ExitPopup();
+			_exitPopup.addEventListener("exit", onExit);
+			_exitPopup.addEventListener("resume", onResume);
+			addChild(_exitPopup);
+		}
+		
 		private function initBoard(data:Object):void
 		{
 			
@@ -86,6 +97,7 @@ package scene.game
 				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
 				addChild(quad);
 				
+				initGameOver();
 				initItem(data[3]);
 				initTime(0);
 			}
@@ -94,24 +106,37 @@ package scene.game
 			else if(data is int && data == 0)
 			{
 				/**
-				 * 0 (data.row - 2);
-				 * 1 (data.col - 2);
-				 * 2 (data.mineNum);
-				 * 3 (data.itemNum);
-				 * 4 (data.chance);
-				 * 5 (data.data);
-				 * 6 (data.image);
-				 * 7 (data.time);
+				 * 0 row - 2
+				 * 1 col - 2
+				 * 2 mineNum
+				 * 3 itemNum
+				 * 4 chance
+				 * 5 data
+				 * 6 image
+				 * 7 item
+				 * 8 time
 				 * */
 				var datas:Vector.<Object> = IOMgr.instance.load();
-				_board = new Board(true, _atlas, int(datas[0]), int(datas[1]), int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array, datas[7] as Array);
-				addChild(_board);
+				if(datas)
+				{
+					_board = new Board(true, _atlas, int(datas[0]), int(datas[1]), int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array, datas[7] as Array);
+					addChild(_board);
+					
+					quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
+					addChild(quad);
+					
+					
+					initGameOver();
+					initItem(int(datas[3]));
+					initTime(int(datas[8]));
+				}
+				else
+				{
+					trace("이어하기 데이터 없음");
+					var warning:Warning = new Warning();
+					addChild(warning);
+				}
 				
-				quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
-				addChild(quad);
-				
-				initItem(int(datas[3]));
-				initTime(int(datas[8]));
 			}
 			
 			if(_board)
@@ -124,6 +149,12 @@ package scene.game
 			}
 		}
 		
+		private function initGameOver():void
+		{
+			_gameOver = new GameOver();
+			_gameOver.visible = false;
+			addChild(_gameOver);
+		}
 		private function initItem(finderNum:int):void
 		{
 			_item = new Item(_atlas, finderNum);
@@ -152,12 +183,14 @@ package scene.game
 			
 			if(_time)
 			{
+				_time.release();
 				_time = null;
 				removeChild(_time);
 			}
 			
 			if(_item)
 			{
+				_item.release();
 				_item = null;
 				removeChild(_item);
 			}
@@ -166,6 +199,12 @@ package scene.game
 			{
 				_exitPopup = null;
 				removeChild(_exitPopup);
+			}
+			
+			if(_gameOver)
+			{
+				_gameOver = null;
+				removeChild(_gameOver);
 			}
 			
 			_beginPos = null;
@@ -186,6 +225,12 @@ package scene.game
 			//타이머 안의 이벤트 제거해야함
 			
 			_time.timer.stop();
+			
+			_gameOver.text.text = "GAME OVER";
+			_gameOver.visible = true;
+			
+			IOMgr.instance.remove();
+			_isGameEnded = true;
 		}
 		
 		public function onGameClear():void
@@ -195,7 +240,14 @@ package scene.game
 			_board.removeEventListener("game_clear", onGameClear);
 			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
+			
 			_time.timer.stop();
+			
+			_gameOver.text.text = "GAME CLEAR";
+			_gameOver.visible = true;
+			
+			IOMgr.instance.remove();
+			_isGameEnded = true;
 		}
 		
 		private function onScrollGameBoard(event:TouchEvent):void
@@ -279,7 +331,7 @@ package scene.game
 		
 		private function onExit(event:Event):void
 		{
-			if(_board)
+			if(_board && !_isGameEnded)
 				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);			
 			
 			dispatchEvent(new Event(SceneType.MODE_SELECT));
@@ -287,7 +339,8 @@ package scene.game
 		
 		private function onResume(event:Event):void
 		{
-			_time.timer.start();
+			if(_time)
+				_time.timer.start();
 		}
 	}
 
