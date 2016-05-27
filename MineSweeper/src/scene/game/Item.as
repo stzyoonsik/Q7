@@ -37,6 +37,19 @@ package scene.game
 		public function set mineFinder(value:Button):void {	_mineFinder = value; }
 
 		public function get isMineFinderSelected():Boolean { return _isMineFinderSelected; }
+		
+		public function release():void
+		{
+			if(_atlas)
+			{
+				_atlas = null;
+			}
+			if(_mineFinder)
+			{
+				_mineFinder.removeEventListener(TouchEvent.TOUCH, onTouchMineFinder);
+				_mineFinder = null;
+			}
+		}
 
 		private function onTouchMineFinder(event:TouchEvent):void
 		{

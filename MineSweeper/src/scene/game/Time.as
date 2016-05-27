@@ -68,6 +68,40 @@ package scene.game
 			addChild(_10secondImage);
 			addChild(_1secondImage);
 		}
+		
+		public function release():void
+		{
+			if(_atlas)
+			{
+				_atlas = null;
+			}
+			
+			if(_timer)
+			{
+				_timer.removeEventListener(TimerEvent.TIMER, onTimer);
+				_timer = null;
+			}
+			
+			if(_10minuteImage)
+			{
+				_10minuteImage = null;
+			}
+			
+			if(_1minuteImage)
+			{
+				_1minuteImage = null;				
+			}
+			
+			if(_10secondImage)
+			{
+				_10secondImage = null;
+			}
+			
+			if(_1secondImage)
+			{
+				_1secondImage = null;
+			}
+		}
 
 		/**
 		 * 매 초마다 시간을 갱신하는 콜백 메소드
