@@ -91,8 +91,8 @@ package util
 			
 			var data:Object = JSON.parse(str);
 			var datas:Vector.<Object> = new Vector.<Object>();
-			datas.push(data.row - 2);
-			datas.push(data.col - 2);
+			datas.push(data.row);
+			datas.push(data.col);
 			datas.push(data.mineNum);
 			datas.push(data.itemNum);
 			datas.push(data.chance);

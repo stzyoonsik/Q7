@@ -115,8 +115,9 @@ package scene.game
 				 * */
 				var datas:Vector.<Object> = IOMgr.instance.load();
 				if(datas)
-				{
-					_board = new Board(true, _atlas, int(datas[0]), int(datas[1]), int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array, datas[7] as Array);
+				{					
+					_board = new Board(true, _atlas, int(datas[0]) - 2, int(datas[1]) - 2, int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array, datas[7] as Array);
+					
 					addChild(_board);
 					
 					quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);

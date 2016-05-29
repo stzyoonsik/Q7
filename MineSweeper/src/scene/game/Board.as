@@ -56,14 +56,14 @@ package scene.game
 			
 			_atlas = atlas;
 			_countToClear = maxRow * maxCol - mineNum;
-			trace(_countToClear);
 			_maxRow = maxRow + 2;
 			_maxCol = maxCol + 2;
+			trace("생성자 _maxRow = " + _maxRow);
+			trace("생성자 _maxCol = " + _maxCol);
 			_numberOfMine = mineNum;
 			_numberOfMineFinder = finderNum;
 			_chanceToGetItem = Number(chanceToGetItem / 100);
 			_maxMineFinder = int(((maxRow * maxCol) - mineNum) * (chanceToGetItem / 100));
-			trace("_maxMineFinder" + _maxMineFinder);
 			init();
 			
 			_isFirstTouch = _isResume;
@@ -75,7 +75,6 @@ package scene.game
 				resume();
 			}
 			
-			initEffect();
 		}
 		
 		public function get items():Array { return _items; }
@@ -122,30 +121,16 @@ package scene.game
 			
 		}
 		
-		private function initEffect():void
-		{
-//			for(var i:int = 0; i < 900; ++i)
-//			{
-//				var effect:TextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.2, "아이템 획득");
-//				effect.format.color = Color.RED;
-//				effect.format.size = Main.stageWidth * 0.05;
-//				effect.visible = false;
-//				addChild(effect);
-//				
-//				_effect.push(effect);
-//			}
-			
-		}
-		
 		private function printData():void
 		{
-			for(var y:int = 0; y < _maxCol; ++y)
-			{
-				for(var x:int = 0; x < _maxRow; ++x)
-				{
-					trace("[data] " + x, y, _datas[y][x]);
-				}				
-			}
+//			for(var y:int = 0; y < _maxCol; ++y)
+//			{
+//				for(var x:int = 0; x < _maxRow; ++x)
+//				{
+//					trace("[data] " + x, y, _datas[y][x]);
+//				}				
+//			}
+		
 		}
 		
 		private function printName():void
@@ -223,11 +208,12 @@ package scene.game
 			{
 				for(var x:int = 0; x < _maxRow; ++x)
 				{
-					if(minePos.indexOf((y * _maxCol) + x) != -1)
+					if(minePos.indexOf((y * _maxRow) + x) != -1)
 					{
 						_datas[y][x] = -1;
+						_images[y][x].texture = _atlas.getTexture("mine");
 					}
-					if(itemPos.indexOf(y * _maxCol + x) != -1)
+					if(itemPos.indexOf(y * _maxRow + x) != -1)
 					{
 						_items[y][x] = 1;
 					}					
@@ -248,7 +234,8 @@ package scene.game
 				{
 					if(_datas[y][x] != -1)
 					{
-						_datas[y][x] = getMineNumber(x, y);	
+						_datas[y][x] = getMineNumber(x, y);
+						
 					}		
 					_images[y][x].name = "block";
 				}				
@@ -290,7 +277,8 @@ package scene.game
 			while(count < _numberOfMine)
 			{
 				var random:int = int(Math.random() * _maxRow * _maxCol);
-				if(random == (inPoint.y * _maxCol) + inPoint.x)
+				//처음 클릭한 위치
+				if(random == (inPoint.y * _maxRow) + inPoint.x)
 				{			
 					continue;
 				}
@@ -299,10 +287,10 @@ package scene.game
 				{
 					for(var x:int = 1; x < _maxRow - 1; ++x)
 					{
-						if(random == y * _maxCol + x)
+						if(random == y * _maxRow + x)
 						{
-							//이미 지뢰인 곳인지 검사
-							if(minePos.indexOf(y * _maxCol + x) == -1)
+							//이미 지뢰인 곳인지  중복 검사
+							if(minePos.indexOf(y * _maxRow + x) == -1)
 							{
 								minePos.push(random);
 								count++;
@@ -326,20 +314,17 @@ package scene.game
 				//trace(random);
 				for(var y:int = 1; y < _maxCol - 1; ++y)
 				{
-					for(var x:int = 1; x < _maxRow -1; ++x)
+					for(var x:int = 1; x < _maxRow - 1; ++x)
 					{
-						if(random == y * _maxCol + x)
+						if(random == y * _maxRow + x)
 						{
 							//현재 지점이 지뢰가 아니면
 							var point:Point = new Point(x, y);
-							if(!isMine(point) && !isItem(point))
+							if(!isMine(point) && itemPos.indexOf(y * _maxRow + x) == -1)
 							{
-								//중복 검사
-								//if(itemPos.indexOf(y * _maxCol + x) == -1)
-								//{
-									itemPos.push(random);
-									count++;
-								//}								
+								itemPos.push(random);
+								count++;
+															
 							}
 						}
 					}
@@ -448,7 +433,7 @@ package scene.game
 										}
 									}
 //									printName();
-//									printData();
+									//printData();
 								}								
 							}							
 						}
@@ -693,14 +678,16 @@ package scene.game
 		 * 
 		 */
 		private function resume():void
-		{
+		{			
+			trace("resumeDatas = " + _resumeDatas);
 			for(var y:int = 0; y < _maxCol ; ++y)
 			{
 				for(var x:int = 0; x < _maxRow ; ++x)
 				{
-					_datas[y][x] = _resumeDatas[y * _maxCol + x];
-					_images[y][x].name = _resumeImages[y * _maxCol + x];
-					_items[y][x] = _resumeItems[y * _maxCol + x];
+					
+					_datas[y][x] = _resumeDatas[(y * (_maxRow )) + x];
+					_images[y][x].name = _resumeImages[(y * (_maxRow )) + x];
+					_items[y][x] = _resumeItems[(y * (_maxRow )) + x];
 					
 					if(_images[y][x].name == "opened")
 					{
@@ -712,6 +699,8 @@ package scene.game
 					}
 				}
 			}
+			
+			trace("이어하기 resume() 데이터 " + _datas);
 		}
 		
 		/**
