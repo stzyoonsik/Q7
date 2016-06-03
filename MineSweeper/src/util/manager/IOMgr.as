@@ -5,6 +5,8 @@ package util.manager
 	import flash.filesystem.FileStream;
 	import flash.utils.Dictionary;
 	
+	import scene.Main;
+	
 	import starling.display.Image;
 	
 	import util.type.DataType;
@@ -119,17 +121,35 @@ package util.manager
 				file.deleteFile();
 		}
 		
-		public function loadRecord():Dictionary
+		public function loadRecord():Object
 		{
-			var datas:Dictionary = new Dictionary();
+			var stream:FileStream = new FileStream();
+			var file:File = new File(_path.resolvePath("record.json").url);
+			
+			if(!file.exists)
+				return null;
+			
+			stream.open(file, FileMode.READ);
+			
+			var str:String = stream.readUTFBytes(stream.bytesAvailable);
+			trace(str);
 			
 			
-			return datas;
+			var data:Object = JSON.parse(str);
+			
+			
+			return data;
 		}
 		
-		public function saveRecord():void
+		public function saveRecord(data:Object):void
 		{
+			var str:String = JSON.stringify(data);
 			
+			var stream:FileStream = new FileStream();
+			var file:File = new File(_path.resolvePath("record.json").url);
+			stream.open(file, FileMode.WRITE);
+			stream.writeUTFBytes(str);
+			stream.close();
 		}
 	}
 }

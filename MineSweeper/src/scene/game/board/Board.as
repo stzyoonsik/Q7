@@ -219,7 +219,7 @@ package scene.game.board
 					if(minePos.indexOf((y * _maxRow) + x) != -1)
 					{
 						_datas[y][x] = -1;
-						_images[y][x].texture = _atlas.getTexture("mine");
+						//_images[y][x].texture = _atlas.getTexture("mine");
 					}
 					if(itemPos.indexOf(y * _maxRow + x) != -1)
 					{

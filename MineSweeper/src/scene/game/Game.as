@@ -33,7 +33,7 @@ package scene.game
 	
 	public class Game extends Sprite
 	{ 
-		private var _difficulty:int;
+		//private var _difficulty:int;
 		private var _atlas:TextureAtlas;
 		
 		private var _board:Board;
@@ -112,9 +112,10 @@ package scene.game
 				addChild(_board);
 				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 				addChild(quad);
-				initGameOver();
+				
 				initItem(data[DataType.ITEM_NUM]);
 				initTime(0);
+				initGameOver();
 			}
 			
 			//이어하기
@@ -131,9 +132,10 @@ package scene.game
 					addChild(_board);
 					quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 					addChild(quad);
-					initGameOver();
+					
 					initItem(int(datas[DataType.ITEM_NUM]));
 					initTime(int(datas[DataType.TIME]));
+					initGameOver();
 				}
 				else
 				{
@@ -261,7 +263,16 @@ package scene.game
 			_gameOver.visible = true;
 			
 			IOMgr.instance.removeData();
+			
+			var datas:Object = IOMgr.instance.loadRecord();
+			renewalData(datas);
+			
+			
+			//IOMgr.instance.saveRecord(data);
+			
 			_isGameEnded = true;
+			
+			
 		}
 		
 		private function onScrollGameBoard(event:TouchEvent):void
@@ -360,6 +371,43 @@ package scene.game
 		{
 			if(_time)
 				_time.timer.start();
+		}
+		
+		private function checkNewRecord(preTime:int, curTime:int):Boolean
+		{
+			
+			return false;
+		}
+		
+		private function renewalData(datas:Object):void
+		{
+			for(var i:int = 0; i < datas.length; ++i)
+			{
+				if(datas[i].id == Main.userId)
+				{
+					switch(_board.difficulty)
+					{
+						case 0 :
+							if(checkNewRecord(datas[i].record.veryEasy, _time.timer.currentCount))
+							{
+								
+							}
+							break;
+						case 1 :
+							break;
+						case 2 :
+							break;
+						case 3 :
+							break;
+						case 4 :
+							break;
+						default :
+							break;
+					}
+				}
+			}
+			
+			
 		}
 	}
 
