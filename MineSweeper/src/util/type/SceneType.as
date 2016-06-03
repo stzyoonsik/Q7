@@ -1,4 +1,4 @@
-package util
+package util.type
 {
 	public final class SceneType
 	{

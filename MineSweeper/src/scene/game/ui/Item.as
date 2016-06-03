@@ -1,4 +1,4 @@
-package scene.game
+package scene.game.ui
 {
 	import scene.Main;
 	

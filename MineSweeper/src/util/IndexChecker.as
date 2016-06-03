@@ -1,4 +1,4 @@
-package scene.game
+package util
 {
 	import flash.geom.Point;
 

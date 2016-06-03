@@ -1,9 +1,10 @@
-package scene.game
+package scene.game.board
 {	
 	import flash.geom.Point;
 	
 	import scene.Main;
 	
+	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -15,10 +16,14 @@ package scene.game
 	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
-	public class Board extends Sprite
+	import util.IndexChecker;
+	
+	public class Board extends DisplayObjectContainer
 	{
 		private var _isResume:Boolean;
-		private var _atlas:TextureAtlas;		
+		private var _atlas:TextureAtlas;
+		
+		private var _difficulty:int;
 		
 		private var _maxRow:int;
 		private var _maxCol:int;
@@ -49,12 +54,13 @@ package scene.game
 		private var _resumeItems:Array;
 		
 		/** resume=0 일반,커스텀  resume=1 이어하기*/
-		public function Board(isResume:Boolean, atlas:TextureAtlas, maxRow:int, maxCol:int, mineNum:int = 0, finderNum:int = 0, chanceToGetItem:Number = 0.0,
+		public function Board(isResume:Boolean, atlas:TextureAtlas, difficulty:int, maxRow:int, maxCol:int, mineNum:int = 0, finderNum:int = 0, chanceToGetItem:Number = 0.0,
 								resumeDatas:Array = null, resumeImages:Array = null, resumeItems:Array = null)
 		{
 			_isResume = isResume;
 			
 			_atlas = atlas;
+			_difficulty = difficulty;
 			_countToClear = maxRow * maxCol - mineNum;
 			_maxRow = maxRow + 2;
 			_maxCol = maxCol + 2;
@@ -77,6 +83,8 @@ package scene.game
 			
 		}
 		
+		public function get difficulty():int { return _difficulty; }
+
 		public function get items():Array { return _items; }
 
 		public function get numberOfMine():int { return _numberOfMine; }
@@ -434,6 +442,7 @@ package scene.game
 									}
 //									printName();
 									//printData();
+									 
 								}								
 							}							
 						}

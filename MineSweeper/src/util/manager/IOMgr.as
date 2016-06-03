@@ -1,10 +1,13 @@
-package util
+package util.manager
 {
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.utils.Dictionary;
 	
 	import starling.display.Image;
+	
+	import util.type.DataType;
 
 	public class IOMgr
 	{
@@ -29,10 +32,10 @@ package util
 		}		
 		
 		
-		//private var _path:File = File.applicationStorageDirectory.resolvePath("data");
-		private var _path:File = File.documentsDirectory.resolvePath("data");
+		private var _path:File = File.applicationStorageDirectory.resolvePath("data");
+		//private var _path:File = File.documentsDirectory.resolvePath("data");
 		
-		public function save(row:int = 0, col:int = 0, mineNum:int = 0, itemNum:int = 0, chance:int = 0, datas:Array = null, images:Array = null, items:Array = null, time:int = 0):void
+		public function saveData(difficulty:int, row:int = 0, col:int = 0, mineNum:int = 0, itemNum:int = 0, chance:int = 0, datas:Array = null, images:Array = null, items:Array = null, time:int = 0):void
 		{
 			var value:String = "";
 			var imageName:String = "";
@@ -58,7 +61,8 @@ package util
 				
 			}
 			
-			var data:String = "{\n\t\"row\" : " + row.toString() + ",\n"
+			var data:String = "{\n\t\"difficulty\" : " + difficulty.toString() + ",\n"
+								+ "\t\"row\" : " + row.toString() + ",\n"
 								+ "\t\"col\" : " + col.toString() + ",\n"
 								+ "\t\"mineNum\" : " + mineNum.toString() + ",\n"
 								+ "\t\"itemNum\" : " + itemNum.toString() + ",\n"
@@ -75,7 +79,7 @@ package util
 			stream.close();
 		}
 		
-		public function load():Vector.<Object>
+		public function loadData():Dictionary
 		{
 			var stream:FileStream = new FileStream();
 			var file:File = new File(_path.resolvePath("lastGame.json").url);
@@ -90,28 +94,42 @@ package util
 			
 			
 			var data:Object = JSON.parse(str);
-			var datas:Vector.<Object> = new Vector.<Object>();
-			datas.push(data.row);
-			datas.push(data.col);
-			datas.push(data.mineNum);
-			datas.push(data.itemNum);
-			datas.push(data.chance);
-			datas.push(data.data);
-			datas.push(data.image);
-			datas.push(data.item);
-			datas.push(data.time);
+			var datas:Dictionary = new Dictionary();
+			datas[DataType.DIFFICULTY] = data.difficulty;
+			datas[DataType.ROW] = data.row;
+			datas[DataType.COL] = data.col;
+			datas[DataType.MINE_NUM] = data.mineNum;
+			datas[DataType.ITEM_NUM] = data.itemNum;
+			datas[DataType.CHANCE] = data.chance;
+			datas[DataType.DATA] = data.data;
+			datas[DataType.IMAGE] = data.image;
+			datas[DataType.ITEM] = data.item;
+			datas[DataType.TIME] = data.time;
 			
 			stream.close();
 			
 			return datas;
 		}
 		
-		public function remove():void
+		public function removeData():void
 		{
 			var file:File = new File(_path.resolvePath("lastGame.json").url);
 			
 			if(file.exists)
 				file.deleteFile();
+		}
+		
+		public function loadRecord():Dictionary
+		{
+			var datas:Dictionary = new Dictionary();
+			
+			
+			return datas;
+		}
+		
+		public function saveRecord():void
+		{
+			
 		}
 	}
 }
