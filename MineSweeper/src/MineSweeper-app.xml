@@ -15,7 +15,7 @@
 
 	<!-- A universally unique application identifier. Must be unique across all AIR applications.
 	Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-	<id>MineSweeper</id>
+	<id>com.cys.MineSweeper</id>
 
 	<!-- Used as the filename for the application. Required. -->
 	<filename>MineSweeper</filename>
@@ -266,6 +266,32 @@
 		together in order to use AIR's NetworkInfo APIs-->
 			    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
 			    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
+			    
+			    <!--
+			    <application android:enabled="true" android:hardwareAccelerated="true">
+					<activity android:name="com.facebook.LoginActivity"/>
+					<activity android:name="com.freshplanet.ane.AirFacebook.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"></activity>
+					<activity android:name="com.freshplanet.ane.AirFacebook.DialogActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"></activity>
+				</application>
+                -->
+			    
+			   <application>
+			        <activity
+			            android:name="com.yoonsik.facebookane.MainActivity"
+			            android:theme="@android:style/Theme.Translucent">
+			            android:label="@string/app_name">			            
+			        </activity>
+			        
+			        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+			        
+			        <activity 
+			            android:name="com.facebook.FacebookActivity"
+			          	android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+						android:theme="@android:style/Theme.Translucent.NoTitleBar"
+						android:label="@string/app_name"/>
+					
+			    </application>
+			   
 			</manifest>
 			
 		]]></manifestAdditions>
@@ -280,4 +306,13 @@
 		]]></InfoAdditions>
         <requestedDisplayResolution>high</requestedDisplayResolution>
     </iPhone>
+
+
+
+
+<extensions>
+        
+    
+    <extensionID>com.yoonsik.FacebookExtension</extensionID>
+    </extensions>
 </application>

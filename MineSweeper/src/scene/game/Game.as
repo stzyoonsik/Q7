@@ -4,9 +4,17 @@ package scene.game
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
+	import flash.utils.Dictionary;
 	
 	import scene.Main;
+	import scene.game.board.Board;
+	import scene.game.popup.ExitPopup;
+	import scene.game.ui.GameOver;
+	import scene.game.ui.Item;
+	import scene.game.ui.Time;
+	import scene.game.ui.Warning;
 	
+	import starling.animation.Transitions;
 	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -18,11 +26,14 @@ package scene.game
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
-	import util.IOMgr;
-	import util.SceneType;
+	import util.manager.IOMgr;
+	import util.manager.SwitchActionMgr;
+	import util.type.DataType;
+	import util.type.SceneType;
 	
 	public class Game extends Sprite
 	{ 
+		private var _difficulty:int;
 		private var _atlas:TextureAtlas;
 		
 		private var _board:Board;
@@ -30,6 +41,7 @@ package scene.game
 		private var _item:Item;
 		private var _exitPopup:ExitPopup;
 		private var _gameOver:GameOver;
+		private var _warning:Warning;
 		
 		private var _isGameEnded:Boolean;
 		
@@ -42,7 +54,7 @@ package scene.game
 		public function Game(data:Object)
 		{
 			load();
-			
+			initBackground();
 			initBoard(data);	
 			initExitPopup();			
 			
@@ -73,6 +85,13 @@ package scene.game
 			_atlas = new TextureAtlas(texture, xml);
 		}
 		
+		private function initBackground():void
+		{
+			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.8, Color.SILVER);
+			quad.y = Main.stageHeight * 0.2;
+			addChild(quad);			
+			
+		}
 		private function initExitPopup():void
 		{
 			_exitPopup = new ExitPopup();
@@ -83,56 +102,44 @@ package scene.game
 		
 		private function initBoard(data:Object):void
 		{
-			
-			if(data is Vector.<int>)
+			//새로 시작
+			if(data is Dictionary)
 			{
 				trace("custom board");
-				_board = new Board(false, _atlas, data[0], data[1], data[2], data[3], data[4]);
+				_board = new Board(false, _atlas, data[DataType.DIFFICULTY], data[DataType.ROW], data[DataType.COL], data[DataType.MINE_NUM],
+					data[DataType.ITEM_NUM], data[DataType.CHANCE]);
 				
 				addChild(_board);
-				
-				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
+				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 				addChild(quad);
-				
 				initGameOver();
-				initItem(data[3]);
+				initItem(data[DataType.ITEM_NUM]);
 				initTime(0);
 			}
 			
 			//이어하기
 			else if(data is int && data == 0)
 			{
-				/**
-				 * 0 row - 2
-				 * 1 col - 2
-				 * 2 mineNum
-				 * 3 itemNum
-				 * 4 chance
-				 * 5 data
-				 * 6 image
-				 * 7 item
-				 * 8 time
-				 * */
-				var datas:Vector.<Object> = IOMgr.instance.load();
+				var datas:Dictionary = IOMgr.instance.loadData();
 				if(datas)
 				{					
-					_board = new Board(true, _atlas, int(datas[0]) - 2, int(datas[1]) - 2, int(datas[2]), int(datas[3]), int(datas[4]), datas[5] as Array, datas[6] as Array, datas[7] as Array);
+					_board = new Board(true, _atlas, int(datas[DataType.DIFFICULTY]), int(datas[DataType.ROW]) - 2, int(datas[DataType.COL]) - 2, 
+						int(datas[DataType.MINE_NUM]), int(datas[DataType.ITEM_NUM]), 
+						int(datas[DataType.CHANCE]), datas[DataType.DATA] as Array, 
+						datas[DataType.IMAGE] as Array, datas[DataType.ITEM] as Array);
 					
 					addChild(_board);
-					
-					quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.WHITE);
+					quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 					addChild(quad);
-					
-					
 					initGameOver();
-					initItem(int(datas[3]));
-					initTime(int(datas[8]));
+					initItem(int(datas[DataType.ITEM_NUM]));
+					initTime(int(datas[DataType.TIME]));
 				}
 				else
 				{
 					trace("이어하기 데이터 없음");
-					var warning:Warning = new Warning();
-					addChild(warning);
+					_warning = new Warning();
+					addChild(_warning);
 				}
 				
 			}
@@ -153,9 +160,11 @@ package scene.game
 			_gameOver.visible = false;
 			addChild(_gameOver);
 		}
+		
 		private function initItem(finderNum:int):void
 		{
 			_item = new Item(_atlas, finderNum);
+			_item.y = Main.stageHeight * 0.05;
 			_item.addEventListener("mineFinder", onTouchMineFinder);
 			addChild(_item);
 		}
@@ -163,6 +172,7 @@ package scene.game
 		private function initTime(time:int):void
 		{
 			_time = new Time(_atlas, time);
+			_time.y = Main.stageHeight * 0.05;
 			_time.timer.start();
 			addChild(_time);
 		}
@@ -205,6 +215,12 @@ package scene.game
 				removeChild(_gameOver);
 			}
 			
+			if(_warning)
+			{
+				_warning = null;
+				removeChild(_warning);
+			}
+			
 			_beginPos = null;
 			_endedPos = null;
 			
@@ -227,7 +243,7 @@ package scene.game
 			_gameOver.text.text = "GAME OVER";
 			_gameOver.visible = true;
 			
-			IOMgr.instance.remove();
+			IOMgr.instance.removeData();
 			_isGameEnded = true;
 		}
 		
@@ -244,7 +260,7 @@ package scene.game
 			_gameOver.text.text = "GAME CLEAR";
 			_gameOver.visible = true;
 			
-			IOMgr.instance.remove();
+			IOMgr.instance.removeData();
 			_isGameEnded = true;
 		}
 		
@@ -333,10 +349,11 @@ package scene.game
 			if(_board && !_isGameEnded)
 			{
 				trace("items : " + _board.items);
-				IOMgr.instance.save(_board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);
+				IOMgr.instance.saveData(_board.difficulty, _board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);
 			}
 			
-			dispatchEvent(new Event(SceneType.MODE_SELECT));
+			//dispatchEvent(new Event(SceneType.MODE_SELECT));
+			SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 		
 		private function onResume(event:Event):void

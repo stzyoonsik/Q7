@@ -1,5 +1,7 @@
 package scene
 {
+	import com.freshplanet.ane.AirFacebook.Facebook;
+	
 	import scene.custom.Custom;
 	import scene.game.Game;
 	import scene.modeSelect.ModeSelect;
@@ -11,7 +13,9 @@ package scene
 	import starling.display.Sprite;
 	import starling.events.Event;
 	
-	import util.SceneType;
+	import util.manager.SceneMgr;
+	import util.manager.SwitchActionMgr;
+	import util.type.SceneType;
 
 	public class Main extends DisplayObjectContainer
 	{
@@ -24,6 +28,12 @@ package scene
 		private var _custom:Custom;
 		private var _game:Game;
 		
+		private static var _userId:String;
+		private static var _userName:String;
+		
+		public static function get userName():String { return _userName; }
+		public static function get userId():String { return _userId; }
+
 		public static function get stageHeight():int{ return _stageHeight; }
 		public static function get stageWidth():int{ return _stageWidth; }
 		
@@ -32,21 +42,42 @@ package scene
 			_stageWidth = Starling.current.stage.stageWidth;
 			_stageHeight = Starling.current.stage.stageHeight;
 			
+			SwitchActionMgr.instance.addEventListener(SceneType.TITLE, onChangeScene);
+			SwitchActionMgr.instance.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+			SwitchActionMgr.instance.addEventListener(SceneType.STAGE_SELECT, onChangeScene);
+			SwitchActionMgr.instance.addEventListener(SceneType.CUSTOM, onChangeScene);
+			SwitchActionMgr.instance.addEventListener(SceneType.GAME, onChangeScene);
+			
 			_title = new Title();			
 			addChild(_title);
 			
 			_title.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+			
 		}		
-	
 
 		private function onChangeScene(event:Event):void
 		{
 			switch(event.type)
 			{
+				case SceneType.TITLE :
+				{
+					if(_modeSelect)
+					{
+						releaseModeSelect();
+					}
+					_title = new Title();	
+					_title.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+					addChild(_title);
+					break;	
+				}
+					
 				case SceneType.MODE_SELECT :
 				{
 					if(_title)
 					{
+						_userId = _title.userId;
+						_userName = _title.userName;
+						
 						_title.release();
 						_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 						removeChild(_title);
@@ -71,6 +102,7 @@ package scene
 					_modeSelect.addEventListener(SceneType.STAGE_SELECT, onChangeScene);
 					_modeSelect.addEventListener(SceneType.CUSTOM, onChangeScene);
 					_modeSelect.addEventListener(SceneType.GAME, onChangeScene);
+					_modeSelect.addEventListener(SceneType.TITLE, onChangeScene);
 					addChild(_modeSelect);
 					trace("ModeSelect");
 					break;
@@ -145,7 +177,8 @@ package scene
 		{
 			trace("releaseTitle");
 			_title.release();
-			_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			_title.removeEventListeners();
+			//_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 			removeChild(_title);
 			_title = null;
 		}
@@ -153,9 +186,10 @@ package scene
 		private function releaseModeSelect():void
 		{
 			_modeSelect.release();
-			_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
-			_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
-			_modeSelect.removeEventListener(SceneType.GAME, onChangeScene);
+//			_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
+//			_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
+//			_modeSelect.removeEventListener(SceneType.GAME, onChangeScene);
+			_modeSelect.removeEventListeners();
 			removeChild(_modeSelect);
 			_modeSelect = null;
 		}
@@ -163,8 +197,9 @@ package scene
 		private function releaseStageSelect():void
 		{
 			_stageSelect.release();
-			_stageSelect.removeEventListener(SceneType.GAME, onChangeScene);
-			_stageSelect.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			_stageSelect.removeEventListeners();
+			//_stageSelect.removeEventListener(SceneType.GAME, onChangeScene);
+			//_stageSelect.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 			removeChild(_stageSelect);
 			_stageSelect = null;
 		}	
@@ -172,8 +207,9 @@ package scene
 		private function releaseCustom():void
 		{
 			_custom.release();
-			_custom.removeEventListener(SceneType.GAME, onChangeScene);
-			_custom.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			_custom.removeEventListeners();
+			//_custom.removeEventListener(SceneType.GAME, onChangeScene);
+			//_custom.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 			removeChild(_custom);
 			_custom = null;
 		}
@@ -181,7 +217,8 @@ package scene
 		private function releaseGame():void
 		{
 			_game.release();
-			_game.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
+			_game.removeEventListeners();
+			//_game.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 			removeChild(_game);
 			_game = null;
 		}

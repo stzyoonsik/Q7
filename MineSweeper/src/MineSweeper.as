@@ -18,8 +18,8 @@ package
 	[SWF(backgroundColor="#FFFFFF", frameRate="60")]  
 	public class MineSweeper extends Sprite   
 	{  
-		public static const WIDTH:int = 320;  
-		public static const HEIGHT:int = 480;  
+		public static const WIDTH:int = 480;  
+		public static const HEIGHT:int = 800;  
 		
 		public function MineSweeper():void   
 		{  			
@@ -43,6 +43,7 @@ package
 			//NativeApplication.nativeApplication.exit();  
 			trace("deactive");
 			Starling.current.stop(true);
+			NativeApplication.nativeApplication.executeInBackground = true;
 		}  
 		
 		private function onActivated(event:flash.events.Event):void 

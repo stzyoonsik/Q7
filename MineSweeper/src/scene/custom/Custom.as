@@ -3,10 +3,13 @@ package scene.custom
 	import flash.desktop.NativeApplication;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
+	import flash.utils.Dictionary;
 	
 	import scene.Main;
 	
+	import starling.animation.Transitions;
 	import starling.display.Button;
+	import starling.display.DisplayObjectContainer;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -15,20 +18,22 @@ package scene.custom
 	import starling.textures.Texture;
 	import starling.utils.Color;
 	
-	import util.SceneType;
+	import util.manager.SwitchActionMgr;
+	import util.type.DataType;
+	import util.type.SceneType;
 
-	public class Custom extends Sprite
+	public class Custom extends DisplayObjectContainer
 	{
 		private var _slider:Slider;
 		
-		private var _maxRow:int;
-		private var _maxCol:int;
-		private var _numberOfMine:int;
-		private var _numberOfMineFinder:int;
-		private var _chanceToGetItem:int;
+//		private var _maxRow:int;
+//		private var _maxCol:int;
+//		private var _numberOfMine:int;
+//		private var _numberOfMineFinder:int;
+//		private var _chanceToGetItem:int;
 		
-		private var _data:Vector.<int>;
-		
+		//private var _data:Vector.<int>;
+		private var _data:Dictionary;
 		private var _startButton:Button;
 		
 		public function Custom()
@@ -68,20 +73,34 @@ package scene.custom
 			var touch:Touch = event.getTouch(_startButton, TouchPhase.ENDED);
 			if(touch)
 			{
-				_maxRow = _slider.row;
-				_maxCol = _slider.col;
-				_numberOfMine = _slider.mineNum;
-				_numberOfMineFinder = _slider.itemNum;
-				_chanceToGetItem = _slider.chance;				
+//				_maxRow = _slider.row;
+//				_maxCol = _slider.col;
+//				_numberOfMine = _slider.mineNum;
+//				_numberOfMineFinder = _slider.itemNum;
+//				_chanceToGetItem = _slider.chance;				
 				
-				_data = new Vector.<int>();
-				_data.push(_maxRow);
-				_data.push(_maxCol);
-				_data.push(_numberOfMine);
-				_data.push(_numberOfMineFinder);
-				_data.push(_chanceToGetItem);
+				_data = new Dictionary();
+				_data[DataType.DIFFICULTY] = 5;
+				_data[DataType.ROW] = _slider.row;
+				_data[DataType.COL] = _slider.col;
+				_data[DataType.MINE_NUM] =  _slider.mineNum;
+				_data[DataType.ITEM_NUM] = _slider.itemNum;
+				_data[DataType.CHANCE] = _slider.chance;	
 				
-				dispatchEvent(new Event(SceneType.GAME, false, _data));
+//				_data = new Vector.<int>();
+//				_data.push(_maxRow);
+//				_data.push(_maxCol);
+//				_data.push(_numberOfMine);
+//				_data.push(_numberOfMineFinder);
+//				_data.push(_chanceToGetItem);
+//				_data.push(0);
+//				_data.push(0);
+//				_data.push(0);
+//				_data.push(0);
+//				_data.push(5);
+				
+				//dispatchEvent(new Event(SceneType.GAME, false, _data));
+				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 		}
 		
@@ -92,6 +111,7 @@ package scene.custom
 			{
 				event.preventDefault();
 				dispatchEvent(new Event(SceneType.MODE_SELECT));
+				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 				trace("[Custom] back");
 			}
 		}
