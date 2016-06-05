@@ -4,8 +4,9 @@ package util.type
 	{
 		public static const VERY_EASY:int = 0;
 		public static const EASY:int = 1;
-		public static const NORMAL:int = 3;
-		public static const HARD:int = 4;
-		public static const VERY_HARD:int = 5;
+		public static const NORMAL:int = 2;
+		public static const HARD:int = 3;
+		public static const VERY_HARD:int = 4;
+		public static const CUSTOM:int = 5;
 	}
 }

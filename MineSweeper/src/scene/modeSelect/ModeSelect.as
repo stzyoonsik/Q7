@@ -1,6 +1,8 @@
 package scene.modeSelect
 {
 	import com.freshplanet.ane.AirFacebook.Facebook;
+	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGames;
+	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGamesLeaderboardEvent;
 	
 	import flash.desktop.NativeApplication;
 	import flash.display.Bitmap;
@@ -27,8 +29,8 @@ package scene.modeSelect
 	import starling.textures.Texture;
 	import starling.utils.Color;
 	
-	import util.type.SceneType;
 	import util.manager.SwitchActionMgr;
+	import util.type.SceneType;
 
 	public class ModeSelect extends DisplayObjectContainer
 	{
@@ -40,6 +42,12 @@ package scene.modeSelect
 		private var _userProfileImage:Image;
 		
 		private var _logOut:Button;
+		
+		private var _ranking:Button;
+		
+		private var _temp:TextField;
+		
+		public static var leaderBoardId:String = "CgkIu_GfvOAVEAIQCA";
 		
 		public function ModeSelect()
 		{
@@ -56,6 +64,12 @@ package scene.modeSelect
 			addChild(_resume);
 			addChild(_normal);
 			addChild(_custom);
+			
+			_temp = new TextField(Main.stageWidth, Main.stageHeight * 0.2);
+			_temp.alignPivot("center", "center");
+			_temp.x = Main.stageWidth * 0.5;
+			_temp.y = Main.stageHeight * 0.9;
+			addChild(_temp);
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
@@ -126,6 +140,38 @@ package scene.modeSelect
 			_logOut.addEventListener(TouchEvent.TOUCH, onTouchLogOut);
 			addChild(_logOut);
 			
+			_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.3, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
+			_ranking.textFormat.size =  Main.stageWidth * 0.05;
+			_ranking.alignPivot("center", "center");
+			_ranking.x = Main.stageWidth * 0.5;
+			_ranking.y = Main.stageHeight * 0.1;
+			_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
+			addChild(_ranking);
+			
+		}
+		
+		private function onTouchRanking(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
+			if(touch)
+			{
+				//AirGooglePlayGames.getInstance().getLeaderboard("Very Easy");
+				//AirGooglePlayGames.getInstance().showLeaderboard("Very Easy");
+				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADED, onLoadSuccessLeaderBoard);
+				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADING_FAILED, onLoadFailLeaderBoard);
+				AirGooglePlayGames.getInstance().getLeaderboard(leaderBoardId);
+			}
+		}
+		
+		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+		{
+			_temp.text = event.leaderboard.scores.toString();
+			AirGooglePlayGames.getInstance().showLeaderboards();
+		}
+		
+		private function onLoadFailLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+		{
+			_temp.text = "onLoadFailLeaderBoard" + event.type;
 		}
 		
 		private function onTouchLogOut(event:TouchEvent):void
@@ -138,6 +184,8 @@ package scene.modeSelect
 //					Facebook.getInstance().closeSessionAndClearTokenInformation();
 //					dispatchEvent(new starling.events.Event(SceneType.TITLE));
 //				}
+				AirGooglePlayGames.getInstance().signOut();
+				//토스트로 로그아웃 알림
 			}
 		}
 		

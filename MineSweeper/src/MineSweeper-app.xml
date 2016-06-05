@@ -15,7 +15,7 @@
 
 	<!-- A universally unique application identifier. Must be unique across all AIR applications.
 	Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-	<id>com.cys.MineSweeper</id>
+	<id>com.cys.MineSweeperTest</id>
 
 	<!-- Used as the filename for the application. Required. -->
 	<filename>MineSweeper</filename>
@@ -28,7 +28,7 @@
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
 	An updated version of application must have a versionNumber value higher than the previous version. Required for namespace >= 2.5 .
     For iOS Apps, this represents build number. -->
-	<versionNumber>1.0.0</versionNumber>
+	<versionNumber>1.0.4</versionNumber>
 		         
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. 
      For iOS Apps, this represents application version number and format should be (<0-999>.<0-999>.<0-999>).
@@ -276,6 +276,7 @@
                 -->
 			    
 			   <application>
+			        <!--
 			        <activity
 			            android:name="com.yoonsik.facebookane.MainActivity"
 			            android:theme="@android:style/Theme.Translucent">
@@ -289,6 +290,11 @@
 			          	android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
 						android:theme="@android:style/Theme.Translucent.NoTitleBar"
 						android:label="@string/app_name"/>
+						-->
+						
+					<meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 747450661051" />
+					<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+					<activity android:name="com.freshplanet.googleplaygames.SignInActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 					
 			    </application>
 			   
@@ -313,6 +319,11 @@
 <extensions>
         
     
-    <extensionID>com.yoonsik.FacebookExtension</extensionID>
+    
+    
+    
+    <extensionID>com.laurentiu.AirGooglePlayServices</extensionID>
+        <extensionID>com.freshplanet.AirGooglePlayGameServices</extensionID>
+    <extensionID>com.vungle.extensions.android.GooglePlayServices</extensionID>
     </extensions>
 </application>

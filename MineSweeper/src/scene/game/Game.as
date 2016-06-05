@@ -1,5 +1,8 @@
 package scene.game
 {	
+	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGames;
+	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGamesEvent;
+	
 	import flash.desktop.NativeApplication;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
@@ -29,6 +32,7 @@ package scene.game
 	import util.manager.IOMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
+	import util.type.DifficultyType;
 	import util.type.SceneType;
 	
 	public class Game extends Sprite
@@ -67,6 +71,10 @@ package scene.game
 			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
 			{
 				event.preventDefault();
+				
+			
+				//AirGooglePlayGames.getInstance().reportScore("CgkIu_GfvOAVEAIQCA", _time.timer.currentCount * 1000);
+				
 				if(_exitPopup)
 					_exitPopup.visible = true;
 				if(_time)
@@ -110,6 +118,7 @@ package scene.game
 					data[DataType.ITEM_NUM], data[DataType.CHANCE]);
 				
 				addChild(_board);
+				trace(_board.difficulty);
 				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 				addChild(quad);
 				
@@ -251,6 +260,19 @@ package scene.game
 		
 		public function onGameClear():void
 		{
+			switch(_board.difficulty)
+			{
+				case DifficultyType.VERY_EASY :
+					AirGooglePlayGames.getInstance().reportScore("CgkIu_GfvOAVEAIQCA", _time.timer.currentCount * 1000);
+					break;
+				case DifficultyType.EASY :
+					AirGooglePlayGames.getInstance().reportScore("CgkIu_GfvOAVEAIQCQ", _time.timer.currentCount * 1000);
+					break;
+				default:
+					break;
+				
+			}
+			
 			trace("GAME CLEAR");
 			_board.removeEventListener("game_over", onGameOver);
 			_board.removeEventListener("game_clear", onGameClear);
@@ -271,6 +293,9 @@ package scene.game
 			//IOMgr.instance.saveRecord(data);
 			
 			_isGameEnded = true;
+			
+			
+			
 			
 			
 		}

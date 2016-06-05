@@ -20,6 +20,7 @@ package scene.custom
 	
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
+	import util.type.DifficultyType;
 	import util.type.SceneType;
 
 	public class Custom extends DisplayObjectContainer
@@ -80,7 +81,7 @@ package scene.custom
 //				_chanceToGetItem = _slider.chance;				
 				
 				_data = new Dictionary();
-				_data[DataType.DIFFICULTY] = 5;
+				_data[DataType.DIFFICULTY] = DifficultyType.CUSTOM;
 				_data[DataType.ROW] = _slider.row;
 				_data[DataType.COL] = _slider.col;
 				_data[DataType.MINE_NUM] =  _slider.mineNum;
