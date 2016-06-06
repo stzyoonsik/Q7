@@ -11,6 +11,7 @@ package scene.game
 	
 	import scene.Main;
 	import scene.game.board.Board;
+	import scene.game.popup.ClearPopup;
 	import scene.game.popup.ExitPopup;
 	import scene.game.ui.GameOver;
 	import scene.game.ui.Item;
@@ -35,6 +36,7 @@ package scene.game
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
 	import util.type.DifficultyType;
+	import util.type.PlatformType;
 	import util.type.SceneType;
 	
 	public class Game extends Sprite
@@ -46,6 +48,7 @@ package scene.game
 		private var _time:Time;
 		private var _item:Item;
 		private var _exitPopup:ExitPopup;
+		private var _clearPopup:ClearPopup;
 		private var _gameOver:GameOver;
 		private var _warning:Warning;
 		
@@ -62,7 +65,7 @@ package scene.game
 			load();
 			initBackground();
 			initBoard(data);	
-			initExitPopup();			
+			initPopup();			
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
@@ -102,12 +105,17 @@ package scene.game
 			addChild(quad);			
 			
 		}
-		private function initExitPopup():void
+		private function initPopup():void
 		{
 			_exitPopup = new ExitPopup();
 			_exitPopup.addEventListener("exit", onExit);
 			_exitPopup.addEventListener("resume", onResume);
 			addChild(_exitPopup);
+			
+			_clearPopup = new ClearPopup();
+			_clearPopup.addEventListener("again", onAgain);
+			_clearPopup.addEventListener("exit", onExit);
+			addChild(_clearPopup);
 		}
 		
 		private function initBoard(data:Object):void
@@ -262,8 +270,6 @@ package scene.game
 		
 		public function onGameClear():void
 		{
-		
-			
 			trace("GAME CLEAR");
 			_board.removeEventListener("game_over", onGameOver);
 			_board.removeEventListener("game_clear", onGameClear);
@@ -272,10 +278,21 @@ package scene.game
 			
 			_time.timer.stop();
 			
-			//기록 등록
-			LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
-			//업적 등록
-			AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+			//구글로 로그인 했으면		
+			if(PlatformType.current == PlatformType.GOOGLE)
+			{
+				//기록 등록
+				LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
+				//업적 등록
+				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+			}
+			
+			if(_clearPopup)
+			{
+				_clearPopup.visible = true;
+				_clearPopup.textField.text = "이름 = " + Main.userName + "\n" + "난이도 = " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 = " + _time.realTime.toString();
+			}
+			
 			
 			_gameOver.text.text = "GAME CLEAR";
 			_gameOver.visible = true;
@@ -289,11 +306,6 @@ package scene.game
 			//IOMgr.instance.saveRecord(data);
 			
 			_isGameEnded = true;
-			
-			
-			
-			
-			
 		}
 		
 		private function onScrollGameBoard(event:TouchEvent):void
@@ -377,7 +389,7 @@ package scene.game
 		
 		private function onExit(event:Event):void
 		{
-			
+			//게임이 끝나지 않은 상태라면 데이터를 저장 (이어하기를 위함)
 			if(_board && !_isGameEnded)
 			{
 				trace("items : " + _board.items);
@@ -385,13 +397,23 @@ package scene.game
 			}
 			
 			//dispatchEvent(new Event(SceneType.MODE_SELECT));
-			SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+			SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 		
 		private function onResume(event:Event):void
 		{
 			if(_time)
 				_time.timer.start();
+		}
+		
+		/**
+		 * 다시하기 버튼 이벤트리스너 
+		 * @param event 디스패치 이벤트
+		 * 
+		 */
+		private function onAgain(event:Event):void
+		{
+			
 		}
 		
 		private function checkNewRecord(preTime:int, curTime:int):Boolean

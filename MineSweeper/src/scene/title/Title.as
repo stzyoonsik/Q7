@@ -1,6 +1,5 @@
 package scene.title
 {	
-	import com.freshplanet.ane.AirFacebook.Facebook;
 	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGames;
 	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGamesEvent;
 	import com.yoonsik.FacebookExtension;
@@ -12,24 +11,22 @@ package scene.title
 	import starling.animation.Transitions;
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
-	import starling.display.Sprite;
-	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.utils.Color;
 	
-	import util.manager.SceneMgr;
 	import util.manager.SwitchActionMgr;
+	import util.type.PlatformType;
 	import util.type.SceneType;
 
 	public class Title extends DisplayObjectContainer
 	{
-		//private var _fb:FacebookExtension = new FacebookExtension();	
+		private var _fb:FacebookExtension = new FacebookExtension();	
 		
-		private var _logIn:Button;
+		private var _logInGoogle:Button;
+		private var _logInFacebook:Button;
 		
 		private var _userId:String;
 		private var _userName:String;
@@ -39,23 +36,17 @@ package scene.title
 		public function get userId():String { return _userId; }
 		
 		public function Title()
-		{
-			
-			//initButton();
-			AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_IN_SUCCESS, onSignInSuccess);
-			AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_OUT_SUCCESS, onSignOutSuccess);
-			AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_IN_FAIL, onSignInFail);
-			//AirGooglePlayGames.getInstance().startAtLaunch();
-			AirGooglePlayGames.getInstance().isSignedIn();
-			AirGooglePlayGames.getInstance().signIn();
-			//SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+		{			
+			initButton();			
 		}
 		
 		private function onSignInSuccess(event:AirGooglePlayGamesEvent):void
 		{
 			trace("login");
-			trace(AirGooglePlayGames.getInstance().getActivePlayerName());
-			SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+			PlatformType.current = PlatformType.GOOGLE;
+			_userId = AirGooglePlayGames.getInstance().getActivePlayerID();
+			_userName = AirGooglePlayGames.getInstance().getActivePlayerName();
+			SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 		
 		private function onSignOutSuccess(event:AirGooglePlayGamesEvent):void
@@ -65,9 +56,9 @@ package scene.title
 		
 		private function onSignInFail(event:AirGooglePlayGamesEvent):void
 		{
-			trace("sininfail");
+			trace("sign in fail");
 			trace(event);
-			SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+			//SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 		
 		private function onGetObject(event:StatusEvent):void
@@ -87,50 +78,74 @@ package scene.title
 			_token = event.level;
 			
 			checkDone();
-		}
+		} 
 		
 		private function checkDone():void
 		{
 			if(_userId != null && _userName != null && _token != null)
 			{
-				//dispatchEvent(new Event(SceneType.MODE_SELECT));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
-				//SceneMgr.instance.switchScene(this, SceneType.MODE_SELECT);
+				PlatformType.current = PlatformType.FACEBOOK;
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 			}
 		}
 		
 		
 		public function release():void
 		{
-			if(_logIn)
+			if(_logInGoogle)
 			{
-				//_logIn.removeEventListener(TouchEvent.TOUCH, onTouchLogin);
-				_logIn = null;
+				_logInGoogle = null;
+			}
+			
+			if(_fb)
+			{
+				_fb = null;
+				
 			}
 		}		
-//		
-//		
-//		private function initButton():void
-//		{
-//			_logIn = new Button(Texture.fromColor(Main.stageWidth * 0.5, Main.stageHeight * 0.2, Color.SILVER),"");
-//			_logIn.text = "Log In With Facebook";
-//			_logIn.alignPivot("center", "center");
-//			_logIn.x = Main.stageWidth * 0.5;
-//			_logIn.y = Main.stageHeight * 0.5;
-//			_logIn.addEventListener(TouchEvent.TOUCH, onTouchLogin);
-//			addChild(_logIn);
-//		}
 		
-//		private function onTouchLogin(event:TouchEvent):void
-//		{
-//			var touch:Touch = event.getTouch(_logIn, TouchPhase.ENDED);
-//			if(touch)
-//			{
-//				_fb.logIn();
-//				_fb.addEventListener("getObject", onGetObject);
-//				_fb.addEventListener("getToken", onGetToken);
-//				
-//			}
-//		}
+		
+		private function initButton():void
+		{
+			_logInGoogle = new Button(Texture.fromColor(Main.stageWidth * 0.5, Main.stageHeight * 0.2, Color.SILVER),"");
+			_logInGoogle.text = "Log In With Google";
+			_logInGoogle.alignPivot("center", "center");
+			_logInGoogle.x = Main.stageWidth * 0.5;
+			_logInGoogle.y = Main.stageHeight * 0.4;
+			_logInGoogle.addEventListener(TouchEvent.TOUCH, onTouchLoginGoogle);
+			addChild(_logInGoogle);
+			
+			_logInFacebook = new Button(Texture.fromColor(Main.stageWidth * 0.5, Main.stageHeight * 0.2, Color.SILVER),"");
+			_logInFacebook.text = "Log In With Facebook";
+			_logInFacebook.alignPivot("center", "center");
+			_logInFacebook.x = Main.stageWidth * 0.5;
+			_logInFacebook.y = Main.stageHeight * 0.7;
+			_logInFacebook.addEventListener(TouchEvent.TOUCH, onTouchLoginFacebook);
+			addChild(_logInFacebook);
+		}
+		
+		private function onTouchLoginGoogle(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_logInGoogle, TouchPhase.ENDED);
+			if(touch)
+			{				
+				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_IN_SUCCESS, onSignInSuccess);
+				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_OUT_SUCCESS, onSignOutSuccess);
+				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_IN_FAIL, onSignInFail);
+				AirGooglePlayGames.getInstance().isSignedIn();
+				AirGooglePlayGames.getInstance().signIn();
+			}
+		}
+		
+		private function onTouchLoginFacebook(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_logInFacebook, TouchPhase.ENDED);
+			if(touch)
+			{
+				_fb.logIn();
+				_fb.addEventListener("getObject", onGetObject);
+				_fb.addEventListener("getToken", onGetToken);
+			}
+		}
 	}
 }

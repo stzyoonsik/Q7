@@ -29,7 +29,9 @@ package scene.modeSelect
 	import starling.textures.Texture;
 	import starling.utils.Color;
 	
+	import util.manager.ButtonMgr;
 	import util.manager.SwitchActionMgr;
+	import util.type.PlatformType;
 	import util.type.SceneType;
 
 	public class ModeSelect extends DisplayObjectContainer
@@ -44,26 +46,17 @@ package scene.modeSelect
 		private var _logOut:Button;
 		
 		private var _ranking:Button;
+		private var _achievement:Button;
 		
 		private var _temp:TextField;
 		
-		public static var leaderBoardId:String = "CgkIu_GfvOAVEAIQCA";
+		private var leaderBoardId:String = "CgkIu_GfvOAVEAIQCA";
 		
 		public function ModeSelect()
 		{
 			initUser();
 			initButton();
-			_resume = setButton(_resume, Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "이어하기", Main.stageWidth * 0.05, Color.SILVER);
-			_normal = setButton(_normal, Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "일반", Main.stageWidth * 0.05, Color.SILVER);
-			_custom = setButton(_custom, Main.stageWidth * 0.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "커스텀", Main.stageWidth * 0.05, Color.SILVER);		
 			
-			_resume.addEventListener(TouchEvent.TOUCH, onTouchMode);
-			_normal.addEventListener(TouchEvent.TOUCH, onTouchMode);
-			_custom.addEventListener(TouchEvent.TOUCH, onTouchMode);
-			
-			addChild(_resume);
-			addChild(_normal);
-			addChild(_custom);
 			
 			_temp = new TextField(Main.stageWidth, Main.stageHeight * 0.2);
 			_temp.alignPivot("center", "center");
@@ -72,7 +65,6 @@ package scene.modeSelect
 			_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
 			addChild(_temp);
 			
-			AirGooglePlayGames.getInstance().showStandardAchievements();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
@@ -99,18 +91,21 @@ package scene.modeSelect
 		
 		private function initUser():void
 		{
-			var urlRequest:URLRequest = new URLRequest("https://graph.facebook.com/"+Main.userId+"/picture?type=large");
-			var loader:Loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
-			loader.load(urlRequest);
-			
-			_userNameTextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.userName);
-			_userNameTextField.autoSize = "left";
-			_userNameTextField.alignPivot("center", "center");
-			_userNameTextField.x = Main.stageWidth * 0.1;
-			_userNameTextField.y = Main.stageHeight * 0.2;
-			_userNameTextField.format.size = Main.stageWidth * 0.04;
-			addChild(_userNameTextField);
+			if(PlatformType.current == PlatformType.FACEBOOK)
+			{
+				var urlRequest:URLRequest = new URLRequest("https://graph.facebook.com/"+Main.userId+"/picture?type=large");
+				var loader:Loader = new Loader();
+				loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
+				loader.load(urlRequest);
+				
+				_userNameTextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.userName);
+				_userNameTextField.autoSize = "left";
+				_userNameTextField.alignPivot("center", "center");
+				_userNameTextField.x = Main.stageWidth * 0.1;
+				_userNameTextField.y = Main.stageHeight * 0.2;
+				_userNameTextField.format.size = Main.stageWidth * 0.04;
+				addChild(_userNameTextField);
+			}			
 			
 		}
 		
@@ -142,14 +137,32 @@ package scene.modeSelect
 			_logOut.addEventListener(TouchEvent.TOUCH, onTouchLogOut);
 			addChild(_logOut);
 			
-			_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.2, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
-			_ranking.textFormat.size =  Main.stageWidth * 0.05;
-			_ranking.alignPivot("center", "center");
-			_ranking.x = Main.stageWidth * 0.5;
-			_ranking.y = Main.stageHeight * 0.1;
-			_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
-			addChild(_ranking);
+			if(PlatformType.current == PlatformType.GOOGLE)
+			{
+				_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.2, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
+				_ranking.textFormat.size =  Main.stageWidth * 0.05;
+				_ranking.alignPivot("center", "center");
+				_ranking.x = Main.stageWidth * 0.5;
+				_ranking.y = Main.stageHeight * 0.1;
+				_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
+				addChild(_ranking);
+				
+				_achievement = ButtonMgr.instance.setButton(_achievement, Main.stageWidth * 0.2, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "업적", Main.stageWidth * 0.05, Color.SILVER);
+				_achievement.addEventListener(TouchEvent.TOUCH, onTouchAchievement);
+				addChild(_achievement);
+			}
 			
+			_resume = setButton(_resume, Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "이어하기", Main.stageWidth * 0.05, Color.SILVER);
+			_normal = setButton(_normal, Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "일반", Main.stageWidth * 0.05, Color.SILVER);
+			_custom = setButton(_custom, Main.stageWidth * 0.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "커스텀", Main.stageWidth * 0.05, Color.SILVER);		
+			
+			_resume.addEventListener(TouchEvent.TOUCH, onTouchMode);
+			_normal.addEventListener(TouchEvent.TOUCH, onTouchMode);
+			_custom.addEventListener(TouchEvent.TOUCH, onTouchMode);
+			
+			addChild(_resume);
+			addChild(_normal);
+			addChild(_custom);
 		}
 		
 		
@@ -159,35 +172,45 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
 			if(touch)
 			{
-				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADED, onLoadSuccessLeaderBoard);
-				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADING_FAILED, onLoadFailLeaderBoard);
-				AirGooglePlayGames.getInstance().getLeaderboard(leaderBoardId);
+				AirGooglePlayGames.getInstance().showLeaderboards();
 			}
 		}
 		
-		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+		private function onTouchAchievement(event:TouchEvent):void
 		{
-			
-			AirGooglePlayGames.getInstance().showLeaderboards();
+			var touch:Touch = event.getTouch(_achievement, TouchPhase.ENDED);
+			if(touch)
+			{
+				AirGooglePlayGames.getInstance().showStandardAchievements();
+			}
 		}
 		
-		private function onLoadFailLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
-		{
-			_temp.text = "onLoadFailLeaderBoard" + event.type;
-		}
+//		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+//		{
+//			
+//			AirGooglePlayGames.getInstance().showLeaderboards();
+//		}
+//		
+//		private function onLoadFailLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+//		{
+//			_temp.text = "onLoadFailLeaderBoard" + event.type;
+//		}
 		
 		private function onTouchLogOut(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_logOut, TouchPhase.ENDED);
 			if(touch)
 			{
-//				if(Facebook.getInstance().isSessionOpen)
-//				{
-//					Facebook.getInstance().closeSessionAndClearTokenInformation();
-//					dispatchEvent(new starling.events.Event(SceneType.TITLE));
-//				}
-				AirGooglePlayGames.getInstance().signOut();
+				if(PlatformType.current == PlatformType.FACEBOOK)
+				{
+					
+				}
+				else
+				{
+					AirGooglePlayGames.getInstance().signOut();
+				}				
 				_temp.text = "";
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.TITLE, false, null, 0.5, Transitions.EASE_OUT);
 				//토스트로 로그아웃 알림
 			}
 		}
@@ -210,19 +233,19 @@ package scene.modeSelect
 			if(touch)
 			{
 				//dispatchEvent(new starling.events.Event(SceneType.GAME, false, 0));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, 0, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, 0, 0.5, Transitions.EASE_OUT);
 			}
 			
 			touch = event.getTouch(_normal, TouchPhase.ENDED);
 			if(touch)
 			{
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.STAGE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.STAGE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 			}
 			
 			touch = event.getTouch(_custom, TouchPhase.ENDED);
 			if(touch)
 			{
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.CUSTOM, false, null, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.CUSTOM, false, null, 0.5, Transitions.EASE_OUT);
 			}			
 			
 		}
