@@ -101,7 +101,7 @@ package scene.custom
 //				_data.push(5);
 				
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 		}
 		
@@ -112,7 +112,7 @@ package scene.custom
 			{
 				event.preventDefault();
 				dispatchEvent(new Event(SceneType.MODE_SELECT));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 				trace("[Custom] back");
 			}
 		}
