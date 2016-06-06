@@ -36,7 +36,7 @@ package util.manager
 		private var _data:Object;
 		
 		
-		public function switchScenefadeOut(currentScene:DisplayObject, nextScene:String, bubbles:Boolean = false, data:Object = null, time:Number = 1.0, transition:String = null):void
+		public function switchSceneFadeOut(currentScene:DisplayObject, nextScene:String, bubbles:Boolean = false, data:Object = null, time:Number = 1.0, transition:String = null):void
 		{
 			_nextScene = nextScene;
 			_bubbles = bubbles;

@@ -125,7 +125,7 @@ package scene.stageSelect
 			{
 				setData(0, 8, 8, 8, 2, 10);
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 			
 		}
@@ -137,7 +137,7 @@ package scene.stageSelect
 			{
 				setData(1, 10, 10, 15, 2, 8);
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 			
 		}
@@ -149,7 +149,7 @@ package scene.stageSelect
 			{
 				setData(2, 15, 15, 40, 2, 7);
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 			
 		}
@@ -161,7 +161,7 @@ package scene.stageSelect
 			{
 				setData(3, 20, 20, 80, 2, 6);
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 			
 		}
@@ -173,7 +173,7 @@ package scene.stageSelect
 			{
 				setData(4, 25, 25, 150, 2, 5);
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 			
 		}
@@ -185,7 +185,7 @@ package scene.stageSelect
 			{
 				event.preventDefault();
 				//dispatchEvent(new Event(SceneType.MODE_SELECT));
-				SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 			}
 		}
 		
