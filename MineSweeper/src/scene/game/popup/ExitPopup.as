@@ -3,6 +3,7 @@ package scene.game.popup
 	import scene.Main;
 	
 	import starling.display.Button;
+	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.display.Quad;
 	import starling.display.Sprite;
@@ -14,7 +15,7 @@ package scene.game.popup
 	import starling.textures.Texture;
 	import starling.utils.Color;
 
-	public class ExitPopup extends Sprite
+	public class ExitPopup extends DisplayObjectContainer
 	{
 		private var _yes:Button;
 		private var _no:Button;
