@@ -29,7 +29,9 @@ package scene.game
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
+	import util.manager.AchievementMgr;
 	import util.manager.IOMgr;
+	import util.manager.LeaderBoardMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
 	import util.type.DifficultyType;
@@ -260,18 +262,7 @@ package scene.game
 		
 		public function onGameClear():void
 		{
-			switch(_board.difficulty)
-			{
-				case DifficultyType.VERY_EASY :
-					AirGooglePlayGames.getInstance().reportScore("CgkIu_GfvOAVEAIQCA", _time.timer.currentCount * 1000);
-					break;
-				case DifficultyType.EASY :
-					AirGooglePlayGames.getInstance().reportScore("CgkIu_GfvOAVEAIQCQ", _time.timer.currentCount * 1000);
-					break;
-				default:
-					break;
-				
-			}
+		
 			
 			trace("GAME CLEAR");
 			_board.removeEventListener("game_over", onGameOver);
@@ -280,6 +271,11 @@ package scene.game
 			
 			
 			_time.timer.stop();
+			
+			//기록 등록
+			LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
+			//업적 등록
+			AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
 			
 			_gameOver.text.text = "GAME CLEAR";
 			_gameOver.visible = true;

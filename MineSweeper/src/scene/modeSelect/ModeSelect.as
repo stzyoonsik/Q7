@@ -69,8 +69,10 @@ package scene.modeSelect
 			_temp.alignPivot("center", "center");
 			_temp.x = Main.stageWidth * 0.5;
 			_temp.y = Main.stageHeight * 0.9;
+			_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
 			addChild(_temp);
 			
+			AirGooglePlayGames.getInstance().showStandardAchievements();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
@@ -140,7 +142,7 @@ package scene.modeSelect
 			_logOut.addEventListener(TouchEvent.TOUCH, onTouchLogOut);
 			addChild(_logOut);
 			
-			_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.3, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
+			_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.2, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
 			_ranking.textFormat.size =  Main.stageWidth * 0.05;
 			_ranking.alignPivot("center", "center");
 			_ranking.x = Main.stageWidth * 0.5;
@@ -150,13 +152,13 @@ package scene.modeSelect
 			
 		}
 		
+		
+		
 		private function onTouchRanking(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
 			if(touch)
 			{
-				//AirGooglePlayGames.getInstance().getLeaderboard("Very Easy");
-				//AirGooglePlayGames.getInstance().showLeaderboard("Very Easy");
 				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADED, onLoadSuccessLeaderBoard);
 				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesLeaderboardEvent.LEADERBOARD_LOADING_FAILED, onLoadFailLeaderBoard);
 				AirGooglePlayGames.getInstance().getLeaderboard(leaderBoardId);
@@ -165,7 +167,7 @@ package scene.modeSelect
 		
 		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
 		{
-			_temp.text = event.leaderboard.scores.toString();
+			
 			AirGooglePlayGames.getInstance().showLeaderboards();
 		}
 		
@@ -185,6 +187,7 @@ package scene.modeSelect
 //					dispatchEvent(new starling.events.Event(SceneType.TITLE));
 //				}
 				AirGooglePlayGames.getInstance().signOut();
+				_temp.text = "";
 				//토스트로 로그아웃 알림
 			}
 		}
