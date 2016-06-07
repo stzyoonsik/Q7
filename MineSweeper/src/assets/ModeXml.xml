@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="Mode.png">
+   <SubTexture name="background" x="0" y="0" width="256" height="256" />
+   <SubTexture name="button" x="258" y="132" width="128" height="48" />
+   <SubTexture name="radioItemOff" x="258" y="0" width="128" height="64" />
+   <SubTexture name="radioItemOn" x="258" y="66" width="128" height="64" />
+</TextureAtlas>

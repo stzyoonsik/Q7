@@ -10,20 +10,25 @@ package scene.stageSelect
 	import starling.animation.Transitions;
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
+	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
+	import util.EmbeddedAssets;
+	import util.manager.ButtonMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
 	import util.type.SceneType;
 
 	public class StageSelect extends DisplayObjectContainer
 	{
+		private var _atlas:TextureAtlas;
 		private var _veryEasy:Button;
 		private var _easy:Button;
 		private var _normal:Button;
@@ -41,11 +46,58 @@ package scene.stageSelect
 		
 		public function StageSelect()
 		{
-			_veryEasy = setButton(_veryEasy, Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "매우 쉬움", Color.SILVER);
-			_easy     = setButton(_easy, Main.stageWidth * 0.5, Main.stageHeight * 0.4, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "쉬움", Color.SILVER);
-			_normal   = setButton(_normal, Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "보통", Color.SILVER);
-			_hard     = setButton(_hard, Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "어려움", Color.SILVER);
-			_veryHard = setButton(_veryHard, Main.stageWidth * 0.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "매우 어려움", Color.SILVER);
+			load();
+			initBackground();
+			initButton();
+			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+		}
+		
+		/**
+		 * 스프라이트시트와 xml을 로드하는 메소드 
+		 * 
+		 */
+		private function load():void
+		{			
+			var xml:XML = XML(new EmbeddedAssets.ModeXml());
+			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.ModeSprite);
+			_atlas = new TextureAtlas(texture, xml);
+			
+			xml = null;
+			texture = null;
+		}
+		
+		public function release():void
+		{	
+			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+		}
+		
+//		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, color:uint):Button
+//		{
+//			var texture:Texture = Texture.fromColor(width, height, color);
+//			button = new Button(texture, text);
+//			button.alignPivot("center", "center");
+//			button.x = x;
+//			button.y = y;
+//			
+//			return button;
+//		}
+		
+		private function initBackground():void
+		{
+			var image:Image = new Image(_atlas.getTexture("background"));
+			image.width = Main.stageWidth;
+			image.height = Main.stageHeight;
+			addChild(image);
+		}
+		
+		private function initButton():void
+		{
+			_veryEasy = ButtonMgr.instance.setButton(_veryEasy, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.2, Main.stageWidth * 0.5, Main.stageWidth * 0.15, "매우 쉬움", Main.stageWidth * 0.05);
+			_easy     = ButtonMgr.instance.setButton(_easy, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.35, Main.stageWidth * 0.5, Main.stageWidth * 0.15, "쉬움", Main.stageWidth * 0.05);
+			_normal   = ButtonMgr.instance.setButton(_normal, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.15, "일반", Main.stageWidth * 0.05);
+			_hard     = ButtonMgr.instance.setButton(_hard, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.65, Main.stageWidth * 0.5, Main.stageWidth * 0.15, "어려움", Main.stageWidth * 0.05);
+			_veryHard = ButtonMgr.instance.setButton(_veryHard, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.8, Main.stageWidth * 0.5, Main.stageWidth * 0.15, "매우 어려움", Main.stageWidth * 0.05);
 			
 			_veryEasy.addEventListener(TouchEvent.TOUCH, onTouchVeryEasy);
 			_easy.addEventListener(TouchEvent.TOUCH, onTouchEasy);
@@ -59,25 +111,7 @@ package scene.stageSelect
 			addChild(_hard);
 			addChild(_veryHard);
 			
-			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
-		
-		public function release():void
-		{	
-			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
-		}
-		
-		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, color:uint):Button
-		{
-			var texture:Texture = Texture.fromColor(width, height, color);
-			button = new Button(texture, text);
-			button.alignPivot("center", "center");
-			button.x = x;
-			button.y = y;
-			
-			return button;
-		}
-		
 		/**
 		 * 
 		 * @param difficulty 0 : veryEasy, 1 : easy, 2 : normal, 3 : hard, 4 : veryHard 5 : custom
@@ -103,18 +137,6 @@ package scene.stageSelect
 			_data[DataType.MINE_NUM] = mineNum;
 			_data[DataType.ITEM_NUM] = itemNum;
 			_data[DataType.CHANCE] = chance;
-			
-//			_data = new Vector.<int>();
-//			_data.push(_maxRow);
-//			_data.push(_maxCol);
-//			_data.push(_numberOfMine);
-//			_data.push(_numberOfMineFinder);
-//			_data.push(_chanceToGetItem);
-//			_data.push(0);
-//			_data.push(0);
-//			_data.push(0);
-//			_data.push(0);
-//			_data.push(difficulty);
 		}
 		
 				

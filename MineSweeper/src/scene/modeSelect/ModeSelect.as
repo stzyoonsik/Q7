@@ -27,8 +27,10 @@ package scene.modeSelect
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.Texture;
+	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
+	import util.EmbeddedAssets;
 	import util.manager.ButtonMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
@@ -36,6 +38,7 @@ package scene.modeSelect
 
 	public class ModeSelect extends DisplayObjectContainer
 	{
+		private var _atlas:TextureAtlas;
 		private var _resume:Button;
 		private var _normal:Button;
 		private var _custom:Button;
@@ -54,18 +57,35 @@ package scene.modeSelect
 		
 		public function ModeSelect()
 		{
-			initUser();
+			load();
+			initBackground();
 			initButton();
+			initUser();
+			
 			
 			
 			_temp = new TextField(Main.stageWidth, Main.stageHeight * 0.2);
 			_temp.alignPivot("center", "center");
 			_temp.x = Main.stageWidth * 0.5;
 			_temp.y = Main.stageHeight * 0.9;
-			_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
+			//_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
 			addChild(_temp);
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+		}
+		
+		/**
+		 * 스프라이트시트와 xml을 로드하는 메소드 
+		 * 
+		 */
+		private function load():void
+		{			
+			var xml:XML = XML(new EmbeddedAssets.ModeXml());
+			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.ModeSprite);
+			_atlas = new TextureAtlas(texture, xml);
+			
+			xml = null;
+			texture = null;
 		}
 		
 		public function release():void
@@ -87,6 +107,14 @@ package scene.modeSelect
 			}
 			
 			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+		}
+		
+		private function initBackground():void
+		{
+			var image:Image = new Image(_atlas.getTexture("background"));
+			image.width = Main.stageWidth;
+			image.height = Main.stageHeight;
+			addChild(image);
 		}
 		
 		private function initUser():void
@@ -147,14 +175,22 @@ package scene.modeSelect
 				_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
 				addChild(_ranking);
 				
-				_achievement = ButtonMgr.instance.setButton(_achievement, Main.stageWidth * 0.2, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "업적", Main.stageWidth * 0.05, Color.SILVER);
+				_achievement = ButtonMgr.instance.setButton(_achievement, _atlas.getTexture("button"), Main.stageWidth * 0.2, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "업적", Main.stageWidth * 0.05);
 				_achievement.addEventListener(TouchEvent.TOUCH, onTouchAchievement);
-				addChild(_achievement);
+				addChild(_achievement); 
 			}
 			
-			_resume = setButton(_resume, Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "이어하기", Main.stageWidth * 0.05, Color.SILVER);
-			_normal = setButton(_normal, Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "일반", Main.stageWidth * 0.05, Color.SILVER);
-			_custom = setButton(_custom, Main.stageWidth * 0.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1, "커스텀", Main.stageWidth * 0.05, Color.SILVER);		
+			_resume = ButtonMgr.instance.setButton(_resume, _atlas.getTexture("button"), 
+						Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.5, Main.stageWidth * 0.15, 
+						"이어하기", Main.stageWidth * 0.05);			
+			
+			_normal = ButtonMgr.instance.setButton(_normal, _atlas.getTexture("button"), 
+						Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.15, 
+						"일반", Main.stageWidth * 0.05);
+			
+			_custom = ButtonMgr.instance.setButton(_custom, _atlas.getTexture("button"), 
+						Main.stageWidth * 0.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.15, 
+						"커스텀", Main.stageWidth * 0.05);		
 			
 			_resume.addEventListener(TouchEvent.TOUCH, onTouchMode);
 			_normal.addEventListener(TouchEvent.TOUCH, onTouchMode);
@@ -172,7 +208,7 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
 			if(touch)
 			{
-				AirGooglePlayGames.getInstance().showLeaderboards();
+				//AirGooglePlayGames.getInstance().showLeaderboards();
 			}
 		}
 		
@@ -181,7 +217,7 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_achievement, TouchPhase.ENDED);
 			if(touch)
 			{
-				AirGooglePlayGames.getInstance().showStandardAchievements();
+				//AirGooglePlayGames.getInstance().showStandardAchievements();
 			}
 		}
 		
@@ -207,7 +243,7 @@ package scene.modeSelect
 				}
 				else
 				{
-					AirGooglePlayGames.getInstance().signOut();
+					//AirGooglePlayGames.getInstance().signOut();
 				}				
 				_temp.text = "";
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.TITLE, false, null, 0.5, Transitions.EASE_OUT);
@@ -215,17 +251,17 @@ package scene.modeSelect
 			}
 		}
 		
-		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, textSize:int, color:uint):Button
-		{
-			var texture:Texture = Texture.fromColor(width, height, color);
-			button = new Button(texture, text);
-			button.textFormat.size = textSize;
-			button.alignPivot("center", "center");
-			button.x = x;
-			button.y = y;
-			
-			return button;
-		}
+//		private function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, textSize:int, color:uint):Button
+//		{
+//			var texture:Texture = Texture.fromColor(width, height, color);
+//			button = new Button(texture, text);
+//			button.textFormat.size = textSize;
+//			button.alignPivot("center", "center");
+//			button.x = x;
+//			button.y = y;
+//			
+//			return button;
+//		}
 		
 		private function onTouchMode(event:TouchEvent):void
 		{
