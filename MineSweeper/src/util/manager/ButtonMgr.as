@@ -26,14 +26,15 @@ package util.manager
 			return _instance;
 		}	
 		
-		public function setButton(button:Button, x:int, y:int, width:int, height:int, text:String, textSize:int, color:uint):Button
+		public function setButton(button:Button, texture:Texture, x:int, y:int, width:int, height:int, text:String, textSize:int):Button
 		{
-			var texture:Texture = Texture.fromColor(width, height, color);
 			button = new Button(texture, text);
-			button.textFormat.size = textSize;
-			button.alignPivot("center", "center");
+			button.textFormat.size = textSize;			
+			button.width = width;
+			button.height = height;
 			button.x = x;
 			button.y = y;
+			button.alignPivot("center", "center");
 			
 			return button;
 		}
