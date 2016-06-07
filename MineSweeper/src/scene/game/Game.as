@@ -58,10 +58,12 @@ package scene.game
 		private var _beginPos:Point;
 		private var _endedPos:Point;
 		
-	
+		private var _data:Object;
 		
 		public function Game(data:Object)
 		{
+			_data = data;
+			
 			load();
 			initBackground();
 			initBoard(data);	
@@ -76,9 +78,6 @@ package scene.game
 			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
 			{
 				event.preventDefault();
-				
-			
-				//AirGooglePlayGames.getInstance().reportScore("CgkIu_GfvOAVEAIQCA", _time.timer.currentCount * 1000);
 				
 				if(_exitPopup)
 					_exitPopup.visible = true;
@@ -96,6 +95,9 @@ package scene.game
 			var xml:XML = XML(new EmbeddedAssets.GameXml());
 			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.GameSprite);
 			_atlas = new TextureAtlas(texture, xml);
+			
+			xml = null;
+			texture = null;
 		}
 		
 		private function initBackground():void
@@ -185,7 +187,8 @@ package scene.game
 		private function initItem(finderNum:int):void
 		{
 			_item = new Item(_atlas, finderNum);
-			_item.y = Main.stageHeight * 0.05;
+			_item.x = Main.stageWidth * 0.8;
+			_item.y = Main.stageHeight * 0.1;
 			_item.addEventListener("mineFinder", onTouchMineFinder);
 			addChild(_item);
 		}
@@ -228,6 +231,12 @@ package scene.game
 			{
 				_exitPopup = null;
 				removeChild(_exitPopup);
+			}
+			
+			if(_clearPopup)
+			{
+				_clearPopup = null;
+				removeChild(_clearPopup);
 			}
 			
 			if(_gameOver)
@@ -279,13 +288,13 @@ package scene.game
 			_time.timer.stop();
 			
 			//구글로 로그인 했으면		
-			if(PlatformType.current == PlatformType.GOOGLE)
-			{
-				//기록 등록
-				LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
-				//업적 등록
-				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
-			}
+//			if(PlatformType.current == PlatformType.GOOGLE)
+//			{
+//				//기록 등록
+//				LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
+//				//업적 등록
+//				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+//			}
 			
 			if(_clearPopup)
 			{
@@ -299,8 +308,8 @@ package scene.game
 			
 			IOMgr.instance.removeData();
 			
-			var datas:Object = IOMgr.instance.loadRecord();
-			renewalData(datas);
+			//var datas:Object = IOMgr.instance.loadRecord();
+			//renewalData(datas);
 			
 			
 			//IOMgr.instance.saveRecord(data);
@@ -390,10 +399,14 @@ package scene.game
 		private function onExit(event:Event):void
 		{
 			//게임이 끝나지 않은 상태라면 데이터를 저장 (이어하기를 위함)
-			if(_board && !_isGameEnded)
+			if(_board && _board.isFirstTouch && !_isGameEnded)
 			{
 				trace("items : " + _board.items);
 				IOMgr.instance.saveData(_board.difficulty, _board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);
+			}
+			else
+			{
+				IOMgr.instance.removeData();
 			}
 			
 			//dispatchEvent(new Event(SceneType.MODE_SELECT));
@@ -413,7 +426,16 @@ package scene.game
 		 */
 		private function onAgain(event:Event):void
 		{
+			trace("onAgain");
+			removeChildren();
+			release();
 			
+			load();
+			initBackground();
+			initBoard(_data);
+			initPopup();
+			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		private function checkNewRecord(preTime:int, curTime:int):Boolean
@@ -449,9 +471,6 @@ package scene.game
 					}
 				}
 			}
-			
-			
 		}
 	}
-
 }
