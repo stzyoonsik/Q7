@@ -31,6 +31,8 @@ package scene
 		private static var _userId:String;
 		private static var _userName:String;
 		
+		public static function set userName(value:String):void { _userName = value;	}
+		public static function set userId(value:String):void { _userId = value;	}
 		public static function get userName():String { return _userName; }
 		public static function get userId():String { return _userId; }
 

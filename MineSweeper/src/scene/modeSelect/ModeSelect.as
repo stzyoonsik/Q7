@@ -156,24 +156,33 @@ package scene.modeSelect
 		
 		private function initButton():void
 		{
-			_logOut = new Button(Texture.fromColor(Main.stageWidth * 0.4, Main.stageHeight * 0.1, Color.SILVER),"");
-			_logOut.text = "Log Out";
-			_logOut.textFormat.size =  Main.stageWidth * 0.05;
-			_logOut.alignPivot("center", "center");
-			_logOut.x = Main.stageWidth * 0.8;
-			_logOut.y = Main.stageHeight * 0.1;
+//			_logOut = new Button(Texture.fromColor(Main.stageWidth * 0.4, Main.stageHeight * 0.1, Color.SILVER),"");
+//			_logOut.text = "Log Out";
+//			_logOut.textFormat.size =  Main.stageWidth * 0.05;
+//			_logOut.alignPivot("center", "center");
+//			_logOut.x = Main.stageWidth * 0.8;
+//			_logOut.y = Main.stageHeight * 0.1;
+//			_logOut.addEventListener(TouchEvent.TOUCH, onTouchLogOut);
+//			addChild(_logOut);
+			
+			_logOut = ButtonMgr.instance.setButton(_logOut, _atlas.getTexture("button"), Main.stageWidth * 0.8, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "로그아웃", Main.stageWidth * 0.025);
 			_logOut.addEventListener(TouchEvent.TOUCH, onTouchLogOut);
-			addChild(_logOut);
+			addChild(_logOut); 
+			
 			
 			if(PlatformType.current == PlatformType.GOOGLE)
 			{
-				_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.2, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
-				_ranking.textFormat.size =  Main.stageWidth * 0.05;
-				_ranking.alignPivot("center", "center");
-				_ranking.x = Main.stageWidth * 0.5;
-				_ranking.y = Main.stageHeight * 0.1;
+//				_ranking = new Button(Texture.fromColor(Main.stageWidth * 0.2, Main.stageHeight * 0.1, Color.SILVER),"Ranking");
+//				_ranking.textFormat.size =  Main.stageWidth * 0.05;
+//				_ranking.alignPivot("center", "center");
+//				_ranking.x = Main.stageWidth * 0.5;
+//				_ranking.y = Main.stageHeight * 0.1;
+//				_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
+//				addChild(_ranking);
+				
+				_ranking = ButtonMgr.instance.setButton(_ranking, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "랭킹", Main.stageWidth * 0.05);
 				_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
-				addChild(_ranking);
+				addChild(_ranking); 
 				
 				_achievement = ButtonMgr.instance.setButton(_achievement, _atlas.getTexture("button"), Main.stageWidth * 0.2, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "업적", Main.stageWidth * 0.05);
 				_achievement.addEventListener(TouchEvent.TOUCH, onTouchAchievement);
@@ -243,7 +252,9 @@ package scene.modeSelect
 				}
 				else
 				{
-					//AirGooglePlayGames.getInstance().signOut();
+					AirGooglePlayGames.getInstance().signOut();
+					Main.userId = "";
+					Main.userName = "";
 				}				
 				_temp.text = "";
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.TITLE, false, null, 0.5, Transitions.EASE_OUT);

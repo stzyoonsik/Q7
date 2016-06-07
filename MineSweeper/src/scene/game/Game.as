@@ -294,7 +294,7 @@ package scene.game
 			if(PlatformType.current == PlatformType.GOOGLE)
 			{
 				//기록 등록
-				LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
+				LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
 				//업적 등록
 				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
 			}

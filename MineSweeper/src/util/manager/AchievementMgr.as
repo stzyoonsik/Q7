@@ -36,6 +36,8 @@ package util.manager
 		private const ID_HARD_FAST_CLEAR:String = "CgkIu_GfvOAVEAIQBQ";
 		private const ID_VERY_HARD_FAST_CLEAR:String = "CgkIu_GfvOAVEAIQBg";
 		
+		
+		
 		private const FAST_CLEAR_VERY_EASY:int = 30;
 		private const FAST_CLEAR_EASY:int = 60;
 		private const FAST_CLEAR_NORMAL:int = 120;
