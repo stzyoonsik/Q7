@@ -186,9 +186,9 @@ package scene
 		private function releaseModeSelect():void
 		{
 			_modeSelect.release();
-//			_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
-//			_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
-//			_modeSelect.removeEventListener(SceneType.GAME, onChangeScene);
+			//_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
+			//_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
+			//_modeSelect.removeEventListener(SceneType.GAME, onChangeScene);
 			_modeSelect.removeEventListeners();
 			removeChild(_modeSelect);
 			_modeSelect = null;

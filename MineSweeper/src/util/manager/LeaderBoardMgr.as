@@ -37,28 +37,28 @@ package util.manager
 		
 		
 		
-		public function reportScore(difficulty:int, time:int):void
-		{
-			switch(difficulty)
-			{
-				case DifficultyType.VERY_EASY :
-					AirGooglePlayGames.getInstance().reportScore(ID_VERY_EASY , time * 1000);
-					break;
-				case DifficultyType.EASY :
-					AirGooglePlayGames.getInstance().reportScore(ID_EASY, time * 1000);
-					break;
-				case DifficultyType.NORMAL :
-					AirGooglePlayGames.getInstance().reportScore(ID_NORMAL, time * 1000);
-					break;
-				case DifficultyType.HARD :
-					AirGooglePlayGames.getInstance().reportScore(ID_HARD, time * 1000);
-					break;
-				case DifficultyType.VERY_HARD :
-					AirGooglePlayGames.getInstance().reportScore(ID_VERY_HARD, time * 1000);
-					break;
-				default:
-					break;				
-			}
-		}
+//		public function reportScore(difficulty:int, time:int):void
+//		{
+//			switch(difficulty)
+//			{
+//				case DifficultyType.VERY_EASY :
+//					AirGooglePlayGames.getInstance().reportScore(ID_VERY_EASY , time * 1000);
+//					break;
+//				case DifficultyType.EASY :
+//					AirGooglePlayGames.getInstance().reportScore(ID_EASY, time * 1000);
+//					break;
+//				case DifficultyType.NORMAL :
+//					AirGooglePlayGames.getInstance().reportScore(ID_NORMAL, time * 1000);
+//					break;
+//				case DifficultyType.HARD :
+//					AirGooglePlayGames.getInstance().reportScore(ID_HARD, time * 1000);
+//					break;
+//				case DifficultyType.VERY_HARD :
+//					AirGooglePlayGames.getInstance().reportScore(ID_VERY_HARD, time * 1000);
+//					break;
+//				default:
+//					break;				
+//			}
+//		}
 	}
 }

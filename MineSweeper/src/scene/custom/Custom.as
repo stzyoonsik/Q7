@@ -26,14 +26,8 @@ package scene.custom
 	public class Custom extends DisplayObjectContainer
 	{
 		private var _slider:Slider;
+		private var _radioItem:Button;
 		
-//		private var _maxRow:int;
-//		private var _maxCol:int;
-//		private var _numberOfMine:int;
-//		private var _numberOfMineFinder:int;
-//		private var _chanceToGetItem:int;
-		
-		//private var _data:Vector.<int>;
 		private var _data:Dictionary;
 		private var _startButton:Button;
 		
@@ -49,6 +43,8 @@ package scene.custom
 			_startButton.y = Main.stageHeight * 0.8;
 			_startButton.addEventListener(TouchEvent.TOUCH, onTouchStart);
 			addChild(_startButton);
+			
+			//_radioItem = new Button(Texture.fromColor(Main.stageWidth * 0.2, Main.stageHeight * 0.1, Color.
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 			
@@ -73,34 +69,16 @@ package scene.custom
 		{
 			var touch:Touch = event.getTouch(_startButton, TouchPhase.ENDED);
 			if(touch)
-			{
-//				_maxRow = _slider.row;
-//				_maxCol = _slider.col;
-//				_numberOfMine = _slider.mineNum;
-//				_numberOfMineFinder = _slider.itemNum;
-//				_chanceToGetItem = _slider.chance;				
-				
+			{				
 				_data = new Dictionary();
 				_data[DataType.DIFFICULTY] = DifficultyType.CUSTOM;
 				_data[DataType.ROW] = _slider.row;
 				_data[DataType.COL] = _slider.col;
-				_data[DataType.MINE_NUM] =  _slider.mineNum;
+				_data[DataType.MINE_NUM] = _slider.mineNum;
 				_data[DataType.ITEM_NUM] = _slider.itemNum;
 				_data[DataType.CHANCE] = _slider.chance;	
 				
-//				_data = new Vector.<int>();
-//				_data.push(_maxRow);
-//				_data.push(_maxCol);
-//				_data.push(_numberOfMine);
-//				_data.push(_numberOfMineFinder);
-//				_data.push(_chanceToGetItem);
-//				_data.push(0);
-//				_data.push(0);
-//				_data.push(0);
-//				_data.push(0);
-//				_data.push(5);
-				
-				//dispatchEvent(new Event(SceneType.GAME, false, _data));
+
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 		}
@@ -111,7 +89,7 @@ package scene.custom
 			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
 			{
 				event.preventDefault();
-				dispatchEvent(new Event(SceneType.MODE_SELECT));
+				//dispatchEvent(new Event(SceneType.MODE_SELECT));
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 				trace("[Custom] back");
 			}

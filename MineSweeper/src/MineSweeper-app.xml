@@ -316,15 +316,5 @@
 
 
 
-<extensions>
-        
-    
-    
-    
-    
-    <extensionID>com.laurentiu.AirGooglePlayServices</extensionID>
-        <extensionID>com.freshplanet.AirGooglePlayGameServices</extensionID>
-    <extensionID>com.vungle.extensions.android.GooglePlayServices</extensionID>
-    <extensionID>com.yoonsik.FacebookExtension</extensionID>
-    </extensions>
+
 </application>

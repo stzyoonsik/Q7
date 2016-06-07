@@ -10,6 +10,7 @@ package scene.game.popup
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
+	import starling.textures.Texture;
 	import starling.utils.Color;
 	
 	import util.manager.ButtonMgr;
@@ -49,8 +50,8 @@ package scene.game.popup
 		/** 버튼 초기화 메소드	 */
 		private function initButton():void
 		{
-			_again = ButtonMgr.instance.setButton(_again, Main.stageWidth * 0.4, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.075, "AGAIN", Main.stageWidth * 0.05, Color.GRAY);
-			_exit = ButtonMgr.instance.setButton(_exit, Main.stageWidth * 0.6, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.075, "EXIT", Main.stageWidth * 0.05,Color.GRAY);
+			_again = ButtonMgr.instance.setButton(_again, Texture.fromColor(1,1,Color.GRAY), Main.stageWidth * 0.4, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.075, "AGAIN", Main.stageWidth * 0.05);
+			_exit = ButtonMgr.instance.setButton(_exit, Texture.fromColor(1,1,Color.GRAY), Main.stageWidth * 0.6, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.075, "EXIT", Main.stageWidth * 0.05);
 			
 			_again.addEventListener(TouchEvent.TOUCH, onTouchAgain);
 			_exit.addEventListener(TouchEvent.TOUCH, onTouchExit);

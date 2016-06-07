@@ -23,10 +23,12 @@ package scene.game.ui
 			_atlas = atlas;
 			_numberOfMineFinder = finderNum;
 			_mineFinder = new Button(_atlas.getTexture("mineFinder"), _numberOfMineFinder.toString());	
+			_mineFinder.alignPivot("center", "center");
 			//_mineFinder.
 			_mineFinder.width = Main.stageWidth * 0.15;
 			_mineFinder.height = _mineFinder.width;
-			_mineFinder.x = Main.stageWidth * 0.7;
+			//_mineFinder.x = Main.stageWidth * 0.8;
+			//_mineFinder.y = Main.stageHeight * 0.1;
 			_mineFinder.textFormat.size = 20;
 			_mineFinder.addEventListener(TouchEvent.TOUCH, onTouchMineFinder);
 			

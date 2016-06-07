@@ -110,14 +110,10 @@ package scene.game.ui
 		 */
 		private function onTimer(event:TimerEvent):void
 		{
-			//trace("[timer] " + _timer.currentCount);	
 			_realTime = _timer.currentCount + _addTime;
 			_second = _realTime % 60;
 			_minute = _realTime / 60;
-			//_second = (_timer.currentCount + _addTime) % 60;
-			//_minute = (_timer.currentCount + _addTime) / 60;
 			changeImage();
-			//trace(_minute + " : " + _second); 
 		}
 		
 		/**
