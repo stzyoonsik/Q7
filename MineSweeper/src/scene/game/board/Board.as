@@ -1,9 +1,14 @@
 package scene.game.board
 {	
+	import com.greensock.TweenLite;
+	import com.greensock.easing.Back;
+	
 	import flash.geom.Point;
 	
 	import scene.Main;
 	
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -83,6 +88,8 @@ package scene.game.board
 			
 		}
 		
+		public function get isFirstTouch():Boolean { return _isFirstTouch; }
+
 		public function get difficulty():int { return _difficulty; }
 
 		public function get items():Array { return _items; }
@@ -553,30 +560,60 @@ package scene.game.board
 		private function getItem(inPoint:Point):void
 		{
 			_items[inPoint.y][inPoint.x] = 0;
+			
+			
+			var effect:Image = new Image(_atlas.getTexture("mineFinder"));
+			effect.alignPivot("center", "center");
+			effect.x = inPoint.x * Main.stageWidth * 0.1 + Main.stageWidth * 0.05 + this.x;
+			effect.y = inPoint.y * Main.stageWidth * 0.1 + Main.stageWidth * 0.05 + this.y;
+			this.parent.addChild(effect);
+			TweenLite.to(effect, 1, {x:Main.stageWidth*0.8, y:Main.stageHeight*0.1, ease:Back.easeOut, 
+				onComplete:onCompleteTweenLite, onCompleteParams:[effect]} );
+		}
+		
+		private function onCompleteTweenLite(effect:Image):void
+		{						
+			var tweenEffect:Tween = new Tween(effect, 1);
+			tweenEffect.scaleTo(3);
+			tweenEffect.fadeTo(0);
+			tweenEffect.addEventListener(Event.REMOVE_FROM_JUGGLER, onCompleteTweenEffect);
+			
+			Starling.juggler.add(tweenEffect);
+			
+			var textField:TextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.2, "+1");
+			textField.alignPivot("center", "center");
+			textField.format.size = Main.stageWidth*0.05;
+			textField.x = Main.stageWidth*0.8;
+			textField.y = Main.stageHeight*0.1;
+			this.parent.addChild(textField);
+			
+			var tweenText:Tween = new Tween(textField, 2);
+			tweenText.moveTo(Main.stageWidth*0.8, Main.stageHeight*0.05);
+			tweenText.fadeTo(0);
+			tweenText.addEventListener(Event.REMOVE_FROM_JUGGLER, onCompleteTweenText);
+			
+			Starling.juggler.add(tweenText);
+		}
+		
+		private function onCompleteTweenEffect(event:Event):void
+		{
 			trace("아이템 획득");
 			_numberOfMineFinder++;
 			dispatchEvent(new Event("getMineFinder"));
 			
-			var effect:TextField = new TextField(Main.stageWidth * 0.2, Main.stageHeight * 0.1, "아이템 획득");
-			effect.alignPivot("center", "center");
-			effect.format.color = Color.RED;
-			effect.format.size = Main.stageWidth * 0.05;
-			effect.x = inPoint.x * Main.stageWidth * 0.1 + Main.stageWidth * 0.05;
-			effect.y = inPoint.y * Main.stageWidth * 0.1 + Main.stageWidth * 0.05;
-			addChild(effect);
-			effect.addEventListener(Event.ENTER_FRAME, onGetItem);
+			var tween:Tween = event.currentTarget as Tween;
+			tween.removeEventListeners();
+			tween.target.removeFromParent(true);			
+			tween = null;
 		}
 		
-		private function onGetItem(event:Event):void
+		private function onCompleteTweenText(event:Event):void
 		{
-			(event.currentTarget as TextField).alpha -= 0.01;
-			if((event.currentTarget as TextField).alpha <= 0)
-			{
-				(event.currentTarget as TextField).removeEventListener(Event.ENTER_FRAME, onGetItem);
-				removeChild((event.currentTarget as TextField));
-			}
+			var tween:Tween = event.currentTarget as Tween;
+			tween.removeEventListeners();
+			tween.target.removeFromParent(true);			
+			tween = null;
 		}
-		
 		
 		/**
 		 * 게임을 성공적으로 마쳤는지 검사하는 메소드 
