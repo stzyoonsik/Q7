@@ -28,6 +28,7 @@ package scene.game.board
 		private var _isResume:Boolean;
 		private var _atlas:TextureAtlas;
 		
+		private var _isItemMode:Boolean;
 		private var _difficulty:int;
 		
 		private var _maxRow:int;
@@ -59,11 +60,11 @@ package scene.game.board
 		private var _resumeItems:Array;
 		
 		/** resume=0 일반,커스텀  resume=1 이어하기*/
-		public function Board(isResume:Boolean, atlas:TextureAtlas, difficulty:int, maxRow:int, maxCol:int, mineNum:int = 0, finderNum:int = 0, chanceToGetItem:Number = 0.0,
+		public function Board(isResume:Boolean, atlas:TextureAtlas, isItemMode:Boolean, difficulty:int, maxRow:int, maxCol:int, mineNum:int = 0, finderNum:int = 0, chanceToGetItem:Number = 0.0,
 								resumeDatas:Array = null, resumeImages:Array = null, resumeItems:Array = null)
 		{
 			_isResume = isResume;
-			
+			_isItemMode = isItemMode;
 			_atlas = atlas;
 			_difficulty = difficulty;
 			_countToClear = maxRow * maxCol - mineNum;
@@ -88,6 +89,8 @@ package scene.game.board
 			
 		}
 		
+		public function get isItemMode():Boolean { return _isItemMode; }
+
 		public function get isFirstTouch():Boolean { return _isFirstTouch; }
 
 		public function get difficulty():int { return _difficulty; }
@@ -230,7 +233,8 @@ package scene.game.board
 					}
 					if(itemPos.indexOf(y * _maxRow + x) != -1)
 					{
-						_items[y][x] = 1;
+						if(_isItemMode)
+							_items[y][x] = 1;
 					}					
 				}
 			}

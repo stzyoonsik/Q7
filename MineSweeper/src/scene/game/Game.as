@@ -126,15 +126,16 @@ package scene.game
 			if(data is Dictionary)
 			{
 				trace("custom board");
-				_board = new Board(false, _atlas, data[DataType.DIFFICULTY], data[DataType.ROW], data[DataType.COL], data[DataType.MINE_NUM],
+				_board = new Board(false, _atlas, data[DataType.IS_ITEM_MODE], data[DataType.DIFFICULTY], data[DataType.ROW], data[DataType.COL], data[DataType.MINE_NUM],
 					data[DataType.ITEM_NUM], data[DataType.CHANCE]);
 				
 				addChild(_board);
-				trace(_board.difficulty);
 				var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 				addChild(quad);
 				
-				initItem(data[DataType.ITEM_NUM]);
+				if(data[DataType.IS_ITEM_MODE])
+					initItem(data[DataType.ITEM_NUM]);
+				
 				initTime(0);
 				initGameOver();
 			}
@@ -145,7 +146,7 @@ package scene.game
 				var datas:Dictionary = IOMgr.instance.loadData();
 				if(datas)
 				{					
-					_board = new Board(true, _atlas, int(datas[DataType.DIFFICULTY]), int(datas[DataType.ROW]) - 2, int(datas[DataType.COL]) - 2, 
+					_board = new Board(true, _atlas, datas[DataType.IS_ITEM_MODE], int(datas[DataType.DIFFICULTY]), int(datas[DataType.ROW]) - 2, int(datas[DataType.COL]) - 2, 
 						int(datas[DataType.MINE_NUM]), int(datas[DataType.ITEM_NUM]), 
 						int(datas[DataType.CHANCE]), datas[DataType.DATA] as Array, 
 						datas[DataType.IMAGE] as Array, datas[DataType.ITEM] as Array);
@@ -154,7 +155,9 @@ package scene.game
 					quad = new Quad(Main.stageWidth, Main.stageHeight * 0.2, Color.GRAY);
 					addChild(quad);
 					
-					initItem(int(datas[DataType.ITEM_NUM]));
+					if(datas[DataType.IS_ITEM_MODE])
+						initItem(int(datas[DataType.ITEM_NUM]));
+					
 					initTime(int(datas[DataType.TIME]));
 					initGameOver();
 				}
@@ -288,13 +291,13 @@ package scene.game
 			_time.timer.stop();
 			
 			//구글로 로그인 했으면		
-//			if(PlatformType.current == PlatformType.GOOGLE)
-//			{
-//				//기록 등록
-//				LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
-//				//업적 등록
-//				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
-//			}
+			if(PlatformType.current == PlatformType.GOOGLE)
+			{
+				//기록 등록
+				LeaderBoardMgr.instance.reportScore(_board.difficulty, _time.realTime);
+				//업적 등록
+				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+			}
 			
 			if(_clearPopup)
 			{
@@ -402,7 +405,7 @@ package scene.game
 			if(_board && _board.isFirstTouch && !_isGameEnded)
 			{
 				trace("items : " + _board.items);
-				IOMgr.instance.saveData(_board.difficulty, _board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);
+				IOMgr.instance.saveData(_board.isItemMode, _board.difficulty, _board.maxRow, _board.maxCol, _board.numberOfMine, _board.numberOfMineFinder, _board.chanceToGetItem * 100, _board.datas, _board.images, _board.items, _time.realTime);
 			}
 			else
 			{

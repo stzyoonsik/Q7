@@ -68,7 +68,7 @@ package scene.modeSelect
 			_temp.alignPivot("center", "center");
 			_temp.x = Main.stageWidth * 0.5;
 			_temp.y = Main.stageHeight * 0.9;
-			//_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
+			_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
 			addChild(_temp);
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
@@ -208,7 +208,7 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
 			if(touch)
 			{
-				//AirGooglePlayGames.getInstance().showLeaderboards();
+				AirGooglePlayGames.getInstance().showLeaderboards();
 			}
 		}
 		
@@ -217,20 +217,20 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_achievement, TouchPhase.ENDED);
 			if(touch)
 			{
-				//AirGooglePlayGames.getInstance().showStandardAchievements();
+				AirGooglePlayGames.getInstance().showStandardAchievements();
 			}
 		}
 		
-//		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
-//		{
-//			
-//			AirGooglePlayGames.getInstance().showLeaderboards();
-//		}
-//		
-//		private function onLoadFailLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
-//		{
-//			_temp.text = "onLoadFailLeaderBoard" + event.type;
-//		}
+		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+		{
+			
+			AirGooglePlayGames.getInstance().showLeaderboards();
+		}
+		
+		private function onLoadFailLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
+		{
+			_temp.text = "onLoadFailLeaderBoard" + event.type;
+		}
 		
 		private function onTouchLogOut(event:TouchEvent):void
 		{
