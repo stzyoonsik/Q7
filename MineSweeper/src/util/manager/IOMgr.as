@@ -37,7 +37,7 @@ package util.manager
 		private var _path:File = File.applicationStorageDirectory.resolvePath("data");
 		//private var _path:File = File.documentsDirectory.resolvePath("data");
 		
-		public function saveData(difficulty:int, row:int = 0, col:int = 0, mineNum:int = 0, itemNum:int = 0, chance:int = 0, datas:Array = null, images:Array = null, items:Array = null, time:int = 0):void
+		public function saveData(isItemMode:Boolean, difficulty:int, row:int = 0, col:int = 0, mineNum:int = 0, itemNum:int = 0, chance:int = 0, datas:Array = null, images:Array = null, items:Array = null, time:int = 0):void
 		{
 			var value:String = "";
 			var imageName:String = "";
@@ -63,7 +63,8 @@ package util.manager
 				
 			}
 			
-			var data:String = "{\n\t\"difficulty\" : " + difficulty.toString() + ",\n"
+			var data:String = "{\n\t\"isItemMode\" : " + isItemMode + ",\n"
+								+ "\t\"difficulty\" : " + difficulty.toString() + ",\n"
 								+ "\t\"row\" : " + row.toString() + ",\n"
 								+ "\t\"col\" : " + col.toString() + ",\n"
 								+ "\t\"mineNum\" : " + mineNum.toString() + ",\n"
@@ -97,6 +98,7 @@ package util.manager
 			
 			var data:Object = JSON.parse(str);
 			var datas:Dictionary = new Dictionary();
+			datas[DataType.IS_ITEM_MODE] = data.isItemMode;
 			datas[DataType.DIFFICULTY] = data.difficulty;
 			datas[DataType.ROW] = data.row;
 			datas[DataType.COL] = data.col;

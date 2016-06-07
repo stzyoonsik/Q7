@@ -12,5 +12,6 @@ package util.type
 		public static const ITEM:int = 7;
 		public static const TIME:int = 8;
 		public static const DIFFICULTY:int = 9;
+		public static const IS_ITEM_MODE:int = 10;
 	}
 }
