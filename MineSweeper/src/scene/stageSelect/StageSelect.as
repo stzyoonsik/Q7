@@ -32,7 +32,7 @@ package scene.stageSelect
 		private var _atlas:TextureAtlas;
 		
 		private var _radioItem:Image;
-		private var _isItem:Boolean;
+		private var _isItemMode:Boolean;
 		
 		private var _veryEasy:Button;
 		private var _easy:Button;
@@ -143,7 +143,7 @@ package scene.stageSelect
 			_chanceToGetItem = chance;
 			
 			_data = new Dictionary();
-			_data[DataType.IS_ITEM_MODE] = _isItem;
+			_data[DataType.IS_ITEM_MODE] = _isItemMode;
 			_data[DataType.DIFFICULTY] = difficulty;
 			_data[DataType.ROW] = row;
 			_data[DataType.COL] = col;
@@ -157,14 +157,14 @@ package scene.stageSelect
 			var touch:Touch = event.getTouch(_radioItem, TouchPhase.ENDED);
 			if(touch)
 			{
-				if(_isItem)
+				if(_isItemMode)
 				{
-					_isItem = false;
+					_isItemMode = false;
 					_radioItem.texture = _atlas.getTexture("radioItemOff");
 				}
 				else
 				{
-					_isItem = true;
+					_isItemMode = true;
 					_radioItem.texture = _atlas.getTexture("radioItemOn");
 				}
 			}
@@ -176,7 +176,7 @@ package scene.stageSelect
 			if(touch)
 			{
 				
-				setData(_isItem, 0, 8, 8, 8, 2, 10);				
+				setData(_isItemMode, 0, 8, 8, 8, 2, 10);				
 				
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
@@ -189,7 +189,7 @@ package scene.stageSelect
 			var touch:Touch = event.getTouch(_easy, TouchPhase.ENDED);
 			if(touch)
 			{
-				setData(_isItem, 1, 10, 10, 15, 2, 8);		
+				setData(_isItemMode, 1, 10, 10, 15, 2, 8);		
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
@@ -201,7 +201,7 @@ package scene.stageSelect
 			var touch:Touch = event.getTouch(_normal, TouchPhase.ENDED);
 			if(touch)
 			{
-				setData(_isItem, 2, 15, 15, 40, 2, 7);		
+				setData(_isItemMode, 2, 15, 15, 40, 2, 7);		
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
@@ -213,7 +213,7 @@ package scene.stageSelect
 			var touch:Touch = event.getTouch(_hard, TouchPhase.ENDED);
 			if(touch)
 			{
-				setData(_isItem, 3, 20, 20, 80, 2, 6);		
+				setData(_isItemMode, 3, 20, 20, 80, 2, 6);		
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
@@ -225,7 +225,7 @@ package scene.stageSelect
 			var touch:Touch = event.getTouch(_veryHard, TouchPhase.ENDED);
 			if(touch)
 			{
-				setData(_isItem, 4, 25, 25, 150, 2, 5);		
+				setData(_isItemMode, 4, 25, 25, 150, 2, 5);		
 				//dispatchEvent(new Event(SceneType.GAME, false, _data));
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}

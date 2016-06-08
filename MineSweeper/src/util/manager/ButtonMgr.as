@@ -26,7 +26,7 @@ package util.manager
 			return _instance;
 		}	
 		
-		public function setButton(button:Button, texture:Texture, x:int, y:int, width:int, height:int, text:String, textSize:int):Button
+		public function setButton(button:Button, texture:Texture, x:int, y:int, width:int, height:int, text:String = "", textSize:int = 20):Button
 		{
 			button = new Button(texture, text);
 			button.textFormat.size = textSize;			

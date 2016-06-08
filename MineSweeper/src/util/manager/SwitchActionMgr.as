@@ -1,6 +1,10 @@
 package util.manager
 {
 	
+	import com.greensock.TweenMax;
+	import com.greensock.easing.Back;
+	import com.hurlant.crypto.symmetric.NullPad;
+	
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
 	import starling.core.Starling;
@@ -58,6 +62,9 @@ package util.manager
 			_tween = null;
 			dispatchEvent(new Event(_nextScene, _bubbles, _data));
 			_nextScene = null;
-		}
+			_bubbles = false;
+			_data = null;
+		}		
+	
 	}
 }
