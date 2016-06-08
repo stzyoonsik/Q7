@@ -11,14 +11,16 @@ package scene.game
 	
 	import scene.Main;
 	import scene.game.board.Board;
+	import scene.game.board.CountDown;
 	import scene.game.popup.ClearPopup;
-	import scene.game.popup.ExitPopup;
+	import scene.game.popup.PausePopup;
 	import scene.game.ui.GameOver;
 	import scene.game.ui.Item;
 	import scene.game.ui.Time;
 	import scene.game.ui.Warning;
 	
 	import starling.animation.Transitions;
+	import starling.core.Starling;
 	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -33,6 +35,7 @@ package scene.game
 	import util.manager.AchievementMgr;
 	import util.manager.IOMgr;
 	import util.manager.LeaderBoardMgr;
+	import util.manager.LoadMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
 	import util.type.DifficultyType;
@@ -42,12 +45,14 @@ package scene.game
 	public class Game extends Sprite
 	{ 
 		//private var _difficulty:int;
-		private var _atlas:TextureAtlas;
+		private var _gameAtlas:TextureAtlas;
+		private var _modeAtlas:TextureAtlas;
 		
+		private var _countDown:CountDown;
 		private var _board:Board;
 		private var _time:Time;
 		private var _item:Item;
-		private var _exitPopup:ExitPopup;
+		private var _pausePopup:PausePopup;
 		private var _clearPopup:ClearPopup;
 		private var _gameOver:GameOver;
 		private var _warning:Warning;
@@ -62,14 +67,18 @@ package scene.game
 		
 		public function Game(data:Object)
 		{
+			_gameAtlas = LoadMgr.instance.load(EmbeddedAssets.GameSprite, EmbeddedAssets.GameXml);
+			_modeAtlas = LoadMgr.instance.load(EmbeddedAssets.ModeSprite, EmbeddedAssets.ModeXml);
+			
 			_data = data;
 			
-			load();
-			initBackground();
-			initBoard(data);	
-			initPopup();			
+			initBackground();			
+			initBoard(data);				
+			initPopup(_modeAtlas);		
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+			NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, onDeactivated);
+			NativeApplication.nativeApplication.addEventListener(flash.events.Event.ACTIVATE, onActivated);
 		}
 		
 		private function onTouchKeyBoard(event:KeyboardEvent):void
@@ -79,25 +88,13 @@ package scene.game
 			{
 				event.preventDefault();
 				
-				if(_exitPopup)
-					_exitPopup.visible = true;
+				if(_pausePopup)
+					_pausePopup.visible = true;
 				if(_time)
 					_time.timer.stop();
+				if(_countDown)
+					_countDown.reset();
 			}
-		}
-		
-		/**
-		 * 스프라이트시트와 xml을 로드하는 메소드 
-		 * 
-		 */
-		private function load():void
-		{			
-			var xml:XML = XML(new EmbeddedAssets.GameXml());
-			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.GameSprite);
-			_atlas = new TextureAtlas(texture, xml);
-			
-			xml = null;
-			texture = null;
 		}
 		
 		private function initBackground():void
@@ -107,17 +104,35 @@ package scene.game
 			addChild(quad);			
 			
 		}
-		private function initPopup():void
+		private function initPopup(atlas:TextureAtlas):void
 		{
-			_exitPopup = new ExitPopup();
-			_exitPopup.addEventListener("exit", onExit);
-			_exitPopup.addEventListener("resume", onResume);
-			addChild(_exitPopup);
+			_pausePopup = new PausePopup(atlas);
+			_pausePopup.addEventListener("again", onAgain);
+			_pausePopup.addEventListener("exit", onExit);
+			_pausePopup.addEventListener("resume", onResume);
+			addChild(_pausePopup);
 			
-			_clearPopup = new ClearPopup();
+			_clearPopup = new ClearPopup(atlas);
 			_clearPopup.addEventListener("again", onAgain);
 			_clearPopup.addEventListener("exit", onExit);
 			addChild(_clearPopup);
+		}
+		
+		private function initCountDown(count:int):void
+		{
+			_countDown = new CountDown(count);
+			_countDown.addEventListener("endTimer", onEndCountDown);
+			addChild(_countDown);
+		}
+		
+		private function onEndCountDown(event:Event):void
+		{
+			_countDown.removeEventListener("endTimer", onEndCountDown);
+			_countDown.release();
+			_countDown = null;
+			//게임 시작
+			_time.timer.start();
+			
 		}
 		
 		private function initBoard(data:Object):void
@@ -126,7 +141,7 @@ package scene.game
 			if(data is Dictionary)
 			{
 				trace("custom board");
-				_board = new Board(false, _atlas, data[DataType.IS_ITEM_MODE], data[DataType.DIFFICULTY], data[DataType.ROW], data[DataType.COL], data[DataType.MINE_NUM],
+				_board = new Board(false, _gameAtlas, data[DataType.IS_ITEM_MODE], data[DataType.DIFFICULTY], data[DataType.ROW], data[DataType.COL], data[DataType.MINE_NUM],
 					data[DataType.ITEM_NUM], data[DataType.CHANCE]);
 				
 				addChild(_board);
@@ -138,6 +153,8 @@ package scene.game
 				
 				initTime(0);
 				initGameOver();
+				
+				initCountDown(3);				
 			}
 			
 			//이어하기
@@ -146,7 +163,7 @@ package scene.game
 				var datas:Dictionary = IOMgr.instance.loadData();
 				if(datas)
 				{					
-					_board = new Board(true, _atlas, datas[DataType.IS_ITEM_MODE], int(datas[DataType.DIFFICULTY]), int(datas[DataType.ROW]) - 2, int(datas[DataType.COL]) - 2, 
+					_board = new Board(true, _gameAtlas, datas[DataType.IS_ITEM_MODE], int(datas[DataType.DIFFICULTY]), int(datas[DataType.ROW]) - 2, int(datas[DataType.COL]) - 2, 
 						int(datas[DataType.MINE_NUM]), int(datas[DataType.ITEM_NUM]), 
 						int(datas[DataType.CHANCE]), datas[DataType.DATA] as Array, 
 						datas[DataType.IMAGE] as Array, datas[DataType.ITEM] as Array);
@@ -160,12 +177,14 @@ package scene.game
 					
 					initTime(int(datas[DataType.TIME]));
 					initGameOver();
+					
+					initCountDown(3);
 				}
 				else
 				{
 					trace("이어하기 데이터 없음");
 					_warning = new Warning();
-					addChild(_warning);
+					addChildAt(_warning, 1);
 				}
 				
 			}
@@ -189,7 +208,7 @@ package scene.game
 		
 		private function initItem(finderNum:int):void
 		{
-			_item = new Item(_atlas, finderNum);
+			_item = new Item(_gameAtlas, finderNum);
 			_item.x = Main.stageWidth * 0.8;
 			_item.y = Main.stageHeight * 0.1;
 			_item.addEventListener("mineFinder", onTouchMineFinder);
@@ -198,17 +217,21 @@ package scene.game
 		
 		private function initTime(time:int):void
 		{
-			_time = new Time(_atlas, time);
+			_time = new Time(_gameAtlas, time);
 			_time.y = Main.stageHeight * 0.05;
-			_time.timer.start();
+			//_time.timer.start();
 			addChild(_time);
 		}
 		
 		public function release():void
 		{
-			if(_atlas != null)
+			if(_gameAtlas != null)
 			{
-				_atlas = null;
+				_gameAtlas = null;
+			}
+			if(_modeAtlas != null)
+			{
+				_modeAtlas = null;
 			}
 			if(_board)
 			{
@@ -230,10 +253,10 @@ package scene.game
 				removeChild(_item);
 			}
 			
-			if(_exitPopup)
+			if(_pausePopup)
 			{
-				_exitPopup = null;
-				removeChild(_exitPopup);
+				_pausePopup = null;
+				removeChild(_pausePopup);
 			}
 			
 			if(_clearPopup)
@@ -291,13 +314,13 @@ package scene.game
 			_time.timer.stop();
 			
 			//구글로 로그인 했으면		
-			if(PlatformType.current == PlatformType.GOOGLE)
-			{
-				//기록 등록
-				LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
-				//업적 등록
-				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
-			}
+//			if(PlatformType.current == PlatformType.GOOGLE)
+//			{
+//				//기록 등록
+//				LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
+//				//업적 등록
+//				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+//			}
 			
 			if(_clearPopup)
 			{
@@ -316,8 +339,19 @@ package scene.game
 			
 			
 			//IOMgr.instance.saveRecord(data);
+//			var object:Object = new Object();
+//			object.id = Main.userId;
+//			object.name = Main.userName;
+//			object.lastLogOut = new Date().toString();
+//			object.stamina = 10;
+			
 			
 			_isGameEnded = true;
+		}
+		
+		private function insertObject(id:String, name:String, lastLogOut:String, stamina:int):Object
+		{
+			return new Object;
 		}
 		
 		private function onScrollGameBoard(event:TouchEvent):void
@@ -418,8 +452,21 @@ package scene.game
 		
 		private function onResume(event:Event):void
 		{
-			if(_time)
+//			if(_time)
+//				_time.timer.start();
+		
+			if(_countDown)
+			{
+				_countDown.removeEventListener("endTimer", onEndCountDown);
+				_countDown.release();
+				_countDown = null;
+				
+				initCountDown(3);
+			}	
+			else
+			{
 				_time.timer.start();
+			}
 		}
 		
 		/**
@@ -433,10 +480,11 @@ package scene.game
 			removeChildren();
 			release();
 			
-			load();
+			_gameAtlas = LoadMgr.instance.load(EmbeddedAssets.GameSprite, EmbeddedAssets.GameXml);
+			_modeAtlas = LoadMgr.instance.load(EmbeddedAssets.ModeSprite, EmbeddedAssets.ModeXml);
 			initBackground();
 			initBoard(_data);
-			initPopup();
+			initPopup(_modeAtlas);
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
@@ -472,6 +520,36 @@ package scene.game
 						default :
 							break;
 					}
+				}
+			}
+		}
+		
+		private function onDeactivated(event:flash.events.Event):void   
+		{  			
+			if(_countDown)
+			{
+				_countDown.stop();
+			}
+			else
+			{
+				if(_time)
+				{
+					_time.timer.stop();
+				}
+			}
+		}  
+		
+		private function onActivated(event:flash.events.Event):void 
+		{			
+			if(_countDown)
+			{
+				_countDown.start();
+			}
+			else
+			{
+				if(_time)
+				{
+					_time.timer.start();
 				}
 			}
 		}
