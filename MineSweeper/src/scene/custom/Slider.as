@@ -4,17 +4,25 @@ package scene.custom
 	
 	import scene.Main;
 	
+	import starling.display.Button;
 	import starling.display.DisplayObject;
+	import starling.display.Image;
 	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
+	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
+	
+	import util.EmbeddedAssets;
+	import util.manager.ButtonMgr;
+	import util.manager.LoadMgr;
 
 	public class Slider extends Sprite
 	{
+		private var _atlas:TextureAtlas;
 		private const MIN_ROW:int = 2;
 		private const MIN_COL:int = 2;
 		private const MIN_MINE_NUM:int = 1;
@@ -45,11 +53,11 @@ package scene.custom
 		private var _itemNumTextField:TextField;
 		private var _chanceTextField:TextField;
 		
-		private var _rowSlider:Quad;
-		private var _colSlider:Quad;
-		private var _mineSlider:Quad;
-		private var _itemSlider:Quad;
-		private var _chanceSlider:Quad;
+		private var _rowSlider:Button;
+		private var _colSlider:Button;
+		private var _mineSlider:Button;
+		private var _itemSlider:Button;
+		private var _chanceSlider:Button;
 		
 		
 		public function get chance():int { return _chance; }
@@ -62,8 +70,10 @@ package scene.custom
 		
 		public function get row():int {	return _row; }
 		
-		public function Slider()
+		public function Slider(atlas:TextureAtlas)
 		{
+			_atlas = atlas;
+			
 			_row = 16;
 			_col = 16;
 			_mineNum = (_row * _col) / 2;
@@ -72,35 +82,42 @@ package scene.custom
 			_maxMineNum = setMaxMineNum(_row, _col);
 			_maxItemNum = setMaxItemNum(_row, _col);
 			
+			
 			initQuad();
 			initTextField();
 		}
 		
-	
+		public function release():void
+		{
+			
+		}
+		
+		
 
 		private function initQuad():void
 		{
 			for(var i:int = 0; i < 5; ++i)
 			{
-				var quad:Quad = setQuad(Main.stageWidth * 0.5, Main.stageHeight * (0.2 + Number(i / 10)), Main.stageWidth * 0.5, Main.stageWidth * 0.05, Color.GRAY);
-				addChild(quad);
+				var bar:Image = new Image(_atlas.getTexture("bar"));
+				bar.width = Main.stageWidth * 0.5;
+				bar.height = bar.width * 0.1;
+				bar.x = Main.stageWidth * 0.5;
+				bar.y = Main.stageHeight * (0.2 + Number(i / 10));
+				bar.alignPivot("center", "center");
+				addChild(bar);				
 			}
 			
-			_rowSlider = setQuad(Main.stageWidth * 0.5, Main.stageHeight * 0.2, Main.stageWidth * 0.05, Main.stageWidth * 0.1,  Color.SILVER);
+			_rowSlider = ButtonMgr.instance.setButton(_rowSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.2, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_colSlider = ButtonMgr.instance.setButton(_colSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_mineSlider = ButtonMgr.instance.setButton(_mineSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.4, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_itemSlider = ButtonMgr.instance.setButton(_itemSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_chanceSlider = ButtonMgr.instance.setButton(_chanceSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			
 			addChild(_rowSlider);
-			
-			_colSlider = setQuad(Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.05, Main.stageWidth * 0.1,  Color.SILVER);
 			addChild(_colSlider);
-			
-			_mineSlider = setQuad(Main.stageWidth * 0.5, Main.stageHeight * 0.4, Main.stageWidth * 0.05, Main.stageWidth * 0.1,  Color.SILVER);
 			addChild(_mineSlider);
-			
-			_itemSlider = setQuad(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.05, Main.stageWidth * 0.1,  Color.SILVER);
 			addChild(_itemSlider);
-			
-			_chanceSlider = setQuad(Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.05, Main.stageWidth * 0.1,  Color.SILVER);
-			addChild(_chanceSlider);			
-			
+			addChild(_chanceSlider);
 			
 			_rowSlider.addEventListener(TouchEvent.TOUCH, onTouchRowSlider);
 			_colSlider.addEventListener(TouchEvent.TOUCH, onTouchColSlider);
@@ -109,23 +126,23 @@ package scene.custom
 			_chanceSlider.addEventListener(TouchEvent.TOUCH, onTouchChanceSlider);
 		}
 		
-		private function setQuad(x:int, y:int, width:int, height:int, color:uint):Quad
-		{
-			var quad:Quad = new Quad(width, height, color);
-			quad.alignPivot("center", "center");
-			quad.x = x;
-			quad.y = y;
-			
-			return quad;
-		}
+//		private function setQuad(x:int, y:int, width:int, height:int, color:uint):Quad
+//		{
+//			var quad:Quad = new Quad(width, height, color);
+//			quad.alignPivot("center", "center");
+//			quad.x = x;
+//			quad.y = y;
+//			
+//			return quad;
+//		}
 		
 		private function initTextField():void
 		{
-			_rowText     = setTextField(_rowText, Main.stageWidth * 0.15, Main.stageHeight * 0.2, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "가로", true);
-			_colText 	 = setTextField(_colText, Main.stageWidth * 0.15, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "세로", true);
-			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "지뢰", true);
-			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.15, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템", true);
-			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.15, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 확률", true);
+			_rowText     = setTextField(_rowText, Main.stageWidth * 0.125, Main.stageHeight * 0.2, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "가로", Main.stageWidth * 0.025, true);
+			_colText 	 = setTextField(_colText, Main.stageWidth * 0.125, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "세로", Main.stageWidth * 0.025, true);
+			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.125, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "지뢰 갯수", Main.stageWidth * 0.025, true);
+			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.125, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 갯수", Main.stageWidth * 0.025, true);
+			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.125, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 확률", Main.stageWidth * 0.025, true);
 			
 			addChild(_rowText);
 			addChild(_colText);
@@ -135,11 +152,11 @@ package scene.custom
 			
 			
 			
-			_rowTextField	  = setTextField(_rowTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.2, 40, 20, _row.toString(), true);
-			_colTextField 	  = setTextField(_colTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.3, 40, 20, _col.toString(), true);
-			_mineNumTextField = setTextField(_mineNumTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.4, 40, 20, _mineNum.toString(), true);
-			_itemNumTextField = setTextField(_itemNumTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.5, 40, 20, _itemNum.toString(), true);
-			_chanceTextField  = setTextField(_chanceTextField, Main.stageWidth * 0.85, Main.stageHeight * 0.6, 40, 20, _chance.toString(), true);
+			_rowTextField	  = setTextField(_rowTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.2, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _row.toString(), Main.stageWidth * 0.05, true);
+			_colTextField 	  = setTextField(_colTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _col.toString(), Main.stageWidth * 0.05, true);
+			_mineNumTextField = setTextField(_mineNumTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _mineNum.toString(), Main.stageWidth * 0.05, true);
+			_itemNumTextField = setTextField(_itemNumTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _itemNum.toString(), Main.stageWidth * 0.05, true);
+			_chanceTextField  = setTextField(_chanceTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _chance.toString(), Main.stageWidth * 0.05, true);
 			
 			addChild(_rowTextField);
 			addChild(_colTextField);
@@ -148,15 +165,17 @@ package scene.custom
 			addChild(_chanceTextField);
 		}
 		
-		private function setTextField(textField:TextField, x:int, y:int, width:int, height:int, text:String, border:Boolean):TextField
+		private function setTextField(textField:TextField, x:int, y:int, width:int, height:int, text:String, textSize:int, border:Boolean):TextField
 		{
 			var tf:TextField = textField;
-			tf = new TextField(width, height, "");
-			tf.alignPivot("center", "center");	
+			tf = new TextField(width, height, "");				
 			tf.border = border;
+			tf.text = text;
+			tf.format.size = textSize;
 			tf.x = x;
 			tf.y = y;
-			tf.text = text;
+			tf.alignPivot("center", "center");
+			
 			
 			return tf;
 		}
