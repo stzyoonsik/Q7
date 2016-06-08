@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="TitleSprite.png">
+   <SubTexture name="background" x="0" y="138" width="256" height="289" />
+   <SubTexture name="facebook" x="258" y="138" width="256" height="47" />
+   <SubTexture name="google" x="258" y="187" width="256" height="47" />
+   <SubTexture name="title" x="0" y="0" width="452" height="136" />
+</TextureAtlas>
