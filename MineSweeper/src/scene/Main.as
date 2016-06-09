@@ -13,6 +13,7 @@ package scene
 	import starling.display.Sprite;
 	import starling.events.Event;
 	
+	import util.UserInfo;
 	import util.manager.SceneMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.SceneType;
@@ -28,13 +29,13 @@ package scene
 		private var _custom:Custom;
 		private var _game:Game;
 		
-		private static var _userId:String;
-		private static var _userName:String;
+//		private static var _userId:String;
+//		private static var _userName:String;
 		
-		public static function set userName(value:String):void { _userName = value;	}
-		public static function set userId(value:String):void { _userId = value;	}
-		public static function get userName():String { return _userName; }
-		public static function get userId():String { return _userId; }
+//		public static function set userName(value:String):void { _userName = value;	}
+//		public static function set userId(value:String):void { _userId = value;	}
+//		public static function get userName():String { return _userName; }
+//		public static function get userId():String { return _userId; }
 
 		public static function get stageHeight():int{ return _stageHeight; }
 		public static function get stageWidth():int{ return _stageWidth; }
@@ -76,10 +77,7 @@ package scene
 				case SceneType.MODE_SELECT :
 				{
 					if(_title)
-					{
-						_userId = _title.userId;
-						_userName = _title.userName;
-						
+					{												
 						_title.release();
 						_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 						removeChild(_title);
