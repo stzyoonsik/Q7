@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TextureAtlas imagePath="Mode.png">
+   <SubTexture name="back" x="258" y="179" width="64" height="64" />
    <SubTexture name="background" x="0" y="0" width="256" height="256" />
-   <SubTexture name="bar" x="0" y="258" width="256" height="45" />
-   <SubTexture name="button" x="258" y="132" width="128" height="48" />
-   <SubTexture name="radioItemOff" x="258" y="0" width="128" height="64" />
-   <SubTexture name="radioItemOn" x="258" y="66" width="128" height="64" />
-   <SubTexture name="sliderButton" x="258" y="182" width="64" height="64" />
+   <SubTexture name="bar" x="258" y="0" width="256" height="45" />
+   <SubTexture name="button" x="388" y="47" width="128" height="48" />
+   <SubTexture name="close" x="388" y="97" width="64" height="64" />
+   <SubTexture name="loading_01" x="258" y="245" width="64" height="64" />
+   <SubTexture name="loading_01" x="324" y="179" width="64" height="64" />
+   <SubTexture name="loading_11" x="454" y="97" width="64" height="64" />
+   <SubTexture name="loading_12" x="324" y="245" width="64" height="64" />
+   <SubTexture name="loading_13" x="390" y="163" width="64" height="64" />
+   <SubTexture name="loading_14" x="258" y="311" width="64" height="64" />
+   <SubTexture name="loading_15" x="520" y="0" width="64" height="64" />
+   <SubTexture name="loading_16" x="520" y="66" width="64" height="64" />
+   <SubTexture name="loading_17" x="390" y="229" width="64" height="64" />
+   <SubTexture name="loading_18" x="456" y="163" width="64" height="64" />
+   <SubTexture name="loading_03" x="324" y="311" width="64" height="64" />
+   <SubTexture name="loading_04" x="258" y="377" width="64" height="64" />
+   <SubTexture name="loading_05" x="456" y="229" width="64" height="64" />
+   <SubTexture name="loading_06" x="522" y="132" width="64" height="64" />
+   <SubTexture name="loading_07" x="390" y="295" width="64" height="64" />
+   <SubTexture name="loading_08" x="324" y="377" width="64" height="64" />
+   <SubTexture name="loading_09" x="522" y="198" width="64" height="64" />
+   <SubTexture name="loading_10" x="456" y="295" width="64" height="64" />
+   <SubTexture name="next" x="586" y="0" width="32" height="64" />
+   <SubTexture name="popupBg" x="0" y="258" width="256" height="192" />
+   <SubTexture name="prev" x="586" y="66" width="32" height="64" />
+   <SubTexture name="radioItemOff" x="258" y="47" width="128" height="64" />
+   <SubTexture name="radioItemOn" x="258" y="113" width="128" height="64" />
+   <SubTexture name="sliderButton" x="390" y="361" width="64" height="64" />
 </TextureAtlas>
