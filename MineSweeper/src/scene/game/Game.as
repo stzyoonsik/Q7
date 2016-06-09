@@ -19,6 +19,8 @@ package scene.game
 	import scene.game.ui.Time;
 	import scene.game.ui.Warning;
 	
+	import server.UserDBMgr;
+	
 	import starling.animation.Transitions;
 	import starling.core.Starling;
 	import starling.display.Quad;
@@ -32,6 +34,7 @@ package scene.game
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
+	import util.UserInfo;
 	import util.manager.AchievementMgr;
 	import util.manager.IOMgr;
 	import util.manager.LeaderBoardMgr;
@@ -325,7 +328,7 @@ package scene.game
 			if(_clearPopup)
 			{
 				_clearPopup.visible = true;
-				_clearPopup.textField.text = "이름 = " + Main.userName + "\n" + "난이도 = " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 = " + _time.realTime.toString();
+				_clearPopup.textField.text = "이름 = " + UserInfo.name + "\n" + "난이도 = " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 = " + _time.realTime.toString();
 			}
 			
 			
@@ -338,15 +341,26 @@ package scene.game
 			//renewalData(datas);
 			
 			
-			//IOMgr.instance.saveRecord(data);
-//			var object:Object = new Object();
-//			object.id = Main.userId;
-//			object.name = Main.userName;
-//			object.lastLogOut = new Date().toString();
-//			object.stamina = 10;
 			
-			
+			//난이도가 커스텀모드이면 기록 저장 안함
+			//select로 정보 가져오고, 최고기록인지 확인하고 , 최고기록이면 업데이트
+			if(_board.difficulty != DifficultyType.CUSTOM)
+			{
+				UserDBMgr.instance.addEventListener("selectRecord", onSelectRecordComplete);
+				UserDBMgr.instance.selectRecord(UserInfo.id, _board.isItemMode, _board.difficulty);				
+			}
+				
 			_isGameEnded = true;
+		}
+		
+		private function onSelectRecordComplete(event:Event):void
+		{
+			if(checkNewRecord(int(event.data), _time.realTime))
+			{
+				UserDBMgr.instance.updateRecord(UserInfo.id, _board.isItemMode, _board.difficulty, _time.realTime);
+			}
+			
+			UserDBMgr.instance.removeEventListener("selectRecord", onSelectRecordComplete);
 		}
 		
 		private function insertObject(id:String, name:String, lastLogOut:String, stamina:int):Object
@@ -491,38 +505,40 @@ package scene.game
 		
 		private function checkNewRecord(preTime:int, curTime:int):Boolean
 		{
+			if(!preTime)
+				return true;
 			
-			return false;
+			return curTime < preTime;
 		}
 		
-		private function renewalData(datas:Object):void
-		{
-			for(var i:int = 0; i < datas.length; ++i)
-			{
-				if(datas[i].id == Main.userId)
-				{
-					switch(_board.difficulty)
-					{
-						case 0 :
-							if(checkNewRecord(datas[i].record.veryEasy, _time.timer.currentCount))
-							{
-								
-							}
-							break;
-						case 1 :
-							break;
-						case 2 :
-							break;
-						case 3 :
-							break;
-						case 4 :
-							break;
-						default :
-							break;
-					}
-				}
-			}
-		}
+//		private function renewalData(datas:Object):void
+//		{
+//			for(var i:int = 0; i < datas.length; ++i)
+//			{
+//				if(datas[i].id == Main.userId)
+//				{
+//					switch(_board.difficulty)
+//					{
+//						case 0 :
+//							if(checkNewRecord(datas[i].record.veryEasy, _time.timer.currentCount))
+//							{
+//								
+//							}
+//							break;
+//						case 1 :
+//							break;
+//						case 2 :
+//							break;
+//						case 3 :
+//							break;
+//						case 4 :
+//							break;
+//						default :
+//							break;
+//					}
+//				}
+//			}
+//		}
 		
 		private function onDeactivated(event:flash.events.Event):void   
 		{  			
