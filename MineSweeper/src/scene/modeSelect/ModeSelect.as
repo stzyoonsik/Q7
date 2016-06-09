@@ -7,6 +7,7 @@ package scene.modeSelect
 	import flash.desktop.NativeApplication;
 	import flash.display.Bitmap;
 	import flash.display.Loader;
+	import flash.display.LoaderInfo;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.net.URLRequest;
@@ -20,17 +21,20 @@ package scene.modeSelect
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
+	import starling.display.MovieClip;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.filters.BlurFilter;
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
+	import util.UserInfo;
 	import util.manager.ButtonMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
@@ -42,6 +46,8 @@ package scene.modeSelect
 		private var _resume:Button;
 		private var _normal:Button;
 		private var _custom:Button;
+		
+		private var _rank:Rank;
 		
 		private var _userNameTextField:TextField;
 		private var _userProfileImage:Image;
@@ -62,6 +68,9 @@ package scene.modeSelect
 			initButton();
 			initUser();
 			
+			_rank = new Rank(_atlas);
+			_rank.visible = false;
+			addChild(_rank);
 			
 			
 //			_temp = new TextField(Main.stageWidth, Main.stageHeight * 0.2);
@@ -121,12 +130,33 @@ package scene.modeSelect
 		{
 			if(PlatformType.current == PlatformType.FACEBOOK)
 			{
-				var urlRequest:URLRequest = new URLRequest("https://graph.facebook.com/"+Main.userId+"/picture?type=large");
-				var loader:Loader = new Loader();
-				loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
-				loader.load(urlRequest);
+				_userProfileImage = new Image(null);
+				_userProfileImage.alignPivot("center", "center");
 				
-				_userNameTextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.userName);
+				_userProfileImage.width = Main.stageWidth * 0.2;
+				_userProfileImage.height = _userProfileImage.width;
+				
+				_userProfileImage.x = Main.stageWidth * 0.1;
+				_userProfileImage.y = _userProfileImage.height / 2;
+				
+				addChild(_userProfileImage);
+				
+				//모드셀렉트에 최초 진입 시에만 로딩. 이후에는 메모리에 올린 texture를 불러옴
+				if(UserInfo.picture == null)
+				{
+					var urlRequest:URLRequest = new URLRequest("https://graph.facebook.com/"+UserInfo.id+"/picture?type=large");
+					var loader:Loader = new Loader();
+					loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
+					loader.load(urlRequest);
+				}
+				
+				else
+				{
+					_userProfileImage.texture = UserInfo.picture;
+				}
+				
+				
+				_userNameTextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.5, UserInfo.name);
 				_userNameTextField.autoSize = "left";
 				_userNameTextField.alignPivot("center", "center");
 				_userNameTextField.x = Main.stageWidth * 0.1;
@@ -142,16 +172,11 @@ package scene.modeSelect
 			var bitmap:Bitmap = event.currentTarget.loader.content as Bitmap;
 			var texture:Texture = Texture.fromBitmap(bitmap);
 			
-			_userProfileImage = new Image(texture);
-			_userProfileImage.alignPivot("center", "center");
+			_userProfileImage.texture = texture;
 			
-			_userProfileImage.width = Main.stageWidth * 0.2;
-			_userProfileImage.height = _userProfileImage.width;
+			var loaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
+			loaderInfo.removeEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
 			
-			_userProfileImage.x = Main.stageWidth * 0.1;
-			_userProfileImage.y = _userProfileImage.height / 2;
-			
-			addChild(_userProfileImage);
 		}
 		
 		private function initButton():void
@@ -161,13 +186,13 @@ package scene.modeSelect
 			addChild(_logOut); 
 			
 			
+	
+			_ranking = ButtonMgr.instance.setButton(_ranking, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "랭킹", Main.stageWidth * 0.05);
+			_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
+			addChild(_ranking); 
+			
 //			if(PlatformType.current == PlatformType.GOOGLE)
 //			{
-//				
-//				_ranking = ButtonMgr.instance.setButton(_ranking, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "랭킹", Main.stageWidth * 0.05);
-//				_ranking.addEventListener(TouchEvent.TOUCH, onTouchRanking);
-//				addChild(_ranking); 
-//				
 //				_achievement = ButtonMgr.instance.setButton(_achievement, _atlas.getTexture("button"), Main.stageWidth * 0.2, Main.stageHeight * 0.1, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "업적", Main.stageWidth * 0.05);
 //				_achievement.addEventListener(TouchEvent.TOUCH, onTouchAchievement);
 //				addChild(_achievement); 
@@ -196,14 +221,22 @@ package scene.modeSelect
 		
 		
 		
-//		private function onTouchRanking(event:TouchEvent):void
-//		{
-//			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
-//			if(touch)
-//			{
-//				AirGooglePlayGames.getInstance().showLeaderboards();
-//			}
-//		}
+		private function onTouchRanking(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
+			if(touch)
+			{
+				if(PlatformType.current == PlatformType.GOOGLE)
+				{
+					//AirGooglePlayGames.getInstance().showLeaderboards();
+				}
+				else
+				{
+					_rank.reset();
+					_rank.visible = true;					
+				}
+			}
+		}
 //		
 //		private function onTouchAchievement(event:TouchEvent):void
 //		{
@@ -230,15 +263,15 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_logOut, TouchPhase.ENDED);
 			if(touch)
 			{
-				if(PlatformType.current == PlatformType.FACEBOOK)
+				if(PlatformType.current == PlatformType.GOOGLE)
 				{
-					
+					//					AirGooglePlayGames.getInstance().signOut();
+					//					Main.userId = "";
+					//					Main.userName = "";
 				}
 				else
 				{
-//					AirGooglePlayGames.getInstance().signOut();
-//					Main.userId = "";
-//					Main.userName = "";
+
 				}				
 				_temp.text = "";
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.TITLE, false, null, 0.5, Transitions.EASE_OUT);
