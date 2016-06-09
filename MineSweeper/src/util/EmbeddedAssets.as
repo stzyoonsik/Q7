@@ -24,6 +24,6 @@ package util
 		
 		// Title XML
 		[Embed(source="../assets/TitleXml.xml", mimeType="application/octet-stream")]
-		public static const TitleXml:Class;
+		public static const TitleXml:Class; 
 	}
 }

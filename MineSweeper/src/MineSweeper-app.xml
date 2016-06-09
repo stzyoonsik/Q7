@@ -93,7 +93,7 @@
 
         <!-- The aspect ratio of the app ("portrait" or "landscape" or "any"). Optional. Mobile only. Default is the natural orientation of the device -->
 
-        <!-- <aspectRatio></aspectRatio> -->
+        <aspectRatio>portrait</aspectRatio>
 
         <!-- Whether the app will begin auto-orienting on launch. Optional. Mobile only. Default false -->
 
@@ -291,11 +291,11 @@
 						android:theme="@android:style/Theme.Translucent.NoTitleBar"
 						android:label="@string/app_name"/>
 						
-						
+					<!--	
 					<meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 747450661051" />
 					<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 					<activity android:name="com.freshplanet.googleplaygames.SignInActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
-					
+					-->
 			    </application>
 			   
 			</manifest>
@@ -318,4 +318,7 @@
 
 
 
+<extensions>
+        <extensionID>com.yoonsik.FacebookExtension</extensionID>
+    </extensions>
 </application>
