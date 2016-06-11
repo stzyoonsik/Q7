@@ -1,4 +1,4 @@
-package scene.custom
+package scene.modeSelect.custom
 {
 	import flash.geom.Point;
 	
@@ -17,7 +17,7 @@ package scene.custom
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
-	import util.manager.ButtonMgr;
+	import util.manager.DisplayObjectMgr;
 	import util.manager.LoadMgr;
 
 	public class Slider extends Sprite
@@ -102,16 +102,16 @@ package scene.custom
 				bar.width = Main.stageWidth * 0.5;
 				bar.height = bar.width * 0.1;
 				bar.x = Main.stageWidth * 0.5;
-				bar.y = Main.stageHeight * (0.2 + Number(i / 10));
+				bar.y = Main.stageHeight * (0.3 + Number(i / 10));
 				bar.alignPivot("center", "center");
 				addChild(bar);				
 			}
 			
-			_rowSlider = ButtonMgr.instance.setButton(_rowSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.2, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_colSlider = ButtonMgr.instance.setButton(_colSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_mineSlider = ButtonMgr.instance.setButton(_mineSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.4, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_itemSlider = ButtonMgr.instance.setButton(_itemSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_chanceSlider = ButtonMgr.instance.setButton(_chanceSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_rowSlider = DisplayObjectMgr.instance.setButton(_rowSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.3, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_colSlider = DisplayObjectMgr.instance.setButton(_colSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.4, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_mineSlider = DisplayObjectMgr.instance.setButton(_mineSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_itemSlider = DisplayObjectMgr.instance.setButton(_itemSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+			_chanceSlider = DisplayObjectMgr.instance.setButton(_chanceSlider, _atlas.getTexture("sliderButton"), Main.stageWidth * 0.5, Main.stageHeight * 0.7, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 			
 			addChild(_rowSlider);
 			addChild(_colSlider);
@@ -138,11 +138,11 @@ package scene.custom
 		
 		private function initTextField():void
 		{
-			_rowText     = setTextField(_rowText, Main.stageWidth * 0.125, Main.stageHeight * 0.2, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "가로", Main.stageWidth * 0.025, true);
-			_colText 	 = setTextField(_colText, Main.stageWidth * 0.125, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "세로", Main.stageWidth * 0.025, true);
-			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.125, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "지뢰 갯수", Main.stageWidth * 0.025, true);
-			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.125, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 갯수", Main.stageWidth * 0.025, true);
-			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.125, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 확률", Main.stageWidth * 0.025, true);
+			_rowText     = setTextField(_rowText, Main.stageWidth * 0.125, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "가로", Main.stageWidth * 0.025, true);
+			_colText 	 = setTextField(_colText, Main.stageWidth * 0.125, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "세로", Main.stageWidth * 0.025, true);
+			_mineNumText = setTextField(_mineNumText, Main.stageWidth * 0.125, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "지뢰 갯수", Main.stageWidth * 0.025, true);
+			_itemNumText = setTextField(_itemNumText, Main.stageWidth * 0.125, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 갯수", Main.stageWidth * 0.025, true);
+			_chanceText  = setTextField(_chanceText, Main.stageWidth * 0.125, Main.stageHeight * 0.7, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "아이템 확률", Main.stageWidth * 0.025, true);
 			
 			addChild(_rowText);
 			addChild(_colText);
@@ -152,11 +152,11 @@ package scene.custom
 			
 			
 			
-			_rowTextField	  = setTextField(_rowTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.2, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _row.toString(), Main.stageWidth * 0.05, true);
-			_colTextField 	  = setTextField(_colTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _col.toString(), Main.stageWidth * 0.05, true);
-			_mineNumTextField = setTextField(_mineNumTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _mineNum.toString(), Main.stageWidth * 0.05, true);
-			_itemNumTextField = setTextField(_itemNumTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _itemNum.toString(), Main.stageWidth * 0.05, true);
-			_chanceTextField  = setTextField(_chanceTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _chance.toString(), Main.stageWidth * 0.05, true);
+			_rowTextField	  = setTextField(_rowTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _row.toString(), Main.stageWidth * 0.05, true);
+			_colTextField 	  = setTextField(_colTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.4, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _col.toString(), Main.stageWidth * 0.05, true);
+			_mineNumTextField = setTextField(_mineNumTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.5, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _mineNum.toString(), Main.stageWidth * 0.05, true);
+			_itemNumTextField = setTextField(_itemNumTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.6, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _itemNum.toString(), Main.stageWidth * 0.05, true);
+			_chanceTextField  = setTextField(_chanceTextField, Main.stageWidth * 0.875, Main.stageHeight * 0.7, Main.stageWidth * 0.15, Main.stageHeight * 0.05, _chance.toString(), Main.stageWidth * 0.05, true);
 			
 			addChild(_rowTextField);
 			addChild(_colTextField);

@@ -1,10 +1,9 @@
-package scene.modeSelect
+package scene.modeSelect.rank
 {
 	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
-	import flash.events.IOErrorEvent;
 	import flash.net.URLRequest;
 	import flash.utils.Dictionary;
 	
@@ -29,11 +28,11 @@ package scene.modeSelect
 	import starling.utils.Align;
 	import starling.utils.Color;
 	
-	import util.manager.ButtonMgr;
+	import util.manager.DisplayObjectMgr;
 	import util.type.DifficultyType;
 	
 
-	public class Rank extends DisplayObjectContainer
+	public class RankPopup extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
 		
@@ -61,9 +60,7 @@ package scene.modeSelect
 		private var _normal:Button;
 		private var _hard:Button;
 		private var _veryHard:Button;
-		
-		private var _rankTextField:TextField;
-		
+				
 		private var _back:Button;
 		private var _close:Button;
 		
@@ -73,7 +70,7 @@ package scene.modeSelect
 		private var _loadingBg:Quad;
 		private var _loading:MovieClip;
 		
-		public function Rank(atlas:TextureAtlas)
+		public function RankPopup(atlas:TextureAtlas)
 		{
 			_atlas = atlas;
 			
@@ -82,6 +79,47 @@ package scene.modeSelect
 			initButton();
 			initLoading();
 			
+		}
+		
+		public function release():void
+		{
+			if(_atlas) { _atlas = null; }
+			if(_isItemModeSpr) { _isItemModeSpr.dispose(); _isItemModeSpr.removeChildren(); _isItemModeSpr.dispose(); _isItemModeSpr = null; removeChild(_isItemModeSpr); }
+			if(_difficultySpr) { _difficultySpr.dispose(); _difficultySpr.removeChildren(); _difficultySpr.dispose(); _difficultySpr = null; removeChild(_difficultySpr); }
+			if(_rankingSpr) { _rankingSpr.dispose(); _rankingSpr.removeChildren(); _rankingSpr.dispose(); _rankingSpr = null; removeChild(_rankingSpr); }
+			if(_pictures) 
+			{
+				for(var key:String in _pictures)
+				{
+					_pictures[key] = null;
+					delete _pictures[key];
+				}
+				_pictures = null;
+			}
+			if(_spriteVector)
+			{
+				for(var i:int = 0; i < _spriteVector.length; ++i)
+				{
+					_spriteVector[i].dispose();
+					_spriteVector[i] = null;
+				}
+				_spriteVector.splice(0, _spriteVector.length);
+			}
+			if(_prev) { _prev.removeEventListener(TouchEvent.TOUCH, onTouchPrev); _prev.dispose(); _prev = null; removeChild(_prev); }
+			if(_next) { _next.removeEventListener(TouchEvent.TOUCH, onTouchNext); _next.dispose(); _next = null; removeChild(_next); }
+			if(_page) { _page = null; removeChild(_page); }
+			if(_data) { _data = null; }
+			if(_item) { _item.removeEventListener(TouchEvent.TOUCH, onTouchItemMode); _item.dispose(); _item = null; removeChild(_item); }
+			if(_noItem) { _noItem.removeEventListener(TouchEvent.TOUCH, onTouchItemMode); _noItem.dispose(); _noItem = null; removeChild(_noItem); }
+			if(_veryEasy) { _veryEasy.removeEventListener(TouchEvent.TOUCH, onTouchDifficulty); _veryEasy.dispose(); _veryEasy = null; removeChild(_veryEasy); }
+			if(_easy) { _easy.removeEventListener(TouchEvent.TOUCH, onTouchDifficulty); _easy.dispose(); _easy = null; removeChild(_easy); }
+			if(_normal) { _normal.removeEventListener(TouchEvent.TOUCH, onTouchDifficulty); _normal.dispose(); _normal = null; removeChild(_normal); }
+			if(_hard) { _hard.removeEventListener(TouchEvent.TOUCH, onTouchDifficulty); _hard.dispose(); _hard = null; removeChild(_hard); }
+			if(_veryHard) { _veryHard.removeEventListener(TouchEvent.TOUCH, onTouchDifficulty); _veryHard.dispose(); _veryHard = null; removeChild(_veryHard); }
+			if(_back) { _back.removeEventListener(TouchEvent.TOUCH, onTouchBack); _back.dispose(); _back = null; removeChild(_back); }
+			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchBack); _close.dispose(); _close = null; removeChild(_close); }
+			if(_loadingBg) { _loadingBg.dispose(); _loadingBg = null; removeChild(_loadingBg); }
+			if(_loading) { Starling.juggler.remove(_loading); _loading.dispose(); _loading = null; removeChild(_loading);}
 		}
 		
 		public function reset():void
@@ -93,6 +131,15 @@ package scene.modeSelect
 			_pageNum = 0;
 			if(_rankingSpr.numChildren > 3)
 				_rankingSpr.removeChildren(3, _rankingSpr.numChildren, true);
+			if(_pictures)
+			{
+				for(var key:String in _pictures)
+				{
+					_pictures[key] = null;
+					delete _pictures[key];
+				}
+			}
+				
 		}
 		
 		private function initBackground():void
@@ -114,9 +161,9 @@ package scene.modeSelect
 			_rankingSpr = new Sprite();			
 			
 			
-			_item = ButtonMgr.instance.setButton(_item, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, 
+			_item = DisplayObjectMgr.instance.setButton(_item, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, 
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "아이템", Main.stageWidth * 0.05);
-			_noItem = ButtonMgr.instance.setButton(_noItem, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.4, 
+			_noItem = DisplayObjectMgr.instance.setButton(_noItem, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.4, 
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "노템", Main.stageWidth * 0.05);
 			
 			_noItem.addEventListener(TouchEvent.TOUCH, onTouchItemMode);
@@ -127,15 +174,15 @@ package scene.modeSelect
 			
 			
 			
-			_veryEasy = ButtonMgr.instance.setButton(_veryEasy, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.3, 
+			_veryEasy = DisplayObjectMgr.instance.setButton(_veryEasy, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.3, 
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "매우 쉬움", Main.stageWidth * 0.05);
-			_easy     = ButtonMgr.instance.setButton(_easy, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.4,
+			_easy     = DisplayObjectMgr.instance.setButton(_easy, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.4,
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "쉬움", Main.stageWidth * 0.05);
-			_normal   = ButtonMgr.instance.setButton(_normal, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, 
+			_normal   = DisplayObjectMgr.instance.setButton(_normal, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, 
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "일반", Main.stageWidth * 0.05);
-			_hard     = ButtonMgr.instance.setButton(_hard, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, 
+			_hard     = DisplayObjectMgr.instance.setButton(_hard, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, 
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "어려움", Main.stageWidth * 0.05);
-			_veryHard = ButtonMgr.instance.setButton(_veryHard, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.7, 
+			_veryHard = DisplayObjectMgr.instance.setButton(_veryHard, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.7, 
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "매우 어려움", Main.stageWidth * 0.05);
 			
 			_veryEasy.addEventListener(TouchEvent.TOUCH, onTouchDifficulty);
@@ -164,11 +211,11 @@ package scene.modeSelect
 		
 		private function initButton():void
 		{
-			_back = ButtonMgr.instance.setButton(_back, _atlas.getTexture("back"), 
+			_back = DisplayObjectMgr.instance.setButton(_back, _atlas.getTexture("back"), 
 				Main.stageWidth * 0.2, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 			_back.addEventListener(TouchEvent.TOUCH, onTouchBack);
 			
-			_close = ButtonMgr.instance.setButton(_close, _atlas.getTexture("close"), 
+			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
 				Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
 			
@@ -176,11 +223,11 @@ package scene.modeSelect
 			addChild(_close);
 			
 			
-			_prev = ButtonMgr.instance.setButton(_prev, _atlas.getTexture("prev"), 
+			_prev = DisplayObjectMgr.instance.setButton(_prev, _atlas.getTexture("prev"), 
 				Main.stageWidth * 0.2, Main.stageHeight * 0.8, Main.stageWidth * 0.05, Main.stageWidth * 0.1);
 			_prev.addEventListener(TouchEvent.TOUCH, onTouchPrev);
 			
-			_next = ButtonMgr.instance.setButton(_next, _atlas.getTexture("next"),
+			_next = DisplayObjectMgr.instance.setButton(_next, _atlas.getTexture("next"),
 				Main.stageWidth * 0.8, Main.stageHeight * 0.8, Main.stageWidth * 0.05, Main.stageWidth * 0.1);
 			_next.addEventListener(TouchEvent.TOUCH, onTouchNext);
 			
@@ -263,7 +310,16 @@ package scene.modeSelect
 					_rankingSpr.visible = false;
 					
 					_pageNum = 0;
-					_rankingSpr.removeChildren(3, _rankingSpr.numChildren, true);	
+					if(_rankingSpr.numChildren > 3)
+						_rankingSpr.removeChildren(3, _rankingSpr.numChildren, true);	
+					if(_pictures)
+					{
+						for(var key:String in _pictures)
+						{
+							_pictures[key] = null;
+							delete _pictures[key];
+						}
+					}
 				}
 			}
 		}
