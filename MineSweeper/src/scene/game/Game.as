@@ -34,6 +34,7 @@ package scene.game
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
+	import util.LevelSystem;
 	import util.UserInfo;
 	import util.manager.AchievementMgr;
 	import util.manager.IOMgr;
@@ -134,7 +135,8 @@ package scene.game
 			_countDown.release();
 			_countDown = null;
 			//게임 시작
-			_time.timer.start();
+			if(_time)
+				_time.timer.start();
 			
 		}
 		
@@ -317,18 +319,41 @@ package scene.game
 			_time.timer.stop();
 			
 			//구글로 로그인 했으면		
-//			if(PlatformType.current == PlatformType.GOOGLE)
-//			{
-//				//기록 등록
-//				LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
-//				//업적 등록
-//				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
-//			}
+			if(PlatformType.current == PlatformType.GOOGLE)
+			{
+				//기록 등록
+				//LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
+				//업적 등록
+				//AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+			}
+			//페북으로 로그인 했으면
+			else
+			{
+				//난이도가 커스텀모드이면 기록 저장 안함
+				if(_board.difficulty != DifficultyType.CUSTOM)
+				{
+					//경험치 보상
+					UserInfo.exp += LevelSystem.getRewardExp(_board.difficulty);				
+					while(LevelSystem.checkLevelUp(UserInfo.level, UserInfo.exp))
+					{					
+						UserInfo.exp -= LevelSystem.getNeedExp(UserInfo.level);
+						UserInfo.level++;
+					}
+					//UserInfo.exp = LevelSystem.levelUp(UserInfo.level, UserInfo.exp);
+					
+					UserDBMgr.instance.updateData(UserInfo.id, "level", UserInfo.level);
+					UserDBMgr.instance.updateData(UserInfo.id, "exp", UserInfo.exp);
+					
+					UserDBMgr.instance.addEventListener("selectRecord", onSelectRecordComplete);
+					UserDBMgr.instance.selectRecord(UserInfo.id, _board.isItemMode, _board.difficulty);				
+				}
+			}
 			
 			if(_clearPopup)
 			{
 				_clearPopup.visible = true;
-				_clearPopup.textField.text = "이름 = " + UserInfo.name + "\n" + "난이도 = " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 = " + _time.realTime.toString();
+				var isItem:String = _board.isItemMode == true ? "O" : "X";
+				_clearPopup.textField.text = "이름 : " + UserInfo.name + "\n" + "아이템 : " + isItem + "\n" + "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 : " + _time.realTime.toString();
 			}
 			
 			
@@ -337,24 +362,18 @@ package scene.game
 			
 			IOMgr.instance.removeData();
 			
-			//var datas:Object = IOMgr.instance.loadRecord();
-			//renewalData(datas);
 			
 			
 			
-			//난이도가 커스텀모드이면 기록 저장 안함
-			//select로 정보 가져오고, 최고기록인지 확인하고 , 최고기록이면 업데이트
-			if(_board.difficulty != DifficultyType.CUSTOM)
-			{
-				UserDBMgr.instance.addEventListener("selectRecord", onSelectRecordComplete);
-				UserDBMgr.instance.selectRecord(UserInfo.id, _board.isItemMode, _board.difficulty);				
-			}
+			
 				
 			_isGameEnded = true;
 		}
 		
 		private function onSelectRecordComplete(event:Event):void
 		{
+			
+			//select로 정보 가져오고, 최고기록인지 확인하고 , 최고기록이면 업데이트
 			if(checkNewRecord(int(event.data), _time.realTime))
 			{
 				UserDBMgr.instance.updateRecord(UserInfo.id, _board.isItemMode, _board.difficulty, _time.realTime);
@@ -510,35 +529,7 @@ package scene.game
 			
 			return curTime < preTime;
 		}
-		
-//		private function renewalData(datas:Object):void
-//		{
-//			for(var i:int = 0; i < datas.length; ++i)
-//			{
-//				if(datas[i].id == Main.userId)
-//				{
-//					switch(_board.difficulty)
-//					{
-//						case 0 :
-//							if(checkNewRecord(datas[i].record.veryEasy, _time.timer.currentCount))
-//							{
-//								
-//							}
-//							break;
-//						case 1 :
-//							break;
-//						case 2 :
-//							break;
-//						case 3 :
-//							break;
-//						case 4 :
-//							break;
-//						default :
-//							break;
-//					}
-//				}
-//			}
-//		}
+
 		
 		private function onDeactivated(event:flash.events.Event):void   
 		{  			
