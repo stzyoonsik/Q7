@@ -16,7 +16,7 @@ package util
 				var data:ByteArray=Hex.toArray(Hex.fromString(rawData));
 				
 				var pad:IPad = new PKCS5();
-				var mode:ICipher = Crypto.getCipher("aes-cbc", kdata, pad);
+				var mode:ICipher = Crypto.getCipher("aes-ecb", kdata, pad);
 				pad.setBlockSize(mode.getBlockSize());
 				mode.encrypt(data);
 				return Hex.fromArray(data);
@@ -28,7 +28,7 @@ package util
 				var data:ByteArray = Hex.toArray(encData);
 				
 				var pad:IPad = new PKCS5();
-				var mode:ICipher = Crypto.getCipher("aes-cbc", kdata, pad);
+				var mode:ICipher = Crypto.getCipher("aes-ecb", kdata, pad);
 				pad.setBlockSize(mode.getBlockSize());
 				mode.decrypt(data);
 				return Hex.toString(Hex.fromArray(data));
