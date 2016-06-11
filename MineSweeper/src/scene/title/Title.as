@@ -28,7 +28,7 @@ package scene.title
 	
 	import util.EmbeddedAssets;
 	import util.UserInfo;
-	import util.manager.ButtonMgr;
+	import util.manager.DisplayObjectMgr;
 	import util.manager.LoadMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
@@ -180,9 +180,64 @@ package scene.title
 			UserInfo.name = data.name;
 			
 			//체크 하고 인서트
-			UserDBMgr.instance.insert(UserInfo.id, UserInfo.name);
+			UserDBMgr.instance.checkData(UserInfo.id);
+			UserDBMgr.instance.addEventListener("checkData", onCheckDataComplete);
 			
+		}
+		
+		private function onCheckDataComplete(event:Event):void
+		{
+			trace("event.data = " + event.data);
+			UserDBMgr.instance.removeEventListener("checkData", onCheckDataComplete);
+			if(int(event.data) == 0)
+			{
+				UserDBMgr.instance.insertUser(UserInfo.id, UserInfo.name);
+				UserDBMgr.instance.addEventListener("insertUser", onInsertUserComplete);				
+			}
+			else
+			{
+				UserDBMgr.instance.selectData(UserInfo.id, "heart");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+				
+			}
+		}
+		
+		private function onInsertUserComplete(event:Event):void
+		{
+			UserDBMgr.instance.removeEventListener("insertUser", onInsertUserComplete);
+			trace("[TITLE] insert user is done");
+			UserDBMgr.instance.updateData(UserInfo.id, "heart", 5);
+			UserDBMgr.instance.updateData(UserInfo.id, "level", 1);
+			UserDBMgr.instance.updateData(UserInfo.id, "exp", 0);
 			checkDone();
+		}
+		
+		private function onSelectDataComplete(event:Event):void
+		{
+			UserDBMgr.instance.removeEventListener("selectData", onSelectDataComplete);
+			
+			if(UserInfo.heart == -1)
+			{
+				UserInfo.heart = int(event.data);				
+				
+				UserDBMgr.instance.selectData(UserInfo.id, "level");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+			}
+			
+			else if(UserInfo.level == -1)
+			{
+				UserInfo.level = int(event.data);				
+				
+				UserDBMgr.instance.selectData(UserInfo.id, "exp");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+			}
+			
+			else if(UserInfo.exp == -1)
+			{
+				UserInfo.exp = int(event.data);	
+				checkDone();
+			}
+			
 		}
 		
 //		private function onGetToken(event:StatusEvent):void
@@ -194,7 +249,7 @@ package scene.title
 		
 		private function checkDone():void
 		{
-			if(UserInfo.id != null && UserInfo.name != null /*&& _token != null*/)
+			if(UserInfo.id != null && UserInfo.name != null && UserInfo.heart != -1 && UserInfo.level != -1 && UserInfo.exp != -1)
 			{
 				PlatformType.current = PlatformType.FACEBOOK;
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
@@ -207,11 +262,11 @@ package scene.title
 //		
 		private function initButton():void
 		{
-			_logInGoogle = ButtonMgr.instance.setButton(_logInGoogle, _atlas.getTexture("google"), Main.stageWidth * 1.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1); 
+			_logInGoogle = DisplayObjectMgr.instance.setButton(_logInGoogle, _atlas.getTexture("google"), Main.stageWidth * 1.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1); 
 			//_logInGoogle.addEventListener(TouchEvent.TOUCH, onTouchLoginGoogle);
 			addChild(_logInGoogle);
 			
-			_logInFacebook = ButtonMgr.instance.setButton(_logInFacebook, _atlas.getTexture("facebook"), Main.stageWidth * 1.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1);
+			_logInFacebook = DisplayObjectMgr.instance.setButton(_logInFacebook, _atlas.getTexture("facebook"), Main.stageWidth * 1.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1);
 
 			_logInFacebook.addEventListener(TouchEvent.TOUCH, onTouchLoginFacebook);
 			addChild(_logInFacebook);
