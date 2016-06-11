@@ -2,10 +2,10 @@ package scene
 {
 	import com.freshplanet.ane.AirFacebook.Facebook;
 	
-	import scene.custom.Custom;
+	import scene.modeSelect.custom.CustomPopup;
 	import scene.game.Game;
 	import scene.modeSelect.ModeSelect;
-	import scene.stageSelect.StageSelect;
+	import scene.modeSelect.normal.NormalPopup;
 	import scene.title.Title;
 	
 	import starling.core.Starling;
@@ -25,17 +25,10 @@ package scene
 		
 		private var _title:Title;
 		private var _modeSelect:ModeSelect;
-		private var _stageSelect:StageSelect;
-		private var _custom:Custom;
+		private var _stageSelect:NormalPopup;
+		private var _custom:CustomPopup;
 		private var _game:Game;
 		
-//		private static var _userId:String;
-//		private static var _userName:String;
-		
-//		public static function set userName(value:String):void { _userName = value;	}
-//		public static function set userId(value:String):void { _userId = value;	}
-//		public static function get userName():String { return _userName; }
-//		public static function get userId():String { return _userId; }
 
 		public static function get stageHeight():int{ return _stageHeight; }
 		public static function get stageWidth():int{ return _stageWidth; }
@@ -47,8 +40,6 @@ package scene
 			
 			SwitchActionMgr.instance.addEventListener(SceneType.TITLE, onChangeScene);
 			SwitchActionMgr.instance.addEventListener(SceneType.MODE_SELECT, onChangeScene);
-			SwitchActionMgr.instance.addEventListener(SceneType.STAGE_SELECT, onChangeScene);
-			SwitchActionMgr.instance.addEventListener(SceneType.CUSTOM, onChangeScene);
 			SwitchActionMgr.instance.addEventListener(SceneType.GAME, onChangeScene);
 			
 			_title = new Title();			
@@ -82,59 +73,24 @@ package scene
 						_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 						removeChild(_title);
 						_title = null;
-					}	
-					else if(_stageSelect)
-					{
-						releaseStageSelect();
-					}
-					else if(_custom)
-					{
-						releaseCustom();
-					}				
-					else if(_game)
+					}			
+					if(_game)
 					{
 						releaseGame();
 					}
 					
-					//releaseScenes(_title, null, _stageSelect, _custom, _game);
+					//if(!_modeSelect)
+					//{
+						_modeSelect = new ModeSelect();
+						_modeSelect.addEventListener(SceneType.GAME, onChangeScene);
+						_modeSelect.addEventListener(SceneType.TITLE, onChangeScene);
+						addChild(_modeSelect);
+						trace("ModeSelect");
+					//}
+					//trace("모드셀렉트 visible 킴");
+					//_modeSelect.visible = true;
 					
-					_modeSelect = new ModeSelect();
-					_modeSelect.addEventListener(SceneType.STAGE_SELECT, onChangeScene);
-					_modeSelect.addEventListener(SceneType.CUSTOM, onChangeScene);
-					_modeSelect.addEventListener(SceneType.GAME, onChangeScene);
-					_modeSelect.addEventListener(SceneType.TITLE, onChangeScene);
-					addChild(_modeSelect);
-					trace("ModeSelect");
-					break;
-				}
 				
-				case SceneType.STAGE_SELECT :
-				{
-					if(_modeSelect)
-					{
-						releaseModeSelect();
-					}
-					
-					_stageSelect = new StageSelect();
-					_stageSelect.addEventListener(SceneType.GAME, onChangeScene);
-					_stageSelect.addEventListener(SceneType.MODE_SELECT, onChangeScene);
-					addChild(_stageSelect);
-					trace("StageSelect");
-					break;
-				}
-				
-				case SceneType.CUSTOM : 
-				{
-					if(_modeSelect)
-					{
-						releaseModeSelect();
-					}
-					
-					_custom = new Custom();
-					_custom.addEventListener(SceneType.GAME, onChangeScene);
-					_custom.addEventListener(SceneType.MODE_SELECT, onChangeScene);
-					addChild(_custom);
-					trace("Custom");
 					break;
 				}
 				
@@ -143,14 +99,8 @@ package scene
 					if(_modeSelect)
 					{
 						releaseModeSelect();
-					}
-					else if(_stageSelect)
-					{
-						releaseStageSelect();
-					}					
-					else if(_custom)
-					{
-						releaseCustom();
+						//trace("모드셀렉트 visible 끔");
+						//_modeSelect.visible = false;
 					}
 				
 					_game = new Game(event.data);
@@ -192,26 +142,6 @@ package scene
 			_modeSelect.removeEventListeners();
 			removeChild(_modeSelect);
 			_modeSelect = null;
-		}
-		
-		private function releaseStageSelect():void
-		{
-			_stageSelect.release();
-			_stageSelect.removeEventListeners();
-			//_stageSelect.removeEventListener(SceneType.GAME, onChangeScene);
-			//_stageSelect.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
-			removeChild(_stageSelect);
-			_stageSelect = null;
-		}	
-		
-		private function releaseCustom():void
-		{
-			_custom.release();
-			_custom.removeEventListeners();
-			//_custom.removeEventListener(SceneType.GAME, onChangeScene);
-			//_custom.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
-			removeChild(_custom);
-			_custom = null;
 		}
 		
 		private function releaseGame():void
