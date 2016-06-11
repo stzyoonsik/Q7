@@ -10,10 +10,15 @@ package
 	
 	import scene.Main;
 	
+	import server.UserDBMgr;
+	
 	import starling.core.Starling;
 	import starling.events.Event;
 	import starling.utils.RectangleUtil;
 	import starling.utils.ScaleMode;
+	
+	import util.UserInfo;
+	import util.type.PlatformType;
 	
 	[SWF(backgroundColor="#FFFFFF", frameRate="60")]  
 	public class MineSweeper extends Sprite   
@@ -42,6 +47,13 @@ package
 			// make sure the app behaves well (or exits) when in background  
 			//NativeApplication.nativeApplication.exit();  
 			trace("deactive");
+			if(PlatformType.current != "")
+			{
+				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
+				UserDBMgr.instance.updateData(UserInfo.id, "heartTime", UserInfo.remainHeartTime);
+			}
+			
+			
 			Starling.current.stop(true);
 			NativeApplication.nativeApplication.executeInBackground = true;
 		}  
