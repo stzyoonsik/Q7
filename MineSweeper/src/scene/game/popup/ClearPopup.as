@@ -13,9 +13,10 @@ package scene.game.popup
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import starling.utils.Align;
 	import starling.utils.Color;
 	
-	import util.manager.ButtonMgr;
+	import util.manager.DisplayObjectMgr;
 
 	public class ClearPopup extends DisplayObjectContainer
 	{
@@ -46,11 +47,11 @@ package scene.game.popup
 		/** 백그라운드 초기화 메소드	 */
 		private function initBackground():void
 		{
-			var background:Image = new Image(_atlas.getTexture("background"));
+			var background:Image = new Image(_atlas.getTexture("popupBg"));
 			background.x = Main.stageWidth * 0.5;
 			background.y = Main.stageHeight * 0.5;
-			background.width = Main.stageWidth * 0.5;
-			background.height = Main.stageHeight * 0.35;
+			background.width = Main.stageWidth * 0.6;
+			background.height = Main.stageHeight * 0.4;
 			background.alignPivot("center","center");
 			addChild(background);
 		}
@@ -58,8 +59,8 @@ package scene.game.popup
 		/** 버튼 초기화 메소드	 */
 		private function initButton():void
 		{
-			_again = ButtonMgr.instance.setButton(_again, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "AGAIN", Main.stageWidth * 0.05);
-			_exit = ButtonMgr.instance.setButton(_exit, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.6, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "EXIT", Main.stageWidth * 0.05);
+			_again = DisplayObjectMgr.instance.setButton(_again, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.525, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "AGAIN", Main.stageWidth * 0.05);
+			_exit = DisplayObjectMgr.instance.setButton(_exit, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.625, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "EXIT", Main.stageWidth * 0.05);
 			
 			_again.addEventListener(TouchEvent.TOUCH, onTouchAgain);
 			_exit.addEventListener(TouchEvent.TOUCH, onTouchExit);
@@ -70,10 +71,10 @@ package scene.game.popup
 		
 		private function initTextField():void
 		{
-			_textField = new TextField(Main.stageWidth * 0.6, Main.stageHeight * 0.4, "");
+			_textField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.4, "");
 			_textField.alignPivot("center", "center");
 			_textField.format.size = Main.stageWidth * 0.05;
-			//_textField.format.color = Color.WHITE;
+			_textField.format.horizontalAlign = Align.LEFT;
 			_textField.x = Main.stageWidth * 0.5;
 			_textField.y = Main.stageHeight * 0.4;
 			

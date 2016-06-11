@@ -39,6 +39,7 @@ package scene.game.ui
 			
 			_timer = new Timer(1000);
 			_timer.addEventListener(TimerEvent.TIMER, onTimer);
+			
 		}
 		
 		private function init():void

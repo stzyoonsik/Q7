@@ -9,6 +9,7 @@ package util.manager
 	
 	import starling.display.Image;
 	
+	import util.AesCrypto;
 	import util.type.DataType;
 
 	public class IOMgr
@@ -75,10 +76,12 @@ package util.manager
 								+ "\t\"item\" : [" + item + "],\n"
 								+ "\t\"time\" : " + time.toString() + "\n}";
 			
+			var encryptedData:String = AesCrypto.encrypt(data, "yoonsik");
+			
 			var stream:FileStream = new FileStream();
 			var file:File = new File(_path.resolvePath("lastGame.json").url);
 			stream.open(file, FileMode.WRITE);
-			stream.writeUTFBytes(data);
+			stream.writeUTFBytes(encryptedData);
 			stream.close();
 		}
 		
@@ -93,10 +96,11 @@ package util.manager
 			stream.open(file, FileMode.READ);
 			
 			var str:String = stream.readUTFBytes(stream.bytesAvailable);
-			trace(str);
+			var decryptedData:String = AesCrypto.decrypt(str, "yoonsik");
+			trace(decryptedData);
 			
 			
-			var data:Object = JSON.parse(str);
+			var data:Object = JSON.parse(decryptedData);
 			var datas:Dictionary = new Dictionary();
 			datas[DataType.IS_ITEM_MODE] = data.isItemMode;
 			datas[DataType.DIFFICULTY] = data.difficulty;
@@ -123,35 +127,35 @@ package util.manager
 				file.deleteFile();
 		}
 		
-		public function loadRecord():Object
-		{
-			var stream:FileStream = new FileStream();
-			var file:File = new File(_path.resolvePath("record.json").url);
-			
-			if(!file.exists)
-				return null;
-			
-			stream.open(file, FileMode.READ);
-			
-			var str:String = stream.readUTFBytes(stream.bytesAvailable);
-			trace(str);
-			
-			
-			var data:Object = JSON.parse(str);
-			
-			
-			return data;
-		}
-		
-		public function saveRecord(data:Object):void
-		{
-			var str:String = JSON.stringify(data);
-			
-			var stream:FileStream = new FileStream();
-			var file:File = new File(_path.resolvePath("record.json").url);
-			stream.open(file, FileMode.WRITE);
-			stream.writeUTFBytes(str);
-			stream.close();
-		}
+//		public function loadRecord():Object
+//		{
+//			var stream:FileStream = new FileStream();
+//			var file:File = new File(_path.resolvePath("record.json").url);
+//			
+//			if(!file.exists)
+//				return null;
+//			
+//			stream.open(file, FileMode.READ);
+//			
+//			var str:String = stream.readUTFBytes(stream.bytesAvailable);
+//			trace(str);
+//			
+//			
+//			var data:Object = JSON.parse(str);
+//			
+//			
+//			return data;
+//		}
+//		
+//		public function saveRecord(data:Object):void
+//		{
+//			var str:String = JSON.stringify(data);
+//			
+//			var stream:FileStream = new FileStream();
+//			var file:File = new File(_path.resolvePath("record.json").url);
+//			stream.open(file, FileMode.WRITE);
+//			stream.writeUTFBytes(str);
+//			stream.close();
+//		}
 	}
 }

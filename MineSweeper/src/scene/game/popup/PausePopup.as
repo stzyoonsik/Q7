@@ -16,7 +16,7 @@ package scene.game.popup
 	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
-	import util.manager.ButtonMgr;
+	import util.manager.DisplayObjectMgr;
 
 	public class PausePopup extends DisplayObjectContainer
 	{
@@ -60,7 +60,7 @@ package scene.game.popup
 		
 		private function initBackground():void
 		{
-			var background:Image = new Image(_atlas.getTexture("background"));
+			var background:Image = new Image(_atlas.getTexture("popupBg"));
 			background.x = Main.stageWidth * 0.5;
 			background.y = Main.stageHeight * 0.5;
 			background.width = Main.stageWidth * 0.5;
@@ -78,9 +78,9 @@ package scene.game.popup
 			text.y = Main.stageHeight * 0.4;
 			addChild(text);
 			
-			_again = ButtonMgr.instance.setButton(_again, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "AGAIN", Main.stageWidth * 0.05);
-			_exit = ButtonMgr.instance.setButton(_exit, _atlas.getTexture("button"), Main.stageWidth * 0.375, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "EXIT", Main.stageWidth * 0.05);			
-			_resume = ButtonMgr.instance.setButton(_resume, _atlas.getTexture("button"), Main.stageWidth * 0.625, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "RESUME", Main.stageWidth * 0.05);
+			_again = DisplayObjectMgr.instance.setButton(_again, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "AGAIN", Main.stageWidth * 0.05);
+			_exit = DisplayObjectMgr.instance.setButton(_exit, _atlas.getTexture("button"), Main.stageWidth * 0.375, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "EXIT", Main.stageWidth * 0.05);			
+			_resume = DisplayObjectMgr.instance.setButton(_resume, _atlas.getTexture("button"), Main.stageWidth * 0.625, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "RESUME", Main.stageWidth * 0.05);
 			
 			_again.addEventListener(TouchEvent.TOUCH, onTouchAgain);
 			_exit.addEventListener(TouchEvent.TOUCH, onTouchYes);
