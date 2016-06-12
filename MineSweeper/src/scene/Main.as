@@ -2,11 +2,13 @@ package scene
 {
 	import com.freshplanet.ane.AirFacebook.Facebook;
 	
-	import scene.modeSelect.custom.CustomPopup;
 	import scene.game.Game;
 	import scene.modeSelect.ModeSelect;
+	import scene.modeSelect.custom.CustomPopup;
 	import scene.modeSelect.normal.NormalPopup;
 	import scene.title.Title;
+	
+	import server.UserDBMgr;
 	
 	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
@@ -107,6 +109,12 @@ package scene
 					_game.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 					addChild(_game);
 					trace("Game");
+					
+					
+					UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
+					UserDBMgr.instance.updateData(UserInfo.id, "heartTime", UserInfo.remainHeartTime);
+					UserInfo.heart--;
+					UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
 					
 					break;
 				}

@@ -15,10 +15,11 @@ package scene.modeSelect
 	
 	import scene.Main;
 	import scene.modeSelect.custom.CustomPopup;
-	import scene.modeSelect.user.Heart;
-	import scene.modeSelect.user.Level;
 	import scene.modeSelect.normal.NormalPopup;
 	import scene.modeSelect.rank.RankPopup;
+	import scene.modeSelect.user.Coin;
+	import scene.modeSelect.user.Heart;
+	import scene.modeSelect.user.Level;
 	
 	import server.UserDBMgr;
 	
@@ -69,6 +70,7 @@ package scene.modeSelect
 		
 		private var _level:Level;
 		private var _heart:Heart;
+		private var _coin:Coin;
 		
 		private var _temp:TextField;
 		
@@ -81,12 +83,12 @@ package scene.modeSelect
 			initButton();
 			initUser();
 			
-			//if(!_heart)
-			//{
-				_heart = new Heart(_atlas);
-				addChild(_heart);
-			//}
+		
+			_heart = new Heart(_atlas);
+			addChild(_heart);
 			
+			_coin = new Coin(_atlas);
+			addChild(_coin);			
 			
 			_level = new Level(_atlas);
 			addChild(_level);
@@ -134,10 +136,10 @@ package scene.modeSelect
 		
 		public function release():void
 		{
-			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
-			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", _heart.remainHeartTime);
-			UserInfo.heart--;
-			UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
+//			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
+//			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", _heart.remainHeartTime);
+//			UserInfo.heart--;
+//			UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
 			
 			if(_atlas) { _atlas = null; }
 			if(_normalPopup) { _normalPopup.release(); _normalPopup = null;	removeChild(_normalPopup); }
@@ -320,8 +322,17 @@ package scene.modeSelect
 				}
 				else
 				{
-
-				}				
+					
+					UserInfo.id = null;
+					UserInfo.name = null;
+					UserInfo.picture = null;
+					UserInfo.level = -1;
+					UserInfo.exp = -1;
+					UserInfo.heart = -1;
+					UserInfo.remainHeartTime = -1;
+					UserInfo.coin = -1;
+				}	
+				trace("로그아웃********************************");
 				//_temp.text = "";
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.TITLE, false, null, 0.5, Transitions.EASE_OUT);
 				//토스트로 로그아웃 알림

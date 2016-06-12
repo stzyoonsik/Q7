@@ -11,5 +11,6 @@ package util
 		public static var exp:int = -1;
 		public static var heart:int = -1;
 		public static var remainHeartTime:int = -1;
+		public static var coin:int = -1;
 	}
 }

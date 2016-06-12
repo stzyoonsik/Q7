@@ -43,9 +43,9 @@ package scene.modeSelect.user
 		private function initBackground():void
 		{
 			_background = new Image(_atlas.getTexture("expBg"));
-			_background.x = Main.stageWidth * 0.65;
+			_background.x = Main.stageWidth * 0.55;
 			_background.y = Main.stageHeight * 0.1;
-			_background.width = Main.stageWidth * 0.5;
+			_background.width = Main.stageWidth * 0.3;
 			_background.height = _background.width * 0.1;
 			_background.alignPivot("center", "center");
 			addChild(_background);
@@ -57,7 +57,7 @@ package scene.modeSelect.user
 				return;
 			
 			_expImage = new Image(_atlas.getTexture("exp"));
-			_expImage.x = Main.stageWidth * 0.65;
+			_expImage.x = Main.stageWidth * 0.55;
 			_expImage.y = Main.stageHeight * 0.1;
 			_expImage.width = _background.width * 0.98;
 			_expImage.height = _background.height * 0.9;
@@ -75,7 +75,7 @@ package scene.modeSelect.user
 			_expTextField = new TextField(Main.stageWidth * 0.4, Main.stageHeight * 0.1);
 			_expTextField.format.size = Main.stageWidth * 0.05;
 			_expTextField.text = UserInfo.exp.toString() + " / " + LevelSystem.getNeedExp(UserInfo.level);
-			_expTextField.x = Main.stageWidth * 0.65;
+			_expTextField.x = Main.stageWidth * 0.55;
 			_expTextField.y = Main.stageHeight * 0.15;
 			_expTextField.alignPivot("center", "center");
 			addChild(_expTextField); 

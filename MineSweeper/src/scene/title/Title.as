@@ -42,50 +42,11 @@ package scene.title
 		private var _logInGoogle:Button;
 		private var _logInFacebook:Button;
 		
-//		private var _userId:String;
-//		private var _userName:String;
 		private var _token:String;
 		
-//		public function get userName():String { return _userName; }
-//		public function get userId():String { return _userId; }
 		
 		public function Title()
-		{			
-//			UserDBMgr.instance.insert("1231237", "내일");
-//			UserDBMgr.instance.updateRecord("1231237", false, 0, 25);
-//			UserDBMgr.instance.updateRecord("1231237", false, 1, 54);
-//			UserDBMgr.instance.updateRecord("1231237", false, 2, 91);
-//			UserDBMgr.instance.updateRecord("1231237", false, 3, 292);
-//			UserDBMgr.instance.updateRecord("1231237", false, 4, 352);
-//			UserDBMgr.instance.updateRecord("1231237", true, 0, 25);
-//			UserDBMgr.instance.updateRecord("1231237", true, 1, 62);
-//			UserDBMgr.instance.updateRecord("1231237", true, 2, 78);
-//			UserDBMgr.instance.updateRecord("1231237", true, 3, 192);
-//			UserDBMgr.instance.updateRecord("1231237", true, 4, 342);
-//			
-//			UserDBMgr.instance.insert("1231238", "점심은");
-//			UserDBMgr.instance.updateRecord("1231238", false, 0, 39);
-//			UserDBMgr.instance.updateRecord("1231238", false, 1, 35);
-//			UserDBMgr.instance.updateRecord("1231238", false, 2, 82);
-//			UserDBMgr.instance.updateRecord("1231238", false, 3, 186);
-//			UserDBMgr.instance.updateRecord("1231238", false, 4, 474);
-//			UserDBMgr.instance.updateRecord("1231238", true, 0, 34);
-//			UserDBMgr.instance.updateRecord("1231238", true, 1, 49);
-//			UserDBMgr.instance.updateRecord("1231238", true, 2, 59);
-//			UserDBMgr.instance.updateRecord("1231238", true, 3, 238);
-//			UserDBMgr.instance.updateRecord("1231238", true, 4, 432);
-//			
-//			UserDBMgr.instance.insert("1231239", "뭐먹지");
-//			UserDBMgr.instance.updateRecord("1231239", false, 0, 19);
-//			UserDBMgr.instance.updateRecord("1231239", false, 1, 34);
-//			UserDBMgr.instance.updateRecord("1231239", false, 2, 56);
-//			UserDBMgr.instance.updateRecord("1231239", false, 3, 182);
-//			UserDBMgr.instance.updateRecord("1231239", false, 4, 252);
-//			UserDBMgr.instance.updateRecord("1231239", true, 0, 23);
-//			UserDBMgr.instance.updateRecord("1231239", true, 1, 83);
-//			UserDBMgr.instance.updateRecord("1231239", true, 2, 81);
-//			UserDBMgr.instance.updateRecord("1231239", true, 3, 198);
-//			UserDBMgr.instance.updateRecord("1231239", true, 4, 672);
+		{	
 			
 			
 			_atlas = LoadMgr.instance.load(EmbeddedAssets.TitleSprite, EmbeddedAssets.TitleXml);
@@ -207,8 +168,19 @@ package scene.title
 			UserDBMgr.instance.removeEventListener("insertUser", onInsertUserComplete);
 			trace("[TITLE] insert user is done");
 			UserDBMgr.instance.updateData(UserInfo.id, "heart", 5);
+			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", 300);
 			UserDBMgr.instance.updateData(UserInfo.id, "level", 1);
 			UserDBMgr.instance.updateData(UserInfo.id, "exp", 0);
+			UserDBMgr.instance.updateData(UserInfo.id, "coin", 1000);
+			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
+			
+			UserInfo.heart = 5;
+			UserInfo.remainHeartTime = 300;
+			UserInfo.level = 1;
+			UserInfo.exp = 0;
+			UserInfo.coin = 1000;
+			
+			
 			checkDone();
 		}
 		
@@ -235,9 +207,26 @@ package scene.title
 			else if(UserInfo.exp == -1)
 			{
 				UserInfo.exp = int(event.data);	
-				checkDone();
+				
+				UserDBMgr.instance.selectData(UserInfo.id, "coin");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
 			}
 			
+			else if(UserInfo.coin == -1)
+			{
+				UserInfo.coin = int(event.data);	
+				
+				UserDBMgr.instance.selectData(UserInfo.id, "heartTime");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+			}
+			
+			else if(UserInfo.remainHeartTime == -1)
+			{
+				UserInfo.remainHeartTime = int(event.data);	
+				
+			}
+			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
+			checkDone();
 		}
 		
 //		private function onGetToken(event:StatusEvent):void
@@ -249,7 +238,9 @@ package scene.title
 		
 		private function checkDone():void
 		{
-			if(UserInfo.id != null && UserInfo.name != null && UserInfo.heart != -1 && UserInfo.level != -1 && UserInfo.exp != -1)
+			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
+			if(UserInfo.id != null && UserInfo.name != null && UserInfo.heart != -1 
+				&& UserInfo.level != -1 && UserInfo.exp != -1 && UserInfo.remainHeartTime != -1 && UserInfo.coin != -1)
 			{
 				PlatformType.current = PlatformType.FACEBOOK;
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);

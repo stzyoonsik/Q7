@@ -129,7 +129,8 @@ package scene.modeSelect.user
 				
 				if(_heartCount >= MAX_HEART)
 				{
-					_heartCount = MAX_HEART;	
+					_heartCount = MAX_HEART;
+					UserInfo.heart = _heartCount;
 				}
 				else
 				{
@@ -184,7 +185,7 @@ package scene.modeSelect.user
 			_heartCountTextField.format.size = Main.stageWidth * 0.05;			
 			addChild(_heartCountTextField);
 			
-			_remainTime = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.4, Main.stageHeight * 0.04,
+			_remainTime = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.425, Main.stageHeight * 0.04,
 				Main.stageWidth * 0.2, Main.stageHeight * 0.1, "", "center","center");
 			_remainTime.format.size = Main.stageWidth * 0.05;
 			addChild(_remainTime);			
