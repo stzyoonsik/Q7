@@ -251,6 +251,7 @@ package server
 		{
 			var urlLoader:URLLoader = event.target as URLLoader;
 			urlLoader.removeEventListener(Event.COMPLETE, onUpdateDataComplete);
+			dispatchEvent(new starling.events.Event("updateData"));
 			trace("update data is done");
 		}
 		

@@ -8,7 +8,6 @@ package scene.modeSelect
 	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
-	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.net.URLRequest;
 	import flash.ui.Keyboard;
@@ -17,6 +16,7 @@ package scene.modeSelect
 	import scene.modeSelect.custom.CustomPopup;
 	import scene.modeSelect.normal.NormalPopup;
 	import scene.modeSelect.rank.RankPopup;
+	import scene.modeSelect.shop.ShopPopup;
 	import scene.modeSelect.user.Coin;
 	import scene.modeSelect.user.Heart;
 	import scene.modeSelect.user.Level;
@@ -42,6 +42,7 @@ package scene.modeSelect
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
+	import util.EtcExtensions;
 	import util.UserInfo;
 	import util.manager.DisplayObjectMgr;
 	import util.manager.SwitchActionMgr;
@@ -54,12 +55,13 @@ package scene.modeSelect
 		
 		private var _normalPopup:NormalPopup;
 		private var _customPopup:CustomPopup;
+		private var _shopPopup:ShopPopup;
+		private var _rankPopup:RankPopup;
 		
 		private var _resume:Button;
 		private var _normal:Button;
-		private var _custom:Button;
+		private var _custom:Button;		
 		
-		private var _rankPopup:RankPopup;
 		
 		private var _userNameTextField:TextField;
 		private var _userProfileImage:Image;
@@ -67,6 +69,7 @@ package scene.modeSelect
 		private var _logOut:Button;		
 		private var _ranking:Button;
 		private var _achievement:Button;
+		private var _shop:Button;
 		
 		private var _level:Level;
 		private var _heart:Heart;
@@ -79,34 +82,23 @@ package scene.modeSelect
 		public function ModeSelect()
 		{
 			load();
-			initBackground();
-			initButton();
+			initBackground();			
 			initUser();
+			initButton();
+			initPopup();
 			
 		
-			_heart = new Heart(_atlas);
-			addChild(_heart);
 			
-			_coin = new Coin(_atlas);
-			addChild(_coin);			
 			
-			_level = new Level(_atlas);
-			addChild(_level);
 			
-			_rankPopup = new RankPopup(_atlas);
-			_rankPopup.visible = false;
-			addChild(_rankPopup);
-			
-			_normalPopup = new NormalPopup(_atlas);
-			_normalPopup.visible = false;
-			addChild(_normalPopup);
-			
-			_customPopup = new CustomPopup(_atlas);
-			_customPopup.visible = false;
-			addChild(_customPopup);
 			
 			
 			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.level, UserInfo.exp);
+//			CONFIG::local
+//			{				
+//				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getDate().toString());
+//			}
+		
 			
 //			_temp = new TextField(Main.stageWidth, Main.stageHeight * 0.2);
 //			_temp.alignPivot("center", "center");
@@ -114,6 +106,7 @@ package scene.modeSelect
 //			_temp.y = Main.stageHeight * 0.9;
 //			_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
 //			addChild(_temp);
+			
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 			
@@ -136,10 +129,6 @@ package scene.modeSelect
 		
 		public function release():void
 		{
-//			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
-//			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", _heart.remainHeartTime);
-//			UserInfo.heart--;
-//			UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
 			
 			if(_atlas) { _atlas = null; }
 			if(_normalPopup) { _normalPopup.release(); _normalPopup = null;	removeChild(_normalPopup); }
@@ -157,16 +146,13 @@ package scene.modeSelect
 			if(_heart) { _heart.release(); _heart.dispose(); _heart = null; removeChild(_heart); }
 			
 			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
-			//NativeApplication.nativeApplication.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivated);
-			//NativeApplication.nativeApplication.removeEventListener(flash.events.Event.ACTIVATE, onActivated);
+			
 		}
 		
 		private function initBackground():void
 		{
-			//var image:Image = new Image(_atlas.getTexture("background"));
-			//image.width = Main.stageWidth;
-			//image.height = Main.stageHeight;
-			var image:Image = DisplayObjectMgr.instance.setImage(_atlas.getTexture("background"), 0, 0, Main.stageWidth, Main.stageHeight);
+			var image:Image = DisplayObjectMgr.instance.setImage(_atlas.getTexture("background"), 0, 0, 
+				Main.stageWidth, Main.stageHeight);
 			addChild(image);
 		}
 		
@@ -207,7 +193,16 @@ package scene.modeSelect
 				_userNameTextField.y = Main.stageHeight * 0.15;
 				_userNameTextField.format.size = Main.stageWidth * 0.04;
 				addChild(_userNameTextField);
-			}			
+			}	
+			
+			_heart = new Heart(_atlas);
+			addChild(_heart);
+			
+			_coin = new Coin(_atlas);
+			addChild(_coin);			
+			
+			_level = new Level(_atlas);
+			addChild(_level);
 			
 		}
 		
@@ -246,6 +241,10 @@ package scene.modeSelect
 				_achievement.alpha = 0.5;
 				_achievement.touchable = false;
 			}
+			
+			_shop = DisplayObjectMgr.instance.setButton(_shop, _atlas.getTexture("button"), Main.stageWidth * 0.85, Main.stageHeight * 0.075, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "상점", Main.stageWidth * 0.05);
+			_shop.addEventListener(TouchEvent.TOUCH, onTouchShop);
+			addChild(_shop); 
 				
 			
 			
@@ -270,6 +269,25 @@ package scene.modeSelect
 			addChild(_custom);
 		}
 		
+		private function initPopup():void
+		{
+			_shopPopup = new ShopPopup(_atlas);
+			_shopPopup.addEventListener("boughtItem", onBoughtItem);
+			_shopPopup.visible = false;
+			addChild(_shopPopup);
+			
+			_rankPopup = new RankPopup(_atlas);
+			_rankPopup.visible = false;
+			addChild(_rankPopup);
+			
+			_normalPopup = new NormalPopup(_atlas);
+			_normalPopup.visible = false;
+			addChild(_normalPopup);
+			
+			_customPopup = new CustomPopup(_atlas);
+			_customPopup.visible = false;
+			addChild(_customPopup);
+		}
 		
 		
 		private function onTouchRanking(event:TouchEvent):void
@@ -338,6 +356,15 @@ package scene.modeSelect
 				//토스트로 로그아웃 알림
 			}
 		}
+		
+		private function onTouchShop(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_shop, TouchPhase.ENDED);
+			if(touch)
+			{
+				_shopPopup.visible = true;
+			}
+		}
 		 
 		private function onTouchMode(event:TouchEvent):void
 		{
@@ -364,6 +391,13 @@ package scene.modeSelect
 			
 		}
 		
+		private function onBoughtItem(event:Event):void
+		{
+			trace("아이템 삼");
+			_heart.refresh();
+			_coin.refresh();
+		}
+		
 		private function onTouchKeyBoard(event:KeyboardEvent):void
 		{
 			
@@ -383,16 +417,18 @@ package scene.modeSelect
 				{
 					_customPopup.visible = false;
 				}
+				if(_shopPopup.visible)
+				{
+					_shopPopup.visible = false;
+				}
 				
 				if(!_rankPopup.visible && !_normalPopup.visible && !_customPopup.visible)
 				{
-					//종료팝업 ane
+					EtcExtensions.exit();
 				}
 				
 			}
-		}
-		
-		
+		}		
 		
 	}
 }

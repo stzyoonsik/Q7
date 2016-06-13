@@ -64,7 +64,7 @@ package scene.modeSelect.user
 			_expImage.alignPivot("center", "center");
 			
 			//??? *2를 왜 해야하는가 미스터리
-			var mask:Quad = new Quad(_expImage.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100) * 2, _expImage.height * 2);
+			var mask:Quad = new Quad(_expImage.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100) * 3.25, _expImage.height * 3.25);
 			_expImage.mask = mask;
 			
 			addChild(_expImage);

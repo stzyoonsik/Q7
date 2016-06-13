@@ -29,6 +29,7 @@ package scene.title
 	import util.EmbeddedAssets;
 	import util.UserInfo;
 	import util.manager.DisplayObjectMgr;
+	import util.manager.FacebookExtensionManager;
 	import util.manager.LoadMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
@@ -36,7 +37,10 @@ package scene.title
 
 	public class Title extends DisplayObjectContainer
 	{
-		private var _fb:FacebookExtension = new FacebookExtension();	
+		//private var _fb:FacebookExtension = new FacebookExtension();
+		
+		private var _fb:FacebookExtensionManager;
+		
 		private var _atlas:TextureAtlas;
 		
 		private var _logInGoogle:Button;
@@ -47,12 +51,25 @@ package scene.title
 		
 		public function Title()
 		{	
+			CONFIG::device
+			{
+				_fb = new FacebookExtensionManager();
+				_fb.addEventListener("checkDone", onCheckDone);
+			}
 			
 			
 			_atlas = LoadMgr.instance.load(EmbeddedAssets.TitleSprite, EmbeddedAssets.TitleXml);
+			
 			initBackground();
-			initButton();	
-			//SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+			initButton();
+			
+			
+			CONFIG::local
+			{
+				UserInfo.test();
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+			}
+			
 					
 		}
 		public function release():void
@@ -133,119 +150,120 @@ package scene.title
 //			//SwitchActionMgr.instance.switchScenefadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 //		}
 //		
-		private function onGetObject(event:StatusEvent):void
-		{
-			
-			var data:Object = JSON.parse(event.level);
-			UserInfo.id = data.id;
-			UserInfo.name = data.name;
-			
-			//체크 하고 인서트
-			UserDBMgr.instance.checkData(UserInfo.id);
-			UserDBMgr.instance.addEventListener("checkData", onCheckDataComplete);
-			
-		}
-		
-		private function onCheckDataComplete(event:Event):void
-		{
-			trace("event.data = " + event.data);
-			UserDBMgr.instance.removeEventListener("checkData", onCheckDataComplete);
-			if(int(event.data) == 0)
-			{
-				UserDBMgr.instance.insertUser(UserInfo.id, UserInfo.name);
-				UserDBMgr.instance.addEventListener("insertUser", onInsertUserComplete);				
-			}
-			else
-			{
-				UserDBMgr.instance.selectData(UserInfo.id, "heart");
-				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
-				
-			}
-		}
-		
-		private function onInsertUserComplete(event:Event):void
-		{
-			UserDBMgr.instance.removeEventListener("insertUser", onInsertUserComplete);
-			trace("[TITLE] insert user is done");
-			UserDBMgr.instance.updateData(UserInfo.id, "heart", 5);
-			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", 300);
-			UserDBMgr.instance.updateData(UserInfo.id, "level", 1);
-			UserDBMgr.instance.updateData(UserInfo.id, "exp", 0);
-			UserDBMgr.instance.updateData(UserInfo.id, "coin", 1000);
-			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
-			
-			UserInfo.heart = 5;
-			UserInfo.remainHeartTime = 300;
-			UserInfo.level = 1;
-			UserInfo.exp = 0;
-			UserInfo.coin = 1000;
-			
-			
-			checkDone();
-		}
-		
-		private function onSelectDataComplete(event:Event):void
-		{
-			UserDBMgr.instance.removeEventListener("selectData", onSelectDataComplete);
-			
-			if(UserInfo.heart == -1)
-			{
-				UserInfo.heart = int(event.data);				
-				
-				UserDBMgr.instance.selectData(UserInfo.id, "level");
-				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
-			}
-			
-			else if(UserInfo.level == -1)
-			{
-				UserInfo.level = int(event.data);				
-				
-				UserDBMgr.instance.selectData(UserInfo.id, "exp");
-				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
-			}
-			
-			else if(UserInfo.exp == -1)
-			{
-				UserInfo.exp = int(event.data);	
-				
-				UserDBMgr.instance.selectData(UserInfo.id, "coin");
-				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
-			}
-			
-			else if(UserInfo.coin == -1)
-			{
-				UserInfo.coin = int(event.data);	
-				
-				UserDBMgr.instance.selectData(UserInfo.id, "heartTime");
-				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
-			}
-			
-			else if(UserInfo.remainHeartTime == -1)
-			{
-				UserInfo.remainHeartTime = int(event.data);	
-				
-			}
-			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
-			checkDone();
-		}
-		
-//		private function onGetToken(event:StatusEvent):void
+//		private function onGetObject(event:StatusEvent):void
 //		{
-//			_token = event.level;
+//			
+//			var data:Object = JSON.parse(event.level);
+//			UserInfo.id = data.id;
+//			UserInfo.name = data.name;
+//			
+//			//체크 하고 인서트
+//			UserDBMgr.instance.checkData(UserInfo.id);
+//			UserDBMgr.instance.addEventListener("checkData", onCheckDataComplete);
+//			
+//		}
+//		
+//		private function onCheckDataComplete(event:Event):void
+//		{
+//			trace("event.data = " + event.data);
+//			UserDBMgr.instance.removeEventListener("checkData", onCheckDataComplete);
+//			if(int(event.data) == 0)
+//			{
+//				UserDBMgr.instance.insertUser(UserInfo.id, UserInfo.name);
+//				UserDBMgr.instance.addEventListener("insertUser", onInsertUserComplete);				
+//			}
+//			else
+//			{
+//				UserDBMgr.instance.selectData(UserInfo.id, "heart");
+//				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+//				
+//			}
+//		}
+//		
+//		private function onInsertUserComplete(event:Event):void
+//		{
+//			UserDBMgr.instance.removeEventListener("insertUser", onInsertUserComplete);
+//			trace("[TITLE] insert user is done");
+//			UserDBMgr.instance.updateData(UserInfo.id, "heart", 5);
+//			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", 300);
+//			UserDBMgr.instance.updateData(UserInfo.id, "level", 1);
+//			UserDBMgr.instance.updateData(UserInfo.id, "exp", 0);
+//			UserDBMgr.instance.updateData(UserInfo.id, "coin", 1000);
+//			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
+//			
+//			UserInfo.heart = 5;
+//			UserInfo.remainHeartTime = 300;
+//			UserInfo.level = 1;
+//			UserInfo.exp = 0;
+//			UserInfo.coin = 1000;
+//			
 //			
 //			checkDone();
-//		} 
-		
-		private function checkDone():void
-		{
-			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
-			if(UserInfo.id != null && UserInfo.name != null && UserInfo.heart != -1 
-				&& UserInfo.level != -1 && UserInfo.exp != -1 && UserInfo.remainHeartTime != -1 && UserInfo.coin != -1)
-			{
-				PlatformType.current = PlatformType.FACEBOOK;
-				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
-			}
-		}
+//		}
+//		
+//		private function onSelectDataComplete(event:Event):void
+//		{
+//			UserDBMgr.instance.removeEventListener("selectData", onSelectDataComplete);
+//			
+//			if(UserInfo.heart == -1)
+//			{
+//				UserInfo.heart = int(event.data);				
+//				
+//				UserDBMgr.instance.selectData(UserInfo.id, "level");
+//				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+//			}
+//			
+//			else if(UserInfo.level == -1)
+//			{
+//				UserInfo.level = int(event.data);				
+//				
+//				UserDBMgr.instance.selectData(UserInfo.id, "exp");
+//				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+//			}
+//			
+//			else if(UserInfo.exp == -1)
+//			{
+//				UserInfo.exp = int(event.data);	
+//				
+//				UserDBMgr.instance.selectData(UserInfo.id, "coin");
+//				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+//			}
+//			
+//			else if(UserInfo.coin == -1)
+//			{
+//				UserInfo.coin = int(event.data);	
+//				
+//				UserDBMgr.instance.selectData(UserInfo.id, "heartTime");
+//				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+//			}
+//			
+//			else if(UserInfo.remainHeartTime == -1)
+//			{
+//				UserInfo.remainHeartTime = int(event.data);	
+//				
+//			}
+//			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
+//			checkDone();
+//		}
+//		
+////		private function onGetToken(event:StatusEvent):void
+////		{
+////			_token = event.level;
+////			
+////			checkDone();
+////		} 
+//		
+//		private function checkDone():void
+//		{
+//			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
+//			
+//			if(UserInfo.id != null && UserInfo.name != null && UserInfo.heart != -1 
+//				&& UserInfo.level != -1 && UserInfo.exp != -1 && UserInfo.remainHeartTime != -1 && UserInfo.coin != -1)
+//			{
+//				PlatformType.current = PlatformType.FACEBOOK;
+//				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+//			}
+//		}
 //		
 //		
 //				
@@ -284,9 +302,14 @@ package scene.title
 			if(touch)
 			{
 				_fb.logIn();
-				_fb.addEventListener("getObject", onGetObject);
+				//_fb.addEventListener("getObject", onGetObject);
 				//_fb.addEventListener("getToken", onGetToken);
 			}
+		}
+		
+		private function onCheckDone(event:Event):void
+		{
+			SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 	}
 }

@@ -19,15 +19,15 @@ package scene.modeSelect.user
 	public class Heart extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
-		private var _heartCount:int;
+		//private var _heartCount:int;
 		private var _heartCountTextField:TextField;
 		private var _remainTime:TextField;
 		private var _heart:Image;
 		
 		private var _timer:Timer;
 		
-		private const HEART_GEN_TIME:int = 300;
-		private const MAX_HEART:int = 10;
+		//private const HEART_GEN_TIME:int = 300;
+		//private const MAX_HEART:int = UserInfo.MAX_HEART;
 		
 		private var _lastDate:Number = 0;
 		
@@ -39,7 +39,7 @@ package scene.modeSelect.user
 			initImage();
 			initTextField();
 			
-			_heartCount = UserInfo.heart;
+			//_heartCount = UserInfo.heart;
 			
 			getLastDateTime();
 		}
@@ -62,13 +62,18 @@ package scene.modeSelect.user
 		{
 			if(_heartCountTextField)
 			{
-				if(_heartCount >= MAX_HEART)
+				if(UserInfo.heart >= UserInfo.MAX_HEART)
 				{
+					UserInfo.heart = UserInfo.MAX_HEART;
 					_heartCountTextField.text = "MAX";
+					if(_timer)
+						_timer.stop();
+					UserInfo.remainHeartTime = UserInfo.HEART_GEN_TIME;
+					_remainTime.text = "";
 				}
 				else
 				{
-					_heartCountTextField.text = _heartCount.toString();
+					_heartCountTextField.text = UserInfo.heart.toString();
 				}
 			}
 		}
@@ -106,18 +111,20 @@ package scene.modeSelect.user
 			//잠수 시간이 하트 남은 시간보다 크면
 			if(inactiveTime != -1)
 			{
+				var count:int;
+				
 				if(inactiveTime >= _remainHeartTime)
 				{
 					//하트 ++;
 					inactiveTime -= _remainHeartTime;
-					_heartCount++;
-					while(inactiveTime > HEART_GEN_TIME)
+					count++;
+					while(inactiveTime > UserInfo.HEART_GEN_TIME)
 					{
-						inactiveTime -= HEART_GEN_TIME;
-						_heartCount++;
+						inactiveTime -= UserInfo.HEART_GEN_TIME;
+						count++;
 					}
 					
-					UserInfo.heart = _heartCount;
+					UserInfo.heart += count;
 					
 				}
 					//잠수 시간이 하트 남은시간보다 작으면
@@ -127,16 +134,18 @@ package scene.modeSelect.user
 				}
 				
 				
-				if(_heartCount >= MAX_HEART)
+				if(UserInfo.heart >= UserInfo.MAX_HEART)
 				{
-					_heartCount = MAX_HEART;
-					UserInfo.heart = _heartCount;
+					UserInfo.heart = UserInfo.MAX_HEART;
+					
+					UserInfo.remainHeartTime = 300;
+					UserDBMgr.instance.updateData(UserInfo.id, "heartTime", UserInfo.remainHeartTime);
 				}
 				else
 				{
 					if(_remainHeartTime == 0)
 					{
-						_timer = new Timer(1000, HEART_GEN_TIME);
+						_timer = new Timer(1000, UserInfo.HEART_GEN_TIME);
 					}
 					else
 					{
@@ -153,6 +162,8 @@ package scene.modeSelect.user
 				UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
 				refresh();
 			}
+			
+			dispatchEvent(new Event("loadingDone"));
 			
 			
 		}
@@ -181,7 +192,7 @@ package scene.modeSelect.user
 		private function initTextField():void
 		{
 			_heartCountTextField = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.275, Main.stageHeight * 0.04,
-				Main.stageWidth * 0.2, Main.stageHeight * 0.1, _heartCount.toString(), "center","center");
+				Main.stageWidth * 0.2, Main.stageHeight * 0.1, UserInfo.heart.toString(), "center","center");
 			_heartCountTextField.format.size = Main.stageWidth * 0.05;			
 			addChild(_heartCountTextField);
 			
@@ -201,22 +212,22 @@ package scene.modeSelect.user
 		
 		private function onTimerComplete(event:TimerEvent):void
 		{
-			if(_heartCount < MAX_HEART)
+			if(UserInfo.heart < UserInfo.MAX_HEART)
 			{
-				_heartCount++;
+				UserInfo.heart++;
 				refresh();
-				UserInfo.heart = _heartCount;
 				UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
 			}	
 			
-			if(_heartCount >= MAX_HEART)
+			if(UserInfo.heart >= UserInfo.MAX_HEART)
 			{
 				_timer = null;
 				_remainTime = null;
+				//_remainTime.text = "";
 			}
 			else
 			{
-				_timer.repeatCount = HEART_GEN_TIME;
+				_timer.repeatCount = UserInfo.HEART_GEN_TIME;
 				_timer.reset();
 				_timer.start();	
 			}

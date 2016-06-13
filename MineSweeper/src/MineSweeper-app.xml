@@ -291,6 +291,9 @@
 						android:theme="@android:style/Theme.Translucent.NoTitleBar"
 						android:label="@string/app_name"/>
 						
+					<service android:name="com.stzyoonsik.extensions.LocalNotificationService"/>
+                   	<receiver android:name="com.stzyoonsik.extensions.AlarmReceiver" android:process=":remote"></receiver>
+						
 					<!--	
 					<meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 747450661051" />
 					<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
@@ -318,7 +321,15 @@
 
 
 
+
+
+
+
+
 <extensions>
         <extensionID>com.yoonsik.FacebookExtension</extensionID>
+        
+    <extensionID>com.stzyoonsik.LocalNotiExtension</extensionID>
+    <extensionID>com.yoonsik.YoonsikExtension</extensionID>
     </extensions>
 </application>

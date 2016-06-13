@@ -23,6 +23,19 @@ package scene.modeSelect.user
 			initTextField();
 		}
 		
+		public function refresh():void
+		{
+			if(_coinTextField)
+			{
+				_coinTextField.text = UserInfo.coin.toString();
+			}
+		}
+		
+		public function release():void
+		{
+			
+		}
+		
 		private function initImage():void
 		{
 			_coinImage = DisplayObjectMgr.instance.setImage(_atlas.getTexture("coin"), Main.stageWidth * 0.55, Main.stageHeight * 0.04

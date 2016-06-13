@@ -2,7 +2,7 @@ package util
 {
 	import starling.textures.Texture;
 
-	public final class UserInfo
+	public class UserInfo
 	{
 		public static var id:String = null;
 		public static var name:String = null;
@@ -12,5 +12,20 @@ package util
 		public static var heart:int = -1;
 		public static var remainHeartTime:int = -1;
 		public static var coin:int = -1;
+		
+		public static const MAX_HEART:int = 10;
+		public static const HEART_GEN_TIME:int = 300;
+		
+		public static function test():void
+		{
+			id = "769885983113557";	
+			name = "abcd";
+			level = 2;
+			exp = 100;
+			heart = 5;
+			remainHeartTime = 300;
+			coin = 1000;
+		}
+		
 	}
 }
