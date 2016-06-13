@@ -17,6 +17,7 @@ package
 	import starling.utils.RectangleUtil;
 	import starling.utils.ScaleMode;
 	
+	import util.LocalNotification;
 	import util.UserInfo;
 	import util.type.PlatformType;
 	
@@ -51,6 +52,16 @@ package
 			{
 				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
 				UserDBMgr.instance.updateData(UserInfo.id, "heartTime", UserInfo.remainHeartTime);
+				
+				CONFIG::device
+				{
+					var fullHeartTime:int = UserInfo.remainHeartTime + (((UserInfo.MAX_HEART - 1) - UserInfo.heart) * UserInfo.HEART_GEN_TIME);
+					//var localNoti:LocalNotification = new LocalNotification();
+					trace(fullHeartTime);
+					if(fullHeartTime != 0)
+						LocalNotification.push("지뢰찾기", "하트가 꽉 찼어요~ 게임하러 고고~", fullHeartTime);
+				}
+				 
 			}
 			
 			
@@ -61,6 +72,12 @@ package
 		private function onActivated(event:flash.events.Event):void 
 		{
 			trace("active");
+			//var localNoti:LocalNotification = new LocalNotification();
+			CONFIG::device
+			{
+				LocalNotification.pop();	
+			}
+			
 			Starling.current.start();
 		}
 		
