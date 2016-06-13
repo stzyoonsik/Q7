@@ -35,6 +35,7 @@ package scene.game
 	
 	import util.EmbeddedAssets;
 	import util.LevelSystem;
+	import util.Reward;
 	import util.UserInfo;
 	import util.manager.AchievementMgr;
 	import util.manager.IOMgr;
@@ -63,7 +64,7 @@ package scene.game
 		
 		private var _isGameEnded:Boolean;
 		
-		//지역변수로
+		
 		private var _beginPos:Point;
 		private var _endedPos:Point;
 		
@@ -95,7 +96,7 @@ package scene.game
 				if(_pausePopup)
 					_pausePopup.visible = true;
 				if(_time)
-					_time.timer.stop();
+					_time.stop();
 				if(_countDown)
 					_countDown.reset();
 			}
@@ -132,11 +133,12 @@ package scene.game
 		private function onEndCountDown(event:Event):void
 		{
 			_countDown.removeEventListener("endTimer", onEndCountDown);
-			_countDown.release();
-			_countDown = null;
+			_countDown.visible = false;
+			//_countDown.release();
+			//_countDown = null;
 			//게임 시작
 			if(_time)
-				_time.timer.start();
+				_time.start();
 			
 		}
 		
@@ -230,60 +232,17 @@ package scene.game
 		
 		public function release():void
 		{
-			if(_gameAtlas != null)
-			{
-				_gameAtlas = null;
-			}
-			if(_modeAtlas != null)
-			{
-				_modeAtlas = null;
-			}
-			if(_board)
-			{
-				_board = null;
-				removeChild(_board);
-			}
+			if(_gameAtlas != null) { _gameAtlas = null;	}
+			if(_modeAtlas != null) { _modeAtlas = null; }
+			if(_board) { _board.release(); _board = null;	removeChild(_board); }
+			if(_time) { _time.release(); _time = null; removeChild(_time); }
+			if(_item) {	_item.release(); _item = null; removeChild(_item); }			
+			if(_pausePopup) { _pausePopup.release(); _pausePopup = null; removeChild(_pausePopup); }
+			if(_clearPopup) { _clearPopup.release(); _clearPopup = null; removeChild(_clearPopup); }
+			if(_gameOver) { _gameOver.release(); _gameOver = null; removeChild(_gameOver); }
+			if(_warning) { _warning.release(); _warning = null;	removeChild(_warning); }
+			if(_countDown) { _countDown.release(); _countDown = null; }
 			
-			if(_time)
-			{
-				_time.release();
-				_time = null;
-				removeChild(_time);
-			}
-			
-			if(_item)
-			{
-				_item.release();
-				_item = null;
-				removeChild(_item);
-			}
-			
-			if(_pausePopup)
-			{
-				_pausePopup = null;
-				removeChild(_pausePopup);
-			}
-			
-			if(_clearPopup)
-			{
-				_clearPopup = null;
-				removeChild(_clearPopup);
-			}
-			
-			if(_gameOver)
-			{
-				_gameOver = null;
-				removeChild(_gameOver);
-			}
-			
-			if(_warning)
-			{
-				_warning = null;
-				removeChild(_warning);
-			}
-			
-			_beginPos = null;
-			_endedPos = null;
 			
 			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
@@ -299,9 +258,9 @@ package scene.game
 			
 			//타이머 안의 이벤트 제거해야함
 			
-			_time.timer.stop();
+			_time.stop();
 			
-			_gameOver.text.text = "GAME OVER";
+			_gameOver.textField.text = "GAME OVER";
 			_gameOver.visible = true;
 			
 			IOMgr.instance.removeData();
@@ -316,7 +275,7 @@ package scene.game
 			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
 			
-			_time.timer.stop();
+			_time.stop();
 			
 			//구글로 로그인 했으면		
 			if(PlatformType.current == PlatformType.GOOGLE)
@@ -333,16 +292,17 @@ package scene.game
 				if(_board.difficulty != DifficultyType.CUSTOM)
 				{
 					//경험치 보상
-					UserInfo.exp += LevelSystem.getRewardExp(_board.difficulty);				
+					UserInfo.exp += Reward.getRewardExp(_board.difficulty);				
 					while(LevelSystem.checkLevelUp(UserInfo.level, UserInfo.exp))
 					{					
 						UserInfo.exp -= LevelSystem.getNeedExp(UserInfo.level);
 						UserInfo.level++;
 					}
-					//UserInfo.exp = LevelSystem.levelUp(UserInfo.level, UserInfo.exp);
+					UserInfo.coin += Reward.getRewardCoin(_board.difficulty); 
 					
 					UserDBMgr.instance.updateData(UserInfo.id, "level", UserInfo.level);
 					UserDBMgr.instance.updateData(UserInfo.id, "exp", UserInfo.exp);
+					UserDBMgr.instance.updateData(UserInfo.id, "coin", UserInfo.coin);
 					
 					UserDBMgr.instance.addEventListener("selectRecord", onSelectRecordComplete);
 					UserDBMgr.instance.selectRecord(UserInfo.id, _board.isItemMode, _board.difficulty);				
@@ -353,11 +313,13 @@ package scene.game
 			{
 				_clearPopup.visible = true;
 				var isItem:String = _board.isItemMode == true ? "O" : "X";
-				_clearPopup.textField.text = "이름 : " + UserInfo.name + "\n" + "아이템 : " + isItem + "\n" + "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 : " + _time.realTime.toString();
+				_clearPopup.textField.text = "이름 : " + UserInfo.name + "\n" + "아이템 : " + isItem + "\n"
+											+ "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 : "
+											+ _time.realTime.toString() + "\n" + "보상 : " + Reward.getRewardCoin(_board.difficulty).toString() + "코인";
 			}
 			
 			
-			_gameOver.text.text = "GAME CLEAR";
+			_gameOver.textField.text = "GAME CLEAR";
 			_gameOver.visible = true;
 			
 			IOMgr.instance.removeData();
@@ -392,6 +354,7 @@ package scene.game
 			var touch:Touch = event.getTouch(_board);
 			if(touch)
 			{
+				
 				if(touch.phase == TouchPhase.BEGAN)
 				{
 					_beginPos = touch.getLocation(parent);
@@ -402,7 +365,8 @@ package scene.game
 					var previousPos:Point = touch.getPreviousLocation(parent);
 					var delta:Point = currentPos.subtract(previousPos);
 					
-					if(Math.abs(currentPos.x - _beginPos.x) > Main.stageWidth * 0.1 || Math.abs(currentPos.y - _beginPos.y) > Main.stageHeight * 0.1)
+					if(Math.abs(currentPos.x - _beginPos.x) > Main.stageWidth * 0.1 ||
+						Math.abs(currentPos.y - _beginPos.y) > Main.stageHeight * 0.1)
 					{
 						_board.isScrolled = true;
 						_board.hoverCount = 0;
@@ -498,7 +462,7 @@ package scene.game
 			}	
 			else
 			{
-				_time.timer.start();
+				_time.start();
 			}
 		}
 		
@@ -510,16 +474,27 @@ package scene.game
 		private function onAgain(event:Event):void
 		{
 			trace("onAgain");
-			removeChildren();
-			release();
+			if(UserInfo.heart > 0)
+			{
+				//하트 빼야함
+				UserInfo.heart--;
+				UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);
+				removeChildren();
+				release();
+				
+				_gameAtlas = LoadMgr.instance.load(EmbeddedAssets.GameSprite, EmbeddedAssets.GameXml);
+				_modeAtlas = LoadMgr.instance.load(EmbeddedAssets.ModeSprite, EmbeddedAssets.ModeXml);
+				initBackground();
+				initBoard(_data);
+				initPopup(_modeAtlas);
+				
+				NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+			}
+			else
+			{
+				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+			}
 			
-			_gameAtlas = LoadMgr.instance.load(EmbeddedAssets.GameSprite, EmbeddedAssets.GameXml);
-			_modeAtlas = LoadMgr.instance.load(EmbeddedAssets.ModeSprite, EmbeddedAssets.ModeXml);
-			initBackground();
-			initBoard(_data);
-			initPopup(_modeAtlas);
-			
-			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
 		private function checkNewRecord(preTime:int, curTime:int):Boolean
@@ -541,7 +516,7 @@ package scene.game
 			{
 				if(_time)
 				{
-					_time.timer.stop();
+					_time.stop();
 				}
 			}
 		}  
@@ -556,7 +531,7 @@ package scene.game
 			{
 				if(_time)
 				{
-					_time.timer.start();
+					_time.start();
 				}
 			}
 		}
