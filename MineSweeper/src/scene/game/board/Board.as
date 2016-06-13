@@ -59,6 +59,36 @@ package scene.game.board
 		private var _resumeImages:Array;
 		private var _resumeItems:Array;
 		
+		public function get isItemMode():Boolean { return _isItemMode; }
+		
+		public function get isFirstTouch():Boolean { return _isFirstTouch; }
+		
+		public function get difficulty():int { return _difficulty; }
+		
+		public function get items():Array { return _items; }
+		
+		public function get numberOfMine():int { return _numberOfMine; }
+		
+		public function get chanceToGetItem():Number { return _chanceToGetItem; }
+		
+		public function get images():Array { return _images; }
+		
+		public function get datas():Array { return _datas; }
+		
+		public function get maxCol():int { return _maxCol; }
+		
+		public function get maxRow():int { return _maxRow; }
+		
+		public function get numberOfMineFinder():int { return _numberOfMineFinder; }
+		
+		public function set isMineFinderSelected(value:Boolean):void { _isMineFinderSelected = value; }
+		
+		public function get hoverCount():int{ return _hoverCount;	}
+		public function set hoverCount(value:int):void{ _hoverCount = value; }
+		
+		public function get isScrolled():Boolean{ return _isScrolled; }
+		public function set isScrolled(value:Boolean):void{ _isScrolled = value; }
+		
 		/** resume=0 일반,커스텀  resume=1 이어하기*/
 		public function Board(isResume:Boolean, atlas:TextureAtlas, isItemMode:Boolean, difficulty:int, maxRow:int, maxCol:int, mineNum:int = 0, finderNum:int = 0, chanceToGetItem:Number = 0.0,
 								resumeDatas:Array = null, resumeImages:Array = null, resumeItems:Array = null)
@@ -89,35 +119,7 @@ package scene.game.board
 			
 		}
 		
-		public function get isItemMode():Boolean { return _isItemMode; }
-
-		public function get isFirstTouch():Boolean { return _isFirstTouch; }
-
-		public function get difficulty():int { return _difficulty; }
-
-		public function get items():Array { return _items; }
-
-		public function get numberOfMine():int { return _numberOfMine; }
-
-		public function get chanceToGetItem():Number { return _chanceToGetItem; }
-
-		public function get images():Array { return _images; }
-
-		public function get datas():Array { return _datas; }
-
-		public function get maxCol():int { return _maxCol; }
-
-		public function get maxRow():int { return _maxRow; }
-
-		public function get numberOfMineFinder():int { return _numberOfMineFinder; }
-
-		public function set isMineFinderSelected(value:Boolean):void { _isMineFinderSelected = value; }
-
-		public function get hoverCount():int{ return _hoverCount;	}
-		public function set hoverCount(value:int):void{ _hoverCount = value; }
-
-		public function get isScrolled():Boolean{ return _isScrolled; }
-		public function set isScrolled(value:Boolean):void{ _isScrolled = value; }
+		
 
 		private function init():void
 		{
@@ -125,6 +127,27 @@ package scene.game.board
 			this.x = -Main.stageWidth * 0.1;
 			this.y = Main.stageHeight * 0.25;
 			addEventListener(TouchEvent.TOUCH, onTouchBlock);
+		}
+		
+		public function release():void
+		{
+			if(_atlas) { _atlas.dispose(); _atlas = null; }
+			if(_datas) { releaseArray(_datas); }
+			if(_images) { releaseArray(_images); }
+			if(_items) { releaseArray(_items); }
+			if(_resumeDatas) { releaseArray(_resumeDatas); }
+			if(_resumeImages) { releaseArray(_resumeImages); }
+			if(_resumeItems) { releaseArray(_resumeItems); }
+		}
+		
+		private function releaseArray(array:Array):void
+		{
+			for(var i:int = 0; i < array.length; ++i)
+			{
+				array[i] = null;
+			}
+			
+			array.splice(0, array.length - 1);
 		}
 		
 		/**
