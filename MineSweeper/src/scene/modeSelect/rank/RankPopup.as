@@ -144,6 +144,10 @@ package scene.modeSelect.rank
 		
 		private function initBackground():void
 		{
+			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
+			quad.alpha = 0.5;
+			addChild(quad);
+			
 			var background:Image = new Image(_atlas.getTexture("popupBg"));
 			background.width = Main.stageWidth * 0.8;
 			background.height = Main.stageHeight * 0.8;
@@ -272,7 +276,7 @@ package scene.modeSelect.rank
 				}
 			}
 		}
-		
+		 
 		private function onTouchNext(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_next, TouchPhase.ENDED);

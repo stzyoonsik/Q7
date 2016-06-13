@@ -75,8 +75,12 @@ package scene.modeSelect.normal
 			//NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
-		private function initBackground():void
+		private function initBackground():void			
 		{
+			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
+			quad.alpha = 0.5;
+			addChild(quad);
+			
 			var background:Image = new Image(_atlas.getTexture("popupBg"));
 			background.width = Main.stageWidth * 0.9;
 			background.height = Main.stageHeight * 0.85;
@@ -148,25 +152,25 @@ package scene.modeSelect.normal
 		
 		private function initLock():void
 		{
-			if(UserInfo.level < 3)
+			if(UserInfo.level < 2)
 			{		
 				lockButton(_easy);
 				lockButton(_normal);
 				lockButton(_hard);
 				lockButton(_veryHard);
 			}
-			else if(UserInfo.level < 4)
+			else if(UserInfo.level < 3)
 			{				
 				lockButton(_normal);
 				lockButton(_hard);
 				lockButton(_veryHard);
 			} 
-			else if(UserInfo.level < 5)
+			else if(UserInfo.level < 4)
 			{				
 				lockButton(_hard);
 				lockButton(_veryHard);
 			} 
-			else if(UserInfo.level < 6)
+			else if(UserInfo.level < 5)
 			{				
 				lockButton(_veryHard);
 			} 

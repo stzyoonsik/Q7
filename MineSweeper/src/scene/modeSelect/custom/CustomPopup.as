@@ -13,6 +13,7 @@ package scene.modeSelect.custom
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
+	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -66,11 +67,8 @@ package scene.modeSelect.custom
 		
 		public function release():void
 		{
-			if(_start)
-			{
-				_start.removeEventListener(TouchEvent.TOUCH, onTouchStart);
-				_start = null;				
-			}
+			if(_atlas) { _atlas.dispose(); _atlas = null; }
+			if(_start) { _start.removeEventListener(TouchEvent.TOUCH, onTouchStart); _start = null;	}
 			if(_slider)
 			{				
 				_slider.release();
@@ -82,6 +80,10 @@ package scene.modeSelect.custom
 		
 		private function initBackground():void
 		{
+			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
+			quad.alpha = 0.5;
+			addChild(quad);
+			
 			var background:Image = new Image(_atlas.getTexture("popupBg"));
 			background.width = Main.stageWidth;
 			background.height = Main.stageHeight * 0.85;
