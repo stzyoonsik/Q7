@@ -56,14 +56,14 @@ package scene.game.board
 			trace("CountDown Release");
 			if(_background)
 			{
-				removeChild(_background);
+				_background.dispose();
 				_background = null;
+				removeChild(_background);				
 			}
 			if(_textField)
 			{		
-				removeChild(_textField);
 				_textField = null;
-				
+				removeChild(_textField);
 			}
 			if(_timer)
 			{
@@ -98,7 +98,6 @@ package scene.game.board
 		 */
 		private function onTimer(event:TimerEvent):void
 		{
-			trace(_count);
 			_count--;
 			_textField.text = _count.toString();
 		}
@@ -111,7 +110,6 @@ package scene.game.board
 		private function onTimerComplete(event:TimerEvent):void
 		{
 			_isCountEnd = true;
-			//_timer.stop();
 			dispatchEvent(new Event("endTimer"));
 		}
 	}

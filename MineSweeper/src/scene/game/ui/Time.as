@@ -27,9 +27,6 @@ package scene.game.ui
 		
 		public function get realTime():int { return _realTime; }
 		public function set realTime(value:int):void { _realTime = value; }
-
-		public function get timer():Timer {	return _timer; }
-		public function set timer(value:Timer):void { _timer = value; }
 		
 		public function Time(atlas:TextureAtlas, addTime:int)
 		{
@@ -74,6 +71,7 @@ package scene.game.ui
 		{
 			if(_atlas)
 			{
+				_atlas.dispose();
 				_atlas = null;
 			}
 			
@@ -85,23 +83,39 @@ package scene.game.ui
 			
 			if(_10minuteImage)
 			{
+				_10minuteImage.dispose();
 				_10minuteImage = null;
 			}
 			
 			if(_1minuteImage)
 			{
+				_1minuteImage.dispose();
 				_1minuteImage = null;				
 			}
 			
 			if(_10secondImage)
 			{
+				_10secondImage.dispose();
 				_10secondImage = null;
 			}
 			
 			if(_1secondImage)
 			{
+				_1secondImage.dispose();
 				_1secondImage = null;
 			}
+			
+			removeChildren(0, this.numChildren - 1, true);
+		}
+		
+		public function start():void
+		{
+			_timer.start();
+		}
+		
+		public function stop():void
+		{
+			_timer.stop();
 		}
 
 		/**

@@ -41,18 +41,30 @@ package scene.game.popup
 		
 		public function release():void
 		{
+			if(_atlas)
+			{
+				_atlas.dispose();
+				_atlas = null;
+			}
 			if(_exit)
 			{
 				_exit.dispose();
-				_exit.removeEventListener(TouchEvent.TOUCH, onTouchYes);
+				_exit.removeEventListener(TouchEvent.TOUCH, onTouchExit);
 				_exit = null;
 			}
 			
 			if(_resume)
 			{
 				_resume.dispose();
-				_resume.removeEventListener(TouchEvent.TOUCH, onTouchNo);
+				_resume.removeEventListener(TouchEvent.TOUCH, onTouchResume);
 				_resume = null;
+			}
+			
+			if(_again)
+			{
+				_again.dispose();
+				_again.removeEventListener(TouchEvent.TOUCH, onTouchAgain);
+				_again = null;
 			}
 			
 			removeChildren();
@@ -83,8 +95,8 @@ package scene.game.popup
 			_resume = DisplayObjectMgr.instance.setButton(_resume, _atlas.getTexture("button"), Main.stageWidth * 0.625, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "RESUME", Main.stageWidth * 0.05);
 			
 			_again.addEventListener(TouchEvent.TOUCH, onTouchAgain);
-			_exit.addEventListener(TouchEvent.TOUCH, onTouchYes);
-			_resume.addEventListener(TouchEvent.TOUCH, onTouchNo);
+			_exit.addEventListener(TouchEvent.TOUCH, onTouchExit);
+			_resume.addEventListener(TouchEvent.TOUCH, onTouchResume);
 			
 			addChild(_again);
 			addChild(_exit);
@@ -111,7 +123,7 @@ package scene.game.popup
 		}
 		
 		
-		private function onTouchYes(event:TouchEvent):void
+		private function onTouchExit(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_exit, TouchPhase.ENDED);
 			if(touch)
@@ -120,7 +132,7 @@ package scene.game.popup
 			}
 		}
 		
-		private function onTouchNo(event:TouchEvent):void
+		private function onTouchResume(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_resume, TouchPhase.ENDED);
 			if(touch)

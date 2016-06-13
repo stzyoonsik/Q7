@@ -9,7 +9,6 @@ package scene.game.ui
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 
 	public class Item extends Sprite
 	{
@@ -18,39 +17,46 @@ package scene.game.ui
 		private var _isMineFinderSelected:Boolean;
 		private var _numberOfMineFinder:int;
 		
+		public function get mineFinder():Button { return _mineFinder; }
+		public function set mineFinder(value:Button):void {	_mineFinder = value; }
+		
+		public function get isMineFinderSelected():Boolean { return _isMineFinderSelected; }
+		
 		public function Item(atlas:TextureAtlas, finderNum:int)
 		{
 			_atlas = atlas;
 			_numberOfMineFinder = finderNum;
-			_mineFinder = new Button(_atlas.getTexture("mineFinder"), _numberOfMineFinder.toString());	
-			_mineFinder.alignPivot("center", "center");
-			//_mineFinder.
-			_mineFinder.width = Main.stageWidth * 0.15;
-			_mineFinder.height = _mineFinder.width;
-			//_mineFinder.x = Main.stageWidth * 0.8;
-			//_mineFinder.y = Main.stageHeight * 0.1;
-			_mineFinder.textFormat.size = 20;
-			_mineFinder.addEventListener(TouchEvent.TOUCH, onTouchMineFinder);
 			
-			addChild(_mineFinder);
+			initButton();
+			
 		}
-		
-		public function get mineFinder():Button { return _mineFinder; }
-		public function set mineFinder(value:Button):void {	_mineFinder = value; }
-
-		public function get isMineFinderSelected():Boolean { return _isMineFinderSelected; }
 		
 		public function release():void
 		{
 			if(_atlas)
 			{
+				_atlas.dispose();
 				_atlas = null;
 			}
 			if(_mineFinder)
 			{
+				_mineFinder.dispose();
 				_mineFinder.removeEventListener(TouchEvent.TOUCH, onTouchMineFinder);
 				_mineFinder = null;
+				removeChild(_mineFinder);
 			}
+		}
+		
+		private function initButton():void
+		{
+			_mineFinder = new Button(_atlas.getTexture("mineFinder"), _numberOfMineFinder.toString());	
+			_mineFinder.alignPivot("center", "center");
+			_mineFinder.width = Main.stageWidth * 0.15;
+			_mineFinder.height = _mineFinder.width;
+			_mineFinder.textFormat.size = 20;
+			_mineFinder.addEventListener(TouchEvent.TOUCH, onTouchMineFinder);
+			
+			addChild(_mineFinder);
 		}
 
 		private function onTouchMineFinder(event:TouchEvent):void
@@ -59,7 +65,6 @@ package scene.game.ui
 			if(touch)
 			{
 				_isMineFinderSelected = !_isMineFinderSelected;
-				//trace("[Item] " + _isMineFinderSelected);
 				dispatchEvent(new Event("mineFinder")); 
 			}
 			

@@ -42,6 +42,37 @@ package scene.game.popup
 			this.visible = false;
 		}
 		
+		public function release():void
+		{
+			if(_atlas)
+			{
+				_atlas.dispose();
+				_atlas = null;
+			}
+			if(_background)
+			{
+				_background.dispose();
+				_background = null;
+			}
+			if(_textField)
+			{
+				_textField = null;
+			}
+			if(_exit)
+			{
+				_exit.dispose();
+				_exit.removeEventListener(TouchEvent.TOUCH, onTouchExit);
+				_exit = null;
+			}
+			if(_again)
+			{
+				_again.dispose();
+				_again.removeEventListener(TouchEvent.TOUCH, onTouchAgain);
+				_again = null;
+			}
+			removeChildren(0, this.numChildren, true);
+		}
+		
 		
 
 		/** 백그라운드 초기화 메소드	 */
@@ -51,7 +82,7 @@ package scene.game.popup
 			background.x = Main.stageWidth * 0.5;
 			background.y = Main.stageHeight * 0.5;
 			background.width = Main.stageWidth * 0.6;
-			background.height = Main.stageHeight * 0.4;
+			background.height = Main.stageHeight * 0.5;
 			background.alignPivot("center","center");
 			addChild(background);
 		}
@@ -76,7 +107,7 @@ package scene.game.popup
 			_textField.format.size = Main.stageWidth * 0.05;
 			_textField.format.horizontalAlign = Align.LEFT;
 			_textField.x = Main.stageWidth * 0.5;
-			_textField.y = Main.stageHeight * 0.4;
+			_textField.y = Main.stageHeight * 0.35;
 			
 			addChild(_textField);
 		}

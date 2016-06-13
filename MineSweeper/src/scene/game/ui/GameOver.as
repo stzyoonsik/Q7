@@ -8,27 +8,36 @@ package scene.game.ui
 
 	public class GameOver extends Sprite
 	{
-		private var _text:TextField;
+		private var _textField:TextField;
 		
 		public function GameOver()
 		{		
-			_text = new TextField(Main.stageWidth, Main.stageHeight * 0.1, "GAME OVER");
-			_text.alignPivot("center", "center");
-			_text.format.size = Main.stageWidth * 0.125;
-			_text.format.color = Color.RED;
-			_text.x = Main.stageWidth * 0.5;
-			_text.y = Main.stageHeight * 0.25;
-			addChild(_text);
+			_textField = new TextField(Main.stageWidth, Main.stageHeight * 0.1, "GAME OVER");
+			_textField.alignPivot("center", "center");
+			_textField.format.size = Main.stageWidth * 0.125;
+			_textField.format.color = Color.RED;
+			_textField.x = Main.stageWidth * 0.5;
+			_textField.y = Main.stageHeight * 0.25;
+			addChild(_textField);
+		}
+		
+		public function release():void
+		{
+			if(_textField)
+			{
+				_textField = null;
+				removeChild(_textField);
+			}
 		}
 
-		public function get text():TextField
+		public function get textField():TextField
 		{
-			return _text;
+			return _textField;
 		}
 
-		public function set text(value:TextField):void
+		public function set textField(value:TextField):void
 		{
-			_text = value;
+			_textField = value;
 		}
 
 	}
