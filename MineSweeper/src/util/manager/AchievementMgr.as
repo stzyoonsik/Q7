@@ -55,31 +55,31 @@ package util.manager
 		 */
 		public function fastClear(difficulty:int, time:int):void
 		{
-//			switch(difficulty)
-//			{
-//				case DifficultyType.VERY_EASY:
-//					if(time < FAST_CLEAR_VERY_EASY)
-//						AirGooglePlayGames.getInstance().reportAchievement(ID_VERY_EASY_FAST_CLEAR);
-//					break;
-//				case DifficultyType.EASY:
-//					if(time < FAST_CLEAR_EASY)
-//						AirGooglePlayGames.getInstance().reportAchievement(ID_EASY_FAST_CLEAR);
-//					break;
-//				case DifficultyType.NORMAL:
-//					if(time < FAST_CLEAR_NORMAL)
-//						AirGooglePlayGames.getInstance().reportAchievement(ID_NORMAL_FAST_CLEAR);
-//					break;
-//				case DifficultyType.HARD:
-//					if(time < FAST_CLEAR_HARD)
-//						AirGooglePlayGames.getInstance().reportAchievement(ID_HARD_FAST_CLEAR);
-//					break;
-//				case DifficultyType.VERY_HARD:
-//					if(time < FAST_CLEAR_VERY_HARD)
-//						AirGooglePlayGames.getInstance().reportAchievement(ID_VERY_HARD_FAST_CLEAR);
-//					break;
-//				default:
-//					break;
-//			}
+			switch(difficulty)
+			{
+				case DifficultyType.VERY_EASY:
+					if(time < FAST_CLEAR_VERY_EASY)
+						AirGooglePlayGames.getInstance().reportAchievement(ID_VERY_EASY_FAST_CLEAR);
+					break;
+				case DifficultyType.EASY:
+					if(time < FAST_CLEAR_EASY)
+						AirGooglePlayGames.getInstance().reportAchievement(ID_EASY_FAST_CLEAR);
+					break;
+				case DifficultyType.NORMAL:
+					if(time < FAST_CLEAR_NORMAL)
+						AirGooglePlayGames.getInstance().reportAchievement(ID_NORMAL_FAST_CLEAR);
+					break;
+				case DifficultyType.HARD:
+					if(time < FAST_CLEAR_HARD)
+						AirGooglePlayGames.getInstance().reportAchievement(ID_HARD_FAST_CLEAR);
+					break;
+				case DifficultyType.VERY_HARD:
+					if(time < FAST_CLEAR_VERY_HARD)
+						AirGooglePlayGames.getInstance().reportAchievement(ID_VERY_HARD_FAST_CLEAR);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }
