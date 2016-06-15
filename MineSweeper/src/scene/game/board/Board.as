@@ -22,6 +22,7 @@ package scene.game.board
 	import starling.utils.Color;
 	
 	import util.IndexChecker;
+	import util.manager.SoundMgr;
 	
 	public class Board extends DisplayObjectContainer
 	{
@@ -93,6 +94,9 @@ package scene.game.board
 		public function Board(isResume:Boolean, atlas:TextureAtlas, isItemMode:Boolean, difficulty:int, maxRow:int, maxCol:int, mineNum:int = 0, finderNum:int = 0, chanceToGetItem:Number = 0.0,
 								resumeDatas:Array = null, resumeImages:Array = null, resumeItems:Array = null)
 		{
+			SoundMgr.instance.stopAll();
+			SoundMgr.instance.play("gameBgm.mp3");
+			
 			_isResume = isResume;
 			_isItemMode = isItemMode;
 			_atlas = atlas;
@@ -131,7 +135,7 @@ package scene.game.board
 		
 		public function release():void
 		{
-			if(_atlas) { _atlas.dispose(); _atlas = null; }
+			//if(_atlas) { _atlas.dispose(); _atlas = null; }
 			if(_datas) { releaseArray(_datas); }
 			if(_images) { releaseArray(_images); }
 			if(_items) { releaseArray(_items); }
@@ -414,7 +418,8 @@ package scene.game.board
 							}
 							//일반 터치
 							if(_hoverCount < MAX_HOVER_COUNT)
-							{								
+							{					
+								SoundMgr.instance.play("clickBoard.mp3");
 								trace("[Click] " + x, y, _images[y][x].name);
 								//처음 터치가 있고 난 후 지뢰를 랜덤으로 뿌림
 								if(!_isFirstTouch)
@@ -600,6 +605,7 @@ package scene.game.board
 		
 		private function onCompleteTweenLite(effect:Image):void
 		{						
+			SoundMgr.instance.play("getItem.mp3");
 			var tweenEffect:Tween = new Tween(effect, 1);
 			tweenEffect.scaleTo(3);
 			tweenEffect.fadeTo(0);
@@ -624,6 +630,7 @@ package scene.game.board
 		
 		private function onCompleteTweenEffect(event:Event):void
 		{
+			
 			trace("아이템 획득");
 			_numberOfMineFinder++;
 			dispatchEvent(new Event("getMineFinder"));

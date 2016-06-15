@@ -10,18 +10,17 @@ package scene.game.board
 	import starling.events.Event;
 	import starling.text.TextField;
 	import starling.utils.Color;
+	
+	import util.manager.SoundMgr;
 
 	public class CountDown extends DisplayObjectContainer
 	{
 		private var _background:Quad;
 		private var _textField:TextField;
 		private var _count:int;
-		
-		private var _isCountEnd:Boolean;
-		
+				
 		private var _timer:Timer;		
 
-		public function get isCountEnd():Boolean { return _isCountEnd; }
 		
 		public function CountDown(count:int)
 		{
@@ -34,6 +33,7 @@ package scene.game.board
 			_timer.addEventListener(TimerEvent.TIMER, onTimer);
 			_timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 			_timer.start();
+			SoundMgr.instance.play(_count+".mp3");
 		}		
 		
 		public function start():void
@@ -97,8 +97,10 @@ package scene.game.board
 		 * 
 		 */
 		private function onTimer(event:TimerEvent):void
-		{
+		{			
 			_count--;
+			if(_count != 0)
+				SoundMgr.instance.play(_count+".mp3");
 			_textField.text = _count.toString();
 		}
 		
@@ -109,7 +111,7 @@ package scene.game.board
 		 */
 		private function onTimerComplete(event:TimerEvent):void
 		{
-			_isCountEnd = true;
+			SoundMgr.instance.play("start.mp3");
 			dispatchEvent(new Event("endTimer"));
 		}
 	}
