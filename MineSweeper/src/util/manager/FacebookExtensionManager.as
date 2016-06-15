@@ -3,13 +3,20 @@ package util.manager
 	
 	import com.yoonsik.FacebookExtension;
 	
+	import flash.display.Bitmap;
+	import flash.display.Loader;
+	import flash.display.LoaderInfo;
 	import flash.events.StatusEvent;
+	import flash.net.URLRequest;
 	
 	import server.UserDBMgr;
 	
 	import starling.animation.Transitions;
+	import starling.display.Quad;
 	import starling.events.Event;
 	import starling.events.EventDispatcher;
+	import starling.textures.Texture;
+	import starling.textures.TextureAtlas;
 	
 	import util.EtcExtensions;
 	import util.UserInfo;
@@ -18,6 +25,9 @@ package util.manager
 
 	public class FacebookExtensionManager extends EventDispatcher
 	{
+		private var _loadingBg:Quad;
+		
+		
 		CONFIG::device 
 		{
 			private var _fb:FacebookExtension = new FacebookExtension();
@@ -44,10 +54,29 @@ package util.manager
 			UserInfo.id = data.id;
 			UserInfo.name = data.name;
 			
+			var urlRequest:URLRequest = new URLRequest("https://graph.facebook.com/"+UserInfo.id+"/picture?type=large");
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
+			loader.load(urlRequest);
+			
 			//체크 하고 인서트
 			UserDBMgr.instance.checkData(UserInfo.id);
 			UserDBMgr.instance.addEventListener("checkData", onCheckDataComplete);
 			
+		}
+		
+		
+		private function onLoadImageComplete(event:flash.events.Event):void
+		{
+			var bitmap:Bitmap = event.currentTarget.loader.content as Bitmap;
+			var texture:Texture = Texture.fromBitmap(bitmap);
+			
+			UserInfo.picture = texture;
+			
+			var loaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
+			loaderInfo.removeEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
+			
+			checkDone();
 		}
 		
 		private function onCheckDataComplete(event:Event):void
@@ -75,6 +104,7 @@ package util.manager
 			UserDBMgr.instance.updateData(UserInfo.id, "heartTime", 300);
 			UserDBMgr.instance.updateData(UserInfo.id, "level", 1);
 			UserDBMgr.instance.updateData(UserInfo.id, "exp", 0);
+			UserDBMgr.instance.updateData(UserInfo.id, "expRatio", 1);
 			UserDBMgr.instance.updateData(UserInfo.id, "coin", 1000);
 			UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
 			
@@ -87,6 +117,7 @@ package util.manager
 			
 			checkDone();
 		}
+	
 		
 		private function onSelectDataComplete(event:Event):void
 		{
@@ -112,6 +143,22 @@ package util.manager
 			{
 				UserInfo.exp = int(event.data);	
 				
+				UserDBMgr.instance.selectData(UserInfo.id, "expRatio");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+			}
+			
+			else if(UserInfo.expRatio == -1)
+			{
+				UserInfo.expRatio = int(event.data);	
+				
+				UserDBMgr.instance.selectData(UserInfo.id, "lastDate");
+				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
+			}
+			
+			else if(UserInfo.lastDate == -1)
+			{
+				UserInfo.lastDate = Number(event.data);	
+				
 				UserDBMgr.instance.selectData(UserInfo.id, "coin");
 				UserDBMgr.instance.addEventListener("selectData", onSelectDataComplete);
 			}
@@ -129,27 +176,21 @@ package util.manager
 				UserInfo.remainHeartTime = int(event.data);	
 				
 			}
-			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
+			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.expRatio, UserInfo.coin);
 			checkDone();
 		}
 		
-		//		private function onGetToken(event:StatusEvent):void
-		//		{
-		//			_token = event.level;
-		//			
-		//			checkDone();
-		//		} 
 		
 		private function checkDone():void
 		{
-			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
+			trace(UserInfo.id, UserInfo.name, UserInfo.lastDate, UserInfo.heart, UserInfo.remainHeartTime, UserInfo.level, UserInfo.exp, UserInfo.coin);
 			
-			if(UserInfo.id != null && UserInfo.name != null && UserInfo.heart != -1 
-				&& UserInfo.level != -1 && UserInfo.exp != -1 && UserInfo.remainHeartTime != -1 && UserInfo.coin != -1)
+			if(UserInfo.id != null && UserInfo.name != null && UserInfo.lastDate != -1 && UserInfo.picture != null && UserInfo.heart != -1 
+				&& UserInfo.level != -1 && UserInfo.exp != -1 && UserInfo.expRatio != -1 && UserInfo.remainHeartTime != -1 && UserInfo.coin != -1)
 			{
 				PlatformType.current = PlatformType.FACEBOOK;
 				EtcExtensions.alert(UserInfo.name + " 님 환영합니다!");
-				//SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
+				
 				dispatchEvent(new Event("checkDone"));
 			}
 		}

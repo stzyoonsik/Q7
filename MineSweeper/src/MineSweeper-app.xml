@@ -140,7 +140,7 @@
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
 	<icon>
-		<image100x100>MineSweeper.png</image100x100>
+		<image128x128>MineSweeper.png</image128x128>
 	</icon> 
 
 	<!-- Whether the application handles the update when a user double-clicks an update version
