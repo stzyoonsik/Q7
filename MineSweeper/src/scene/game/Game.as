@@ -38,9 +38,11 @@ package scene.game
 	import util.Reward;
 	import util.UserInfo;
 	import util.manager.AchievementMgr;
+	import util.manager.AtlasMgr;
 	import util.manager.IOMgr;
 	import util.manager.LeaderBoardMgr;
 	import util.manager.LoadMgr;
+	import util.manager.SoundMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
 	import util.type.DifficultyType;
@@ -72,8 +74,10 @@ package scene.game
 		
 		public function Game(data:Object)
 		{
-			_gameAtlas = LoadMgr.instance.load(EmbeddedAssets.GameSprite, EmbeddedAssets.GameXml);
-			_modeAtlas = LoadMgr.instance.load(EmbeddedAssets.ModeSprite, EmbeddedAssets.ModeXml);
+			
+			
+			_gameAtlas = AtlasMgr.instance.getAtlas("GameSprite");
+			_modeAtlas = AtlasMgr.instance.getAtlas("ModeSprite");
 			
 			_data = data;
 			
@@ -232,8 +236,8 @@ package scene.game
 		
 		public function release():void
 		{
-			if(_gameAtlas != null) { _gameAtlas = null;	}
-			if(_modeAtlas != null) { _modeAtlas = null; }
+			//if(_gameAtlas) { _gameAtlas = null;	}
+			//if(_modeAtlas) { _modeAtlas = null; }
 			if(_board) { _board.release(); _board = null;	removeChild(_board); }
 			if(_time) { _time.release(); _time = null; removeChild(_time); }
 			if(_item) {	_item.release(); _item = null; removeChild(_item); }			
@@ -249,11 +253,15 @@ package scene.game
 		
 		public function onGameOver():void
 		{
+			SoundMgr.instance.stopAll();
+			SoundMgr.instance.play("gameClear.mp3", true);
+			SoundMgr.instance.play("defeat.mp3");
 			trace("GAME OVER");
 			_board.removeEventListener("game_over", onGameOver);
 			_board.removeEventListener("game_clear", onGameClear);
 			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
+			_pausePopup.makeButtonInvisible("resume");
 			//아이템 안의 이벤트 제거해야함 release 함수 만들자
 			
 			//타이머 안의 이벤트 제거해야함
@@ -269,6 +277,9 @@ package scene.game
 		
 		public function onGameClear():void
 		{
+			SoundMgr.instance.stopAll();
+			SoundMgr.instance.play("gameClear.mp3", true);
+			SoundMgr.instance.play("victory.mp3");
 			trace("GAME CLEAR");
 			_board.removeEventListener("game_over", onGameOver);
 			_board.removeEventListener("game_clear", onGameClear);
@@ -292,11 +303,12 @@ package scene.game
 				if(_board.difficulty != DifficultyType.CUSTOM)
 				{
 					//경험치 보상
-					UserInfo.exp += Reward.getRewardExp(_board.difficulty);				
+					UserInfo.exp += Reward.getRewardExp(_board.difficulty) * UserInfo.expRatio;				
 					while(LevelSystem.checkLevelUp(UserInfo.level, UserInfo.exp))
 					{					
 						UserInfo.exp -= LevelSystem.getNeedExp(UserInfo.level);
 						UserInfo.level++;
+						UserInfo.levelUpAmount++;
 					}
 					UserInfo.coin += Reward.getRewardCoin(_board.difficulty); 
 					
@@ -313,9 +325,12 @@ package scene.game
 			{
 				_clearPopup.visible = true;
 				var isItem:String = _board.isItemMode == true ? "O" : "X";
-				_clearPopup.textField.text = "이름 : " + UserInfo.name + "\n" + "아이템 : " + isItem + "\n"
-											+ "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" + "시간 : "
-											+ _time.realTime.toString() + "\n" + "보상 : " + Reward.getRewardCoin(_board.difficulty).toString() + "코인";
+				_clearPopup.textField.text = "이름 : " + UserInfo.name + "\n" 
+											+ "아이템 : " + isItem + "\n"
+											+ "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" 
+											+ "시간 : " + _time.realTime.toString() + "\n" 
+											+ "경험치 : " + (Reward.getRewardExp(_board.difficulty) * UserInfo.expRatio).toString() + "\n" 
+											+ "보상 : " + Reward.getRewardCoin(_board.difficulty).toString() + "코인";
 			}
 			
 			
@@ -482,8 +497,8 @@ package scene.game
 				removeChildren();
 				release();
 				
-				_gameAtlas = LoadMgr.instance.load(EmbeddedAssets.GameSprite, EmbeddedAssets.GameXml);
-				_modeAtlas = LoadMgr.instance.load(EmbeddedAssets.ModeSprite, EmbeddedAssets.ModeXml);
+				_gameAtlas = AtlasMgr.instance.getAtlas("GameSprite");
+				_modeAtlas = AtlasMgr.instance.getAtlas("ModeSprite");
 				initBackground();
 				initBoard(_data);
 				initPopup(_modeAtlas);
