@@ -41,11 +41,11 @@ package scene.game.popup
 		
 		public function release():void
 		{
-			if(_atlas)
-			{
-				_atlas.dispose();
-				_atlas = null;
-			}
+//			if(_atlas)
+//			{
+//				_atlas.dispose();
+//				_atlas = null;
+//			}
 			if(_exit)
 			{
 				_exit.dispose();
@@ -68,6 +68,27 @@ package scene.game.popup
 			}
 			
 			removeChildren();
+		}
+		
+		public function makeButtonInvisible(type:String):void
+		{
+			switch(type)
+			{
+				case "exit":
+					_exit.alpha = 0.5;
+					_exit.touchable = false;
+					break;
+				case "resume":
+					_resume.alpha = 0.5;
+					_resume.touchable = false;
+					break;
+				case "again":
+					_again.alpha = 0.5;
+					_again.touchable = false;
+					break;
+				default:
+					break;
+			}
 		}
 		
 		private function initBackground():void

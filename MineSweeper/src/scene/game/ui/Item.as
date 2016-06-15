@@ -33,11 +33,11 @@ package scene.game.ui
 		
 		public function release():void
 		{
-			if(_atlas)
-			{
-				_atlas.dispose();
-				_atlas = null;
-			}
+//			if(_atlas)
+//			{
+//				_atlas.dispose();
+//				_atlas = null;
+//			}
 			if(_mineFinder)
 			{
 				_mineFinder.dispose();
