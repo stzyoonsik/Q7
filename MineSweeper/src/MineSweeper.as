@@ -19,6 +19,7 @@ package
 	
 	import util.LocalNotification;
 	import util.UserInfo;
+	import util.manager.SoundMgr;
 	import util.type.PlatformType;
 	
 	[SWF(backgroundColor="#FFFFFF", frameRate="60")]  
@@ -64,6 +65,7 @@ package
 				 
 			}
 			
+			SoundMgr.instance.pauseAll();
 			
 			Starling.current.stop(true);
 			NativeApplication.nativeApplication.executeInBackground = true;
@@ -78,6 +80,7 @@ package
 				LocalNotification.pop();	
 			}
 			
+			SoundMgr.instance.resumeAll();
 			Starling.current.start();
 		}
 		
