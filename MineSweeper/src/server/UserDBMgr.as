@@ -95,6 +95,29 @@ package server
 			trace("select data is done");
 		}
 		
+	
+		
+		public function selectItemOverTime(id:String):void
+		{
+			var urlLoader:URLLoader = new URLLoader();
+			var urlRequest:URLRequest;
+			
+			urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=itemOverTime");
+			
+			trace(urlRequest.url);
+			urlLoader.addEventListener(Event.COMPLETE, onSelectItemOverTimeComplete);
+			urlLoader.load(urlRequest);
+		}
+		
+		private function onSelectItemOverTimeComplete(event:Event):void
+		{
+			var urlLoader:URLLoader = event.target as URLLoader;
+			trace(urlLoader.data);
+			urlLoader.removeEventListener(Event.COMPLETE, onSelectItemOverTimeComplete);
+			dispatchEvent(new starling.events.Event("selectItemOverTime", false, urlLoader.data));
+			trace("select ItemOverTime is done");
+		}
+		
 		
 		public function selectRecord(id:String, isItemMode:Boolean, difficulty:int):void
 		{
@@ -106,19 +129,19 @@ package server
 				switch(difficulty)
 				{
 					case DifficultyType.VERY_EASY :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=itemVeryEasy");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=itemVeryEasy");
 						break;
 					case DifficultyType.EASY :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=itemEasy");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=itemEasy");
 						break;
 					case DifficultyType.NORMAL :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=itemNormal");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=itemNormal");
 						break;
 					case DifficultyType.HARD :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=itemHard");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=itemHard");
 						break;
 					case DifficultyType.VERY_HARD :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=itemVeryHard");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=itemVeryHard");
 						break;
 					default:
 						break;				
@@ -130,19 +153,19 @@ package server
 				switch(difficulty)
 				{
 					case DifficultyType.VERY_EASY :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=noItemVeryEasy");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=noItemVeryEasy");
 						break;
 					case DifficultyType.EASY :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=noItemEasy");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=noItemEasy");
 						break;
 					case DifficultyType.NORMAL :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=noItemNormal");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=noItemNormal");
 						break;
 					case DifficultyType.HARD :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=noItemHard");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=noItemHard");
 						break;
 					case DifficultyType.VERY_HARD :
-						urlRequest = new URLRequest(URL+"SelectData.php?id="+id+"&target=noItemVeryHard");
+						urlRequest = new URLRequest(URL+"SelectRecord.php?id="+id+"&target=noItemVeryHard");
 						break;
 					default:
 						break;				
@@ -265,19 +288,19 @@ package server
 				switch(difficulty)
 				{
 					case DifficultyType.VERY_EASY :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=itemVeryEasy&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=itemVeryEasy&value="+record);
 						break;
 					case DifficultyType.EASY :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=itemEasy&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=itemEasy&value="+record);
 						break;
 					case DifficultyType.NORMAL :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=itemNormal&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=itemNormal&value="+record);
 						break;
 					case DifficultyType.HARD :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=itemHard&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=itemHard&value="+record);
 						break;
 					case DifficultyType.VERY_HARD :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=itemVeryHard&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=itemVeryHard&value="+record);
 						break;
 					default:
 						break;				
@@ -289,19 +312,19 @@ package server
 				switch(difficulty)
 				{
 					case DifficultyType.VERY_EASY :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=noItemVeryEasy&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=noItemVeryEasy&value="+record);
 						break;
 					case DifficultyType.EASY :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=noItemEasy&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=noItemEasy&value="+record);
 						break;
 					case DifficultyType.NORMAL :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=noItemNormal&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=noItemNormal&value="+record);
 						break;
 					case DifficultyType.HARD :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=noItemHard&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=noItemHard&value="+record);
 						break;
 					case DifficultyType.VERY_HARD :
-						urlRequest = new URLRequest(URL+"UpdateData.php?id="+id+"&target=noItemVeryHard&value="+record);
+						urlRequest = new URLRequest(URL+"UpdateRecord.php?id="+id+"&target=noItemVeryHard&value="+record);
 						break;
 					default:
 						break;				
