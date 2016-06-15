@@ -34,7 +34,7 @@ package scene.modeSelect.popup.shop
 		private const HEART_PRICE:int = 100;
 		private const HEART_X5_PRICE:int = 450;
 		private const EXP_BOOST_PRICE:int = 1000;
-		private const EXP_BOOST_TERM:Number = 120000;				//밀리세컨드
+		private const EXP_BOOST_TERM:Number = 3600000;				//밀리세컨드
 		
 		public function ShopItem(num:int, goods:Texture, /*amount:String,*/ price:Texture, value:int , buy:Texture)
 		{

@@ -102,7 +102,7 @@ package scene.modeSelect.popup.shop
 			heartX5.addEventListener("boughtHeart", onBoughtHeart);
 			_itemSpr.addChild(heartX5);
 			
-			var expBoost:ShopItem = addItem(2, _atlas.getTexture("heart"), _atlas.getTexture("coin"), 1000, _atlas.getTexture("button"));
+			var expBoost:ShopItem = addItem(2, _atlas.getTexture("expBoost"), _atlas.getTexture("coin"), 1000, _atlas.getTexture("button"));
 			expBoost.y = Main.stageHeight * 0.0;
 			expBoost.addEventListener("boughtExpBoost", onBoughtExpBoost);
 			_itemSpr.addChild(expBoost);
