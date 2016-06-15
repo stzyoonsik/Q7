@@ -13,10 +13,11 @@ package scene.modeSelect
 	import flash.ui.Keyboard;
 	
 	import scene.Main;
-	import scene.modeSelect.custom.CustomPopup;
-	import scene.modeSelect.normal.NormalPopup;
-	import scene.modeSelect.rank.RankPopup;
-	import scene.modeSelect.shop.ShopPopup;
+	import scene.modeSelect.popup.custom.CustomPopup;
+	import scene.modeSelect.popup.normal.NormalPopup;
+	import scene.modeSelect.popup.rank.RankPopup;
+	import scene.modeSelect.popup.reward.RewardPopup;
+	import scene.modeSelect.popup.shop.ShopPopup;
 	import scene.modeSelect.user.Coin;
 	import scene.modeSelect.user.Heart;
 	import scene.modeSelect.user.Level;
@@ -39,12 +40,15 @@ package scene.modeSelect
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import starling.utils.Align;
 	import starling.utils.Color;
 	
 	import util.EmbeddedAssets;
 	import util.EtcExtensions;
 	import util.UserInfo;
+	import util.manager.AtlasMgr;
 	import util.manager.DisplayObjectMgr;
+	import util.manager.SoundMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
 	import util.type.SceneType;
@@ -57,6 +61,7 @@ package scene.modeSelect
 		private var _customPopup:CustomPopup;
 		private var _shopPopup:ShopPopup;
 		private var _rankPopup:RankPopup;
+		private var _rewardPopup:RewardPopup;
 		
 		private var _resume:Button;
 		private var _normal:Button;
@@ -65,6 +70,7 @@ package scene.modeSelect
 		
 		private var _userNameTextField:TextField;
 		private var _userProfileImage:Image;
+		private var _itemTextField:TextField;
 		
 		private var _logOut:Button;		
 		private var _ranking:Button;
@@ -75,25 +81,26 @@ package scene.modeSelect
 		private var _heart:Heart;
 		private var _coin:Coin;
 		
+		private var _levelUpAmount:int;
+		
 		private var _temp:TextField;
 		
 		//private var leaderBoardId:String = "CgkIu_GfvOAVEAIQCA";
 		
 		public function ModeSelect()
 		{
-			load();
+			//SoundMgr.instance.stop("titleBgm0.mp3");
+			SoundMgr.instance.stopAll();
+			SoundMgr.instance.play("modeBgm.mp3", true);
+			
+			_atlas = AtlasMgr.instance.getAtlas("ModeSprite");
+			
 			initBackground();			
 			initUser();
 			initButton();
 			initPopup();
 			
-		
-			
-			
-			
-			
-			
-			trace(UserInfo.id, UserInfo.name, UserInfo.heart, UserInfo.level, UserInfo.exp);
+			checkItemOver();
 //			CONFIG::local
 //			{				
 //				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getDate().toString());
@@ -111,29 +118,16 @@ package scene.modeSelect
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 			
 			
-		}
-		
-		/**
-		 * 스프라이트시트와 xml을 로드하는 메소드 
-		 * 
-		 */
-		private function load():void
-		{			
-			var xml:XML = XML(new EmbeddedAssets.ModeXml());
-			var texture:Texture = Texture.fromEmbeddedAsset(EmbeddedAssets.ModeSprite);
-			_atlas = new TextureAtlas(texture, xml);
-			
-			xml = null;
-			texture = null;
-		}
-		
+		}		
 		public function release():void
 		{
 			
-			if(_atlas) { _atlas = null; }
+			//if(_atlas) { _atlas = null; }
 			if(_normalPopup) { _normalPopup.release(); _normalPopup = null;	removeChild(_normalPopup); }
 			if(_customPopup) { _customPopup.release(); _customPopup = null;	removeChild(_customPopup); }
 			if(_rankPopup) { _rankPopup.release(); _rankPopup = null; removeChild(_rankPopup); }
+			if(_shopPopup) { _shopPopup.removeEventListener("boughtHeart", onBoughtHeart); _shopPopup.removeEventListener("boughtExpBoost", onBoughtExpBoost);_shopPopup.release; _shopPopup = null; removeChild(_shopPopup); }
+			if(_rewardPopup) { _rewardPopup.release(); _rewardPopup = null; removeChild(_rewardPopup); }
 			if(_resume)	{ _resume.removeEventListener(TouchEvent.TOUCH, onTouchMode); _resume.dispose(); _resume = null; removeChild(_resume);}
 			if(_normal)	{ _normal.removeEventListener(TouchEvent.TOUCH, onTouchMode); _normal.dispose(); _normal = null; removeChild(_normal);}
 			if(_custom)	{ _custom.removeEventListener(TouchEvent.TOUCH, onTouchMode); _custom.dispose(); _custom = null; removeChild(_custom);}
@@ -160,7 +154,7 @@ package scene.modeSelect
 		{
 			if(PlatformType.current == PlatformType.FACEBOOK)
 			{
-				_userProfileImage = new Image(null);
+				_userProfileImage = new Image(UserInfo.picture);
 				_userProfileImage.alignPivot("center", "center");
 				
 				_userProfileImage.width = Main.stageWidth * 0.2;
@@ -168,31 +162,23 @@ package scene.modeSelect
 				
 				_userProfileImage.x = Main.stageWidth * 0.1;
 				_userProfileImage.y = _userProfileImage.height / 2;
-				
-				addChild(_userProfileImage);
-				
-				//모드셀렉트에 최초 진입 시에만 로딩. 이후에는 메모리에 올린 texture를 불러옴
-				if(UserInfo.picture == null)
-				{
-					var urlRequest:URLRequest = new URLRequest("https://graph.facebook.com/"+UserInfo.id+"/picture?type=large");
-					var loader:Loader = new Loader();
-					loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
-					loader.load(urlRequest);
-				}
-				
-				else
-				{
-					_userProfileImage.texture = UserInfo.picture;
-				}
+				addChild(_userProfileImage);				
 				
 				
-				_userNameTextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.5, UserInfo.name);
+				_userNameTextField = new TextField(Main.stageWidth * 0.3, Main.stageHeight * 0.1, UserInfo.name);
 				_userNameTextField.autoSize = "left";
 				_userNameTextField.alignPivot("center", "center");
 				_userNameTextField.x = Main.stageWidth * 0.1;
 				_userNameTextField.y = Main.stageHeight * 0.15;
 				_userNameTextField.format.size = Main.stageWidth * 0.04;
 				addChild(_userNameTextField);
+				
+				_itemTextField = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.2, Main.stageHeight * 0.2,
+												Main.stageWidth * 0.3, Main.stageHeight * 0.1, "", "center", "center");
+				_itemTextField.text = "";
+				_itemTextField.format.horizontalAlign = Align.LEFT;
+				_itemTextField.format.size = Main.stageWidth * 0.025;
+				addChild(_itemTextField);
 			}	
 			
 			_heart = new Heart(_atlas);
@@ -206,18 +192,6 @@ package scene.modeSelect
 			
 		}
 		
-		private function onLoadImageComplete(event:flash.events.Event):void
-		{
-			var bitmap:Bitmap = event.currentTarget.loader.content as Bitmap;
-			var texture:Texture = Texture.fromBitmap(bitmap);
-			
-			if(_userProfileImage)
-				_userProfileImage.texture = texture;
-			
-			var loaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
-			loaderInfo.removeEventListener(flash.events.Event.COMPLETE, onLoadImageComplete);
-			
-		}
 		
 		private function initButton():void
 		{			
@@ -272,7 +246,8 @@ package scene.modeSelect
 		private function initPopup():void
 		{
 			_shopPopup = new ShopPopup(_atlas);
-			_shopPopup.addEventListener("boughtItem", onBoughtItem);
+			_shopPopup.addEventListener("boughtHeart", onBoughtHeart);
+			_shopPopup.addEventListener("boughtExpBoost", onBoughtExpBoost);
 			_shopPopup.visible = false;
 			addChild(_shopPopup);
 			
@@ -287,6 +262,71 @@ package scene.modeSelect
 			_customPopup = new CustomPopup(_atlas);
 			_customPopup.visible = false;
 			addChild(_customPopup);
+			
+			_rewardPopup = new RewardPopup(_atlas);
+			_rewardPopup.visible = false;			
+			addChild(_rewardPopup);
+			if(_rewardPopup.checkLevelUp())
+			{
+				_coin.refresh();
+			}
+			if(_rewardPopup.checkAttend())
+			{
+				_coin.refresh();
+			}
+		}
+		
+		private function checkItemOver():void
+		{
+			UserDBMgr.instance.selectItemOverTime(UserInfo.id);
+			UserDBMgr.instance.addEventListener("selectItemOverTime", onCompleteSelectItemOverTime);
+		}
+		
+		private function onCompleteSelectItemOverTime(event:Event):void
+		{
+//			if(event.data != null && !isNaN(Number(event.data)))
+//			{
+//				var currentTime:Number = new Date().getTime();
+//				trace(currentTime, Number(event.data));
+//				if(currentTime > Number(event.data))
+//				{
+//					trace("********아이템 기간 끝**********");
+//					_itemTextField.text = "";
+//					UserInfo.expRatio = 1;
+//					UserDBMgr.instance.updateData(UserInfo.id, "expRatio", UserInfo.expRatio);
+//					UserDBMgr.instance.updateData(UserInfo.id, "itemOverTime", null);
+//				}
+//				
+//				else
+//				{
+//					_itemTextField.text = "경험치 2배";
+//				}
+//			}
+			UserDBMgr.instance.removeEventListener("selectItemOverTime", onCompleteSelectItemOverTime);
+			if(event.data == null)
+			{
+				trace("itemOverTime NULL");
+				_itemTextField.text = "";
+				
+				
+			}
+			
+			else
+			{
+				var currentTime:Number = new Date().getTime();
+				trace("itemOverTime 널 아님 " + currentTime, Number(event.data));
+				if(currentTime < Number(event.data))
+				{
+					_itemTextField.text = "경험치 2배";
+				}
+				else
+				{
+					_itemTextField.text = "";
+					UserInfo.expRatio = 1;
+					UserDBMgr.instance.updateData(UserInfo.id, "expRatio", UserInfo.expRatio);
+					UserDBMgr.instance.updateData(UserInfo.id, "itemOverTime", null);
+				}
+			}
 		}
 		
 		
@@ -340,15 +380,8 @@ package scene.modeSelect
 				}
 				else
 				{
-					
-					UserInfo.id = null;
-					UserInfo.name = null;
-					UserInfo.picture = null;
-					UserInfo.level = -1;
-					UserInfo.exp = -1;
-					UserInfo.heart = -1;
-					UserInfo.remainHeartTime = -1;
-					UserInfo.coin = -1;
+					UserInfo.reset();	
+				
 				}	
 				trace("로그아웃********************************");
 				//_temp.text = "";
@@ -391,10 +424,18 @@ package scene.modeSelect
 			
 		}
 		
-		private function onBoughtItem(event:Event):void
+		private function onBoughtHeart(event:Event):void
 		{
 			trace("아이템 삼");
+			
 			_heart.refresh();
+			_coin.refresh();
+		}
+		
+		private function onBoughtExpBoost(event:Event):void
+		{
+			trace("경험치 부스트 삼");
+			_itemTextField.text = "경험치 2배";
 			_coin.refresh();
 		}
 		
@@ -403,7 +444,12 @@ package scene.modeSelect
 			
 			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
 			{
-				event.preventDefault();
+				event.preventDefault();				
+				if(!_rankPopup.visible && !_normalPopup.visible && !_customPopup.visible)
+				{
+					EtcExtensions.exit();
+				}
+				
 				if(_rankPopup.visible)
 				{
 					_rankPopup.visible = false;
@@ -422,13 +468,12 @@ package scene.modeSelect
 					_shopPopup.visible = false;
 				}
 				
-				if(!_rankPopup.visible && !_normalPopup.visible && !_customPopup.visible)
-				{
-					EtcExtensions.exit();
-				}
+				
 				
 			}
 		}		
+		
+	
 		
 	}
 }
