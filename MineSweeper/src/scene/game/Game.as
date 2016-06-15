@@ -1,8 +1,5 @@
 package scene.game
 {	
-	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGames;
-	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGamesEvent;
-	
 	import flash.desktop.NativeApplication;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
@@ -22,18 +19,15 @@ package scene.game
 	import server.UserDBMgr;
 	
 	import starling.animation.Transitions;
-	import starling.core.Starling;
 	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
-	import util.EmbeddedAssets;
 	import util.LevelSystem;
 	import util.Reward;
 	import util.UserInfo;
@@ -41,7 +35,6 @@ package scene.game
 	import util.manager.AtlasMgr;
 	import util.manager.IOMgr;
 	import util.manager.LeaderBoardMgr;
-	import util.manager.LoadMgr;
 	import util.manager.SoundMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.DataType;
@@ -74,8 +67,6 @@ package scene.game
 		
 		public function Game(data:Object)
 		{
-			
-			
 			_gameAtlas = AtlasMgr.instance.getAtlas("GameSprite");
 			_modeAtlas = AtlasMgr.instance.getAtlas("ModeSprite");
 			

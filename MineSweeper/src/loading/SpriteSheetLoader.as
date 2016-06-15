@@ -39,7 +39,42 @@ package loading
 		
 		public function release():void
 		{
+			if(_spriteSheetDic)
+			{
+				for(var key:String in _spriteSheetDic)
+				{
+					_spriteSheetDic[key] = null;
+					delete _spriteSheetDic[key];
+				}
+				
+				_spriteSheetDic = null;
+			}
 			
+			if(_xmlDic)
+			{
+				for(key in _xmlDic)
+				{
+					_xmlDic[key] = null;
+					delete _xmlDic[key];
+				}
+				
+				_xmlDic = null;
+			}
+			
+			if(_fileArray)
+			{
+				for(var i:int = 0; i < _fileArray.length; ++i)
+				{
+					_fileArray[i] = null;
+				}
+				
+				_fileArray.splice(0, _fileArray.length - 1);
+			}
+			
+			if(_path)
+			{
+				_path = null;
+			}
 		}
 		
 		public function getFileCount():int

@@ -9,32 +9,49 @@ package util.manager
 	import flash.events.StatusEvent;
 	import flash.net.URLRequest;
 	
+	import loading.CircleLoading;
+	
 	import server.UserDBMgr;
 	
-	import starling.animation.Transitions;
-	import starling.display.Quad;
 	import starling.events.Event;
 	import starling.events.EventDispatcher;
 	import starling.textures.Texture;
-	import starling.textures.TextureAtlas;
 	
 	import util.EtcExtensions;
 	import util.UserInfo;
 	import util.type.PlatformType;
-	import util.type.SceneType;
 
 	public class FacebookExtensionMgr extends EventDispatcher
 	{
+		//싱글톤
+		private static var _instance:FacebookExtensionMgr;
+		private static var _isConstructing:Boolean;
+		
+		public function FacebookExtensionMgr()
+		{
+			if (!_isConstructing) throw new Error("Singleton, use FacebookExtensionMgr.instance()");
+			
+		}
+		
+		public static function get instance():FacebookExtensionMgr 
+		{
+			if (_instance == null)  
+			{
+				_isConstructing = true;
+				_instance = new FacebookExtensionMgr();
+				_isConstructing = false;
+			}
+			return _instance;
+		}	
 		
 		
 		CONFIG::device 
 		{
 			private var _fb:FacebookExtension = new FacebookExtension();
+			private var _circleLoading:CircleLoading 
 		}	
 		
-		public function FacebookExtensionMgr()
-		{
-		}
+		
 		
 		public function logIn():void
 		{
@@ -48,6 +65,7 @@ package util.manager
 		
 		private function onGetObject(event:StatusEvent):void
 		{
+			dispatchEvent(new Event("startLoading"));
 			
 			var data:Object = JSON.parse(event.level);
 			UserInfo.id = data.id;

@@ -47,7 +47,10 @@ package scene.modeSelect.popup.reward
 		
 		public function release():void
 		{
+			if(_textField) { _textField = null; } 
+			if(_close) { addEventListener(TouchEvent.TOUCH, onTouchClose); }
 			
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		public function checkLevelUp():Boolean

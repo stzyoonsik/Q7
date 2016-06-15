@@ -91,7 +91,31 @@ package scene.modeSelect.popup.custom
 		
 		public function release():void
 		{
+			if(_rowText) { _rowText = null; }
+			if(_colText) { _colText = null; }
+			if(_mineNumText) { _mineNumText = null; }
+			if(_itemNumText) { _itemNumText = null; }
+			if(_chanceText) { _chanceText = null; }
 			
+			if(_rowValue) { _rowValue = null; }
+			if(_colValue) { _colValue = null; }
+			if(_mineNumValue) { _mineNumValue = null; }
+			if(_itemNumValue) { _itemNumValue = null; }
+			if(_chanceValue) { _chanceValue = null; }
+			
+			if(_rowBar) { _rowBar = null; }
+			if(_colBar) { _colBar = null; }
+			if(_mineBar) { _mineBar = null; }
+			if(_itemBar) { _itemBar = null; }
+			if(_chanceBar) { _chanceBar = null; }
+			
+			if(_rowSlider) { _rowSlider = null; }
+			if(_colSlider) { _colSlider = null; }
+			if(_mineSlider) { _mineSlider = null; }
+			if(_itemSlider) { _itemSlider = null; }
+			if(_chanceSlider) { _chanceSlider = null; }
+			
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		public function blockItem(value:Boolean):void

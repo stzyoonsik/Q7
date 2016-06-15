@@ -5,16 +5,12 @@ package scene.game.popup
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.Quad;
-	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
-	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
 	import util.manager.DisplayObjectMgr;
 
@@ -103,14 +99,7 @@ package scene.game.popup
 		}
 		
 		private function initButton():void
-		{
-			var text:TextField = new TextField(200,100,"PAUSE");
-			text.format.size = Main.stageWidth * 0.1;
-			text.alignPivot("center", "center");
-			text.x = Main.stageWidth * 0.5;
-			text.y = Main.stageHeight * 0.4;
-			addChild(text);
-			
+		{			
 			_again = DisplayObjectMgr.instance.setButton(_again, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "AGAIN", Main.stageWidth * 0.05);
 			_exit = DisplayObjectMgr.instance.setButton(_exit, _atlas.getTexture("button"), Main.stageWidth * 0.375, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "EXIT", Main.stageWidth * 0.05);			
 			_resume = DisplayObjectMgr.instance.setButton(_resume, _atlas.getTexture("button"), Main.stageWidth * 0.625, Main.stageHeight * 0.6, Main.stageWidth * 0.175, Main.stageWidth * 0.1, "RESUME", Main.stageWidth * 0.05);
@@ -126,7 +115,7 @@ package scene.game.popup
 		
 		private function initTextField():void
 		{
-			var text:TextField = new TextField(200,100,"PAUSE");
+			var text:TextField = new TextField(Main.stageWidth * 0.5 , Main.stageHeight * 0.2,"PAUSE");
 			text.format.size = Main.stageWidth * 0.1;
 			text.alignPivot("center", "center");
 			text.x = Main.stageWidth * 0.5;

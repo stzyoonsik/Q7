@@ -35,13 +35,14 @@ package scene.modeSelect.popup.shop
 			initTextField();
 			initSpr();
 			initButton();
-			
-			
 		}
 		
 		public function release():void
 		{
+			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchClose); _close.dispose(); _close = null; }
+			if(_itemSpr) { _itemSpr.dispose(); _itemSpr = null; }
 			
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		private function initBackground():void
@@ -77,9 +78,6 @@ package scene.modeSelect.popup.shop
 				Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
 			addChild(_close);
-			
-			
-			
 		}
 		
 		private function initSpr():void
@@ -92,7 +90,7 @@ package scene.modeSelect.popup.shop
 			_itemSpr.alignPivot("center", "center");			
 
 			
-			var heartX1:ShopItem = addItem(0, _atlas.getTexture("heart"), _atlas.getTexture("coin"), 100, _atlas.getTexture("button"));
+			var heartX1:ShopItem = addItem(0, _atlas.getTexture("heartX1"), _atlas.getTexture("coin"), 100, _atlas.getTexture("button"));
 			heartX1.y = -Main.stageHeight * 0.2;
 			heartX1.addEventListener("boughtHeart", onBoughtHeart);
 			_itemSpr.addChild(heartX1);

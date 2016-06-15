@@ -1,15 +1,7 @@
 package scene.modeSelect
 {
-	import com.freshplanet.ane.AirFacebook.Facebook;
-	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGames;
-	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGamesLeaderboardEvent;
-	
 	import flash.desktop.NativeApplication;
-	import flash.display.Bitmap;
-	import flash.display.Loader;
-	import flash.display.LoaderInfo;
 	import flash.events.KeyboardEvent;
-	import flash.net.URLRequest;
 	import flash.ui.Keyboard;
 	
 	import scene.Main;
@@ -25,25 +17,17 @@ package scene.modeSelect
 	import server.UserDBMgr;
 	
 	import starling.animation.Transitions;
-	import starling.animation.Tween;
-	import starling.core.Starling;
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.MovieClip;
-	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.filters.BlurFilter;
 	import starling.text.TextField;
-	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Align;
-	import starling.utils.Color;
 	
-	import util.EmbeddedAssets;
 	import util.EtcExtensions;
 	import util.UserInfo;
 	import util.manager.AtlasMgr;
@@ -57,7 +41,7 @@ package scene.modeSelect
 	public class ModeSelect extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
-		
+		 
 		private var _normalPopup:NormalPopup;
 		private var _customPopup:CustomPopup;
 		private var _shopPopup:ShopPopup;
@@ -82,15 +66,10 @@ package scene.modeSelect
 		private var _heart:Heart;
 		private var _coin:Coin;
 		
-		private var _levelUpAmount:int;
-		
-		private var _temp:TextField;
-		
-		//private var leaderBoardId:String = "CgkIu_GfvOAVEAIQCA";
+		private var _levelUpAmount:int;	
 		
 		public function ModeSelect()
 		{
-			//SoundMgr.instance.stop("titleBgm0.mp3");
 			SoundMgr.instance.stopAll();
 			SoundMgr.instance.play("modeBgm.mp3", true);
 			
@@ -101,24 +80,9 @@ package scene.modeSelect
 			initButton();
 			initPopup();
 			
-			checkItemOver();
-//			CONFIG::local
-//			{				
-//				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getDate().toString());
-//			}
-		
-			
-//			_temp = new TextField(Main.stageWidth, Main.stageHeight * 0.2);
-//			_temp.alignPivot("center", "center");
-//			_temp.x = Main.stageWidth * 0.5;
-//			_temp.y = Main.stageHeight * 0.9;
-//			_temp.text = AirGooglePlayGames.getInstance().getActivePlayerName() + " " + AirGooglePlayGames.getInstance().getActivePlayerID();
-//			addChild(_temp);
-			
+			checkItemOver();			
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
-			
-			
 		}		
 		public function release():void
 		{
@@ -139,6 +103,9 @@ package scene.modeSelect
 			if(_achievement) { _achievement.removeEventListener(TouchEvent.TOUCH, onTouchAchievement); _achievement.dispose(); _achievement = null; removeChild(_achievement); }
 			if(_level) { _level.release(); _level.dispose(); _level = null; removeChild(_level); }
 			if(_heart) { _heart.release(); _heart.dispose(); _heart = null; removeChild(_heart); }
+			if(_coin) { _coin.release(); _coin.dispose(); _coin = null; removeChild(_coin); }
+			
+			removeChildren(0, this.numChildren - 1, true);
 			
 			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 			

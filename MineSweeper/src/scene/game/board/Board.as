@@ -142,6 +142,8 @@ package scene.game.board
 			if(_resumeDatas) { releaseArray(_resumeDatas); }
 			if(_resumeImages) { releaseArray(_resumeImages); }
 			if(_resumeItems) { releaseArray(_resumeItems); }
+			
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		private function releaseArray(array:Array):void

@@ -13,18 +13,13 @@ package scene.modeSelect.popup.shop
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.Texture;
-	import starling.textures.TextureAtlas;
 	
 	import util.UserInfo;
-	import util.manager.DisplayObjectMgr;
 	import util.manager.SoundMgr;
 
 	public class ShopItem extends Sprite
-	{
-		//private var _atlas:TextureAtlas;
-		
+	{		
 		private var _goods:Image;
-		//private var _amount:TextField;
 		private var _price:Image;
 		private var _value:TextField;
 		private var _buy:Button;
@@ -36,7 +31,7 @@ package scene.modeSelect.popup.shop
 		private const EXP_BOOST_PRICE:int = 1000;
 		private const EXP_BOOST_TERM:Number = 3600000;				//밀리세컨드
 		
-		public function ShopItem(num:int, goods:Texture, /*amount:String,*/ price:Texture, value:int , buy:Texture)
+		public function ShopItem(num:int, goods:Texture, price:Texture, value:int , buy:Texture)
 		{
 			this.width = Main.stageWidth;
 			this.height = Main.stageHeight;
@@ -44,7 +39,6 @@ package scene.modeSelect.popup.shop
 			_num = num;
 			
 			setGoods(goods);
-			//setAmount(amount);
 			setPrice(price);
 			setValue(value);
 			setBuy(buy);
@@ -54,19 +48,10 @@ package scene.modeSelect.popup.shop
 		{
 			_goods = new Image(texture);
 			_goods.x = -Main.stageWidth * 0.325;
-			_goods.width = texture.width * (Main.stageWidth / Main.stageHeight) * 0.75;
-			_goods.height = texture.height * (Main.stageWidth / Main.stageHeight) * 0.75;
+			_goods.width = Main.stageWidth * 0.05;
+			_goods.height = _goods.width;
 			addChild(_goods);
 		}
-		
-//		private function setAmount(amount:int):void
-//		{
-//			_amount = new TextField(Main.stageWidth * 0.2, Main.stageHeight * 0.1, amount.toString());
-//			_amount.format.size = Main.stageWidth * 0.05;
-//			_amount.x = -Main.stageWidth * 0.25;
-//			_amount.y = -Main.stageHeight * 0.02;
-//			addChild(_amount);
-//		}
 		
 		private function setPrice(texture:Texture):void
 		{
@@ -81,7 +66,6 @@ package scene.modeSelect.popup.shop
 		{
 			_value = new TextField(Main.stageWidth * 0.2, Main.stageHeight * 0.1, value.toString());
 			_value.format.size = Main.stageWidth * 0.05;
-			//_value.x = Main.stageWidth * 0.1;
 			_value.y = -Main.stageHeight * 0.035;
 			addChild(_value);
 		}
@@ -89,6 +73,7 @@ package scene.modeSelect.popup.shop
 		private function setBuy(texture:Texture):void
 		{
 			_buy = new Button(texture, "구입");
+			_buy.textFormat.size = Main.stageWidth * 0.025;
 			_buy.x = Main.stageWidth * 0.25;
 			_buy.width = Main.stageWidth * 0.1;
 			_buy.height = Main.stageHeight * 0.0375;

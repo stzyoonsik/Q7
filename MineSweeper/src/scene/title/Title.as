@@ -1,19 +1,16 @@
 package scene.title
 {	
-	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGames;
-	import com.freshplanet.ane.AirGooglePlayGames.AirGooglePlayGamesEvent;
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Back;
-	import com.yoonsik.FacebookExtension;
 	
-	import flash.events.StatusEvent;
+	import flash.desktop.NativeApplication;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
 	
 	import loading.CircleLoading;
 	
 	import scene.Main;
-	
-	import server.UserDBMgr;
-	
+		
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
 	import starling.core.Starling;
@@ -24,17 +21,13 @@ package scene.title
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
-	import util.EmbeddedAssets;
-	import util.UserInfo;
+	import util.EtcExtensions;
 	import util.manager.AtlasMgr;
 	import util.manager.DisplayObjectMgr;
 	import util.manager.FacebookExtensionMgr;
 	import util.manager.GoogleExtensionMgr;
-	import util.manager.LoadMgr;
 	import util.manager.SoundMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
@@ -42,10 +35,6 @@ package scene.title
 
 	public class Title extends DisplayObjectContainer
 	{
-		
-		private var _fb:FacebookExtensionMgr;
-		//private var _gg:GoogleExtensionMgr;
-		
 		private var _atlas:TextureAtlas;
 		
 		private var _logInGoogle:Button;
@@ -58,11 +47,11 @@ package scene.title
 		{	
 			CONFIG::device
 			{
-				_fb = new FacebookExtensionMgr();
-				_fb.addEventListener("checkDone", onCheckDone);
+				FacebookExtensionMgr.instance.addEventListener("checkDone", onCheckDone);
+				FacebookExtensionMgr.instance.addEventListener("startLoading", onStartLoading);
 				
-				//_gg = new GoogleExtensionMgr();
 				GoogleExtensionMgr.instance.addEventListener("checkDone", onCheckDone);
+				GoogleExtensionMgr.instance.addEventListener("startLoading", onStartLoading);
 			}
 			
 			SoundMgr.instance.stopAll();
@@ -76,6 +65,7 @@ package scene.title
 			_circleLoading = new CircleLoading();
 			addChild(_circleLoading);
 			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 			
 			CONFIG::local
 			{
@@ -87,24 +77,16 @@ package scene.title
 		}
 		public function release():void
 		{
-			if(_logInGoogle)
-			{
-				_logInGoogle = null;
-				
-			}
-			
-			if(_logInFacebook)
-			{
-				_logInFacebook = null;
-			}
-			
-			if(_fb)
-			{
-				_fb.removeEventListener("checkDone", onCheckDone);
-				_fb = null;
-				
-			}
+			if(_logInGoogle) { _logInGoogle.addEventListener(TouchEvent.TOUCH, onTouchLoginGoogle); _logInGoogle.dispose(); _logInGoogle = null; removeChild(_logInGoogle);}
+			if(_logInFacebook) { _logInFacebook.addEventListener(TouchEvent.TOUCH, onTouchLoginFacebook); _logInFacebook.dispose(); _logInFacebook = null; removeChild(_logInFacebook);}
+			if(_circleLoading) { _circleLoading.release(); _circleLoading = null; removeChild(_circleLoading); }
 			removeChildren(0, this.numChildren - 1, true);
+			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+		}
+		
+		private function onStartLoading(event:Event):void
+		{
+			_circleLoading.startLoading();
 		}
 		
 		private function getRandomNum():int
@@ -145,10 +127,13 @@ package scene.title
 			title.x = Main.stageWidth * 0.5;
 			title.y = Main.stageHeight * 0.2;
 			title.alignPivot("center","center");
-			title.scale = 0.1;
+			
+			var tempScale:Number = title.scale;
+			title.scale *= 0.1;
+			
 			
 			var titleTween:Tween = new Tween(title, 2, Transitions.EASE_IN_BOUNCE);
-			titleTween.scaleTo(1);
+			titleTween.scaleTo(tempScale);
 			titleTween.addEventListener(Event.REMOVE_FROM_JUGGLER, onRemoveTitleTween);
 			Starling.juggler.add(titleTween);
 			addChild(title);
@@ -183,36 +168,55 @@ package scene.title
 			
 			
 		}
-//		
+		
 		private function onTouchLoginGoogle(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_logInGoogle, TouchPhase.ENDED);
 			if(touch)
 			{				
-				_circleLoading.visible = true;
 				GoogleExtensionMgr.instance.logIn();
 			}
 		}
-//		
+	
 		private function onTouchLoginFacebook(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_logInFacebook, TouchPhase.ENDED);
 			if(touch)
 			{
-				_circleLoading.visible = true;
-				_fb.logIn();
+				FacebookExtensionMgr.instance.logIn();
 			}
 		}
 		
 		private function onCheckDone(event:Event):void
 		{
-			_circleLoading.visible = false;
+			_circleLoading.stopLoading();
 			
 			if(PlatformType.current == PlatformType.GOOGLE)
 			{
 				GoogleExtensionMgr.instance.removeEventListener("checkDone", onCheckDone);
+				GoogleExtensionMgr.instance.removeEventListener("startLoading", onStartLoading);
+			}
+			else
+			{
+				FacebookExtensionMgr.instance.removeEventListener("checkDone", onCheckDone);
+				FacebookExtensionMgr.instance.removeEventListener("startLoading", onStartLoading);
 			}
 			SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
+		
+		private function onTouchKeyBoard(event:KeyboardEvent):void
+		{
+			
+			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
+			{
+				event.preventDefault();		
+				if(_circleLoading.visible == true)
+				{
+					_circleLoading.visible = false;
+				}
+				
+				EtcExtensions.exit();
+			}
+		}		
 	}
 }

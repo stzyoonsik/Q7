@@ -52,6 +52,8 @@ package util.manager
 		
 		private function onSignInSuccess(event:AirGooglePlayGamesEvent):void
 		{
+			dispatchEvent(new Event("startLoading"));
+			
 			UserInfo.id = AirGooglePlayGames.getInstance().getActivePlayerID();
 			UserInfo.name = AirGooglePlayGames.getInstance().getActivePlayerName();
 			

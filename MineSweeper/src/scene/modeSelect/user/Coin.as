@@ -33,7 +33,10 @@ package scene.modeSelect.user
 		
 		public function release():void
 		{
+			if(_coinImage) { _coinImage.dispose(); _coinImage = null; }
+			if(_coinTextField) { _coinTextField = null; }
 			
+			removeChildren();
 		}
 		
 		private function initImage():void

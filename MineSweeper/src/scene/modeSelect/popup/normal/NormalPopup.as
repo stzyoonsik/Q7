@@ -1,33 +1,23 @@
 package scene.modeSelect.popup.normal
-{
-	
-	import flash.desktop.NativeApplication;
-	import flash.events.KeyboardEvent;
-	import flash.ui.Keyboard;
+{	
 	import flash.utils.Dictionary;
 	
 	import scene.Main;
 	
-	import server.UserDBMgr;
 	
 	import starling.animation.Transitions;
-	import starling.core.starling_internal;
 	import starling.display.Button;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.display.Quad;
-	import starling.display.Sprite;
-	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
-	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Color;
 	
-	import util.EmbeddedAssets;
 	import util.UserInfo;
 	import util.manager.DisplayObjectMgr;
 	import util.manager.SwitchActionMgr;
@@ -55,24 +45,37 @@ package scene.modeSelect.popup.normal
 		private var _numberOfMineFinder:int;
 		private var _chanceToGetItem:int;
 		
-//		private var _data:Vector.<int>;
 		private var _data:Dictionary;
 		
 		public function NormalPopup(atlas:TextureAtlas)
 		{
 			_atlas = atlas;
-			//load();
 			initBackground();
 			initButton();
 			initLock();
-			
-			//NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}		
 		
 		
 		public function release():void
 		{	
-			//NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+			if(_radioItem) { _radioItem.removeEventListener(TouchEvent.TOUCH, onTouchRadioItem); _radioItem.dispose(); _radioItem = null; }
+			if(_veryEasy) { _veryEasy.removeEventListener(TouchEvent.TOUCH, onTouchVeryEasy); _veryEasy.dispose(); _veryEasy = null; }
+			if(_easy) { _easy.removeEventListener(TouchEvent.TOUCH, onTouchEasy); _easy.dispose(); _easy = null; }
+			if(_normal) { _normal.removeEventListener(TouchEvent.TOUCH, onTouchNormal); _normal.dispose(); _normal = null; }
+			if(_hard) { _hard.removeEventListener(TouchEvent.TOUCH, onTouchHard); _hard.dispose(); _hard = null; }
+			if(_veryHard) { _veryHard.removeEventListener(TouchEvent.TOUCH, onTouchVeryHard); _veryHard.dispose(); _veryHard = null; }
+			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchClose); _close.dispose(); _close = null; }
+//			if(_data)
+//			{
+//				for(var key:String in _data)
+//				{
+//					_data[key] = null;
+//					delete _data[key];
+//				}
+//				_data = null;
+//			}
+			
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		private function initBackground():void			
@@ -305,18 +308,5 @@ package scene.modeSelect.popup.normal
 			}
 			
 		}
-		
-//		private function onTouchKeyBoard(event:KeyboardEvent):void
-//		{
-//			
-//			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
-//			{
-//				event.preventDefault();
-//				//dispatchEvent(new Event(SceneType.MODE_SELECT));
-//				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
-//			}
-//		}
-		
-		
 	}
 }

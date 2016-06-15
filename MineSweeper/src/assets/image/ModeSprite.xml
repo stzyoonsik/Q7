@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TextureAtlas imagePath="ModeSprite.png">
-   <SubTexture name="back" x="642" y="0" width="64" height="64" />
+   <SubTexture name="back" x="516" y="116" width="64" height="64" />
    <SubTexture name="background" x="0" y="80" width="256" height="256" />
    <SubTexture name="bar" x="0" y="338" width="256" height="45" />
-   <SubTexture name="button" x="258" y="340" width="128" height="48" />
-   <SubTexture name="close" x="388" y="274" width="64" height="64" />
-   <SubTexture name="coin" x="516" y="174" width="64" height="64" />
+   <SubTexture name="button" x="516" y="66" width="128" height="48" />
+   <SubTexture name="close" x="642" y="0" width="64" height="64" />
+   <SubTexture name="coin" x="388" y="274" width="64" height="64" />
    <SubTexture name="exp" x="0" y="42" width="459" height="36" />
    <SubTexture name="expBg" x="0" y="0" width="510" height="40" />
-   <SubTexture name="expBoost" x="708" y="0" width="64" height="64" />
-   <SubTexture name="heart" x="718" y="330" width="64" height="56" />
-   <SubTexture name="heartX5" x="516" y="66" width="128" height="56" />
-   <SubTexture name="loading_00" x="646" y="66" width="64" height="64" />
-   <SubTexture name="loading_01" x="454" y="274" width="64" height="64" />
+   <SubTexture name="expBoost" x="516" y="182" width="64" height="64" />
+   <SubTexture name="heart" x="718" y="264" width="64" height="56" />
+   <SubTexture name="heartX1" x="652" y="330" width="64" height="56" />
+   <SubTexture name="heartX5" x="718" y="322" width="64" height="56" />
+   <SubTexture name="loading_00" x="582" y="116" width="64" height="64" />
+   <SubTexture name="loading_01" x="708" y="0" width="64" height="64" />
    <SubTexture name="loading_02" x="388" y="340" width="64" height="64" />
-   <SubTexture name="loading_03" x="582" y="174" width="64" height="64" />
-   <SubTexture name="loading_04" x="774" y="0" width="64" height="64" />
-   <SubTexture name="loading_05" x="712" y="66" width="64" height="64" />
-   <SubTexture name="loading_06" x="454" y="340" width="64" height="64" />
-   <SubTexture name="loading_07" x="520" y="240" width="64" height="64" />
-   <SubTexture name="loading_08" x="648" y="132" width="64" height="64" />
-   <SubTexture name="loading_09" x="520" y="306" width="64" height="64" />
-   <SubTexture name="loading_10" x="586" y="240" width="64" height="64" />
-   <SubTexture name="loading_11" x="778" y="66" width="64" height="64" />
-   <SubTexture name="loading_12" x="714" y="132" width="64" height="64" />
-   <SubTexture name="loading_13" x="652" y="198" width="64" height="64" />
-   <SubTexture name="loading_14" x="586" y="306" width="64" height="64" />
-   <SubTexture name="loading_15" x="780" y="132" width="64" height="64" />
-   <SubTexture name="loading_16" x="652" y="264" width="64" height="64" />
-   <SubTexture name="loading_17" x="718" y="198" width="64" height="64" />
-   <SubTexture name="locked" x="718" y="264" width="64" height="64" />
-   <SubTexture name="lockedButton" x="516" y="124" width="128" height="48" />
+   <SubTexture name="loading_03" x="454" y="274" width="64" height="64" />
+   <SubTexture name="loading_04" x="648" y="66" width="64" height="64" />
+   <SubTexture name="loading_05" x="582" y="182" width="64" height="64" />
+   <SubTexture name="loading_06" x="774" y="0" width="64" height="64" />
+   <SubTexture name="loading_07" x="648" y="132" width="64" height="64" />
+   <SubTexture name="loading_08" x="714" y="66" width="64" height="64" />
+   <SubTexture name="loading_09" x="454" y="340" width="64" height="64" />
+   <SubTexture name="loading_10" x="520" y="248" width="64" height="64" />
+   <SubTexture name="loading_11" x="520" y="314" width="64" height="64" />
+   <SubTexture name="loading_12" x="586" y="248" width="64" height="64" />
+   <SubTexture name="loading_13" x="714" y="132" width="64" height="64" />
+   <SubTexture name="loading_14" x="780" y="66" width="64" height="64" />
+   <SubTexture name="loading_15" x="652" y="198" width="64" height="64" />
+   <SubTexture name="loading_16" x="586" y="314" width="64" height="64" />
+   <SubTexture name="loading_17" x="780" y="132" width="64" height="64" />
+   <SubTexture name="locked" x="652" y="264" width="64" height="64" />
+   <SubTexture name="lockedButton" x="258" y="340" width="128" height="48" />
    <SubTexture name="next" x="784" y="198" width="32" height="64" />
    <SubTexture name="popupBg" x="258" y="80" width="256" height="192" />
    <SubTexture name="prev" x="784" y="264" width="32" height="64" />
    <SubTexture name="radioItemOff" x="512" y="0" width="128" height="64" />
    <SubTexture name="radioItemOn" x="258" y="274" width="128" height="64" />
-   <SubTexture name="sliderButton" x="652" y="330" width="64" height="64" />
+   <SubTexture name="sliderButton" x="718" y="198" width="64" height="64" />
 </TextureAtlas>

@@ -13,11 +13,9 @@ package scene.modeSelect.popup.rank
 	
 	import server.UserDBMgr;
 	
-	import starling.core.Starling;
 	import starling.display.Button;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.MovieClip;
 	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -33,8 +31,7 @@ package scene.modeSelect.popup.rank
 	import util.manager.DisplayObjectMgr;
 	import util.manager.SoundMgr;
 	import util.type.DifficultyType;
-	
-
+	 
 	public class RankPopup extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
@@ -71,7 +68,6 @@ package scene.modeSelect.popup.rank
 		private var _difficulty:int;
 		
 		private var _circleLoading:CircleLoading;
-		//private var _loading:MovieClip;
 		
 		public function RankPopup(atlas:TextureAtlas)
 		{
@@ -122,8 +118,7 @@ package scene.modeSelect.popup.rank
 			if(_back) { _back.removeEventListener(TouchEvent.TOUCH, onTouchBack); _back.dispose(); _back = null; removeChild(_back); }
 			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchBack); _close.dispose(); _close = null; removeChild(_close); }
 			if(_circleLoading) { _circleLoading.release(); _circleLoading = null; removeChild(_circleLoading); }
-			//if(_loadingBg) { _loadingBg.dispose(); _loadingBg = null; removeChild(_loadingBg); }
-			//if(_loading) { Starling.juggler.remove(_loading); _loading.dispose(); _loading = null; removeChild(_loading);}
+			
 		}
 		
 		public function reset():void

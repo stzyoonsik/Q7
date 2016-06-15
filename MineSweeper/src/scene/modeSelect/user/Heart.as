@@ -19,15 +19,11 @@ package scene.modeSelect.user
 	public class Heart extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
-		//private var _heartCount:int;
 		private var _heartCountTextField:TextField;
 		private var _remainTime:TextField;
 		private var _heart:Image;
 		
 		private var _timer:Timer;
-		
-		//private const HEART_GEN_TIME:int = 300;
-		//private const MAX_HEART:int = UserInfo.MAX_HEART;
 		
 		private var _lastDate:Number = 0;
 		
@@ -39,8 +35,6 @@ package scene.modeSelect.user
 			initImage();
 			initTextField();
 			
-			//_heartCount = UserInfo.heart;
-			
 			getLastDateTime();
 		}
 		
@@ -50,12 +44,17 @@ package scene.modeSelect.user
 
 		public function release():void
 		{
+			if(_heartCountTextField) { _heartCountTextField = null; }
+			if(_remainTime) { _remainTime = null; }
+			if(_heart) { _heart.dispose(); _heart = null; }			
 			if(_timer)
 			{
 				_timer.removeEventListener(TimerEvent.TIMER, onTimer);
 				_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 				_timer = null;
 			}
+			
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		public function refresh():void
@@ -90,14 +89,9 @@ package scene.modeSelect.user
 			
 			_lastDate = Number(event.data);
 			trace("lastDate = " + _lastDate);
-			
-			
-			
 			//서버에 저장된 남은시간을 가져옴
 			UserDBMgr.instance.selectData(UserInfo.id, "heartTime");
 			UserDBMgr.instance.addEventListener("selectData", onSelectHeartTimeComplete);
-			
-			
 		}
 		private function onSelectHeartTimeComplete(event:Event):void
 		{			
@@ -164,8 +158,6 @@ package scene.modeSelect.user
 			}
 			
 			dispatchEvent(new Event("loadingDone"));
-			
-			
 		}
 		
 		
@@ -223,7 +215,6 @@ package scene.modeSelect.user
 			{
 				_timer = null;
 				_remainTime = null;
-				//_remainTime.text = "";
 			}
 			else
 			{
@@ -231,8 +222,6 @@ package scene.modeSelect.user
 				_timer.reset();
 				_timer.start();	
 			}
-					
-			
 		}
 	}
 }

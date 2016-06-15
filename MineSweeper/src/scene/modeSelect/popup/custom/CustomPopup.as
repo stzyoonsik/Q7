@@ -45,26 +45,26 @@ package scene.modeSelect.popup.custom
 			_slider = new Slider(_atlas);
 			addChild(_slider);
 			
-			initButton();			
-			
-			
-			
-			
-			//NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
-			
+			initButton();	
 		}
 		
 		public function release():void
 		{
 			//if(_atlas) { _atlas.dispose(); _atlas = null; }
-			if(_start) { _start.removeEventListener(TouchEvent.TOUCH, onTouchStart); _start = null;	}
-			if(_slider)
-			{				
-				_slider.release();
-				_slider = null;
-			}
-			
-			//NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
+			if(_start) { _start.removeEventListener(TouchEvent.TOUCH, onTouchStart); _start.dispose(); _start = null;	}
+			if(_slider)	{ _slider.release(); _slider = null; }
+			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchClose); _close.dispose(); _close = null; }
+			if(_radioItem) { _radioItem.removeEventListener(TouchEvent.TOUCH, onTouchRadioItem); _radioItem.dispose(); _radioItem = null; }
+//			if(_data)
+//			{
+//				for(var key:String in _data)
+//				{
+//					_data[key] = null;
+//					delete _data[key];
+//				}
+//				_data = null;
+//			}
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		private function initBackground():void
@@ -157,25 +157,9 @@ package scene.modeSelect.popup.custom
 				_data[DataType.ITEM_NUM] = _slider.itemNum;
 				_data[DataType.CHANCE] = _slider.chance;	
 				
-				//RetainData.instance.lastModeSelectDate = new Date().getTime();
-				//trace("lastModeSelectDate = " + RetainData.instance.lastModeSelectDate);
-//				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
-//				//UserDBMgr.instance.updateData(UserInfo.id, "heartTime", );
 				if(UserInfo.heart > 0)
 					SwitchActionMgr.instance.switchSceneFadeOut(this.parent, SceneType.GAME, false, _data, 0.5, Transitions.EASE_OUT);
 			}
 		}
-		
-//		private function onTouchKeyBoard(event:KeyboardEvent):void
-//		{
-//			
-//			if(event.keyCode == Keyboard.BACK || event.keyCode == 8)
-//			{
-//				event.preventDefault();
-//				//dispatchEvent(new Event(SceneType.MODE_SELECT));
-//				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
-//				trace("[Custom] back");
-//			}
-//		}
 	}
 }

@@ -27,10 +27,22 @@ package loading
 			this.visible = false;
 		}
 		
+		public function startLoading():void
+		{
+			Starling.juggler.add(_loading);
+			this.visible = true;			
+		}
+		
+		public function stopLoading():void
+		{
+			Starling.juggler.remove(_loading);
+			this.visible = false;
+		}
+		
 		public function release():void
 		{
 			if(_background) { _background.dispose(); _background = null; removeChild(_background); }
-			if(_loading) { Starling.juggler.remove(_loading); _loading.dispose(); _loading = null; removeChild(_loading);}
+			if(_loading) { _loading.dispose(); _loading = null; removeChild(_loading);}
 		}
 		
 		private function initBackground():void
@@ -43,10 +55,12 @@ package loading
 		private function initMovieClip():void
 		{
 			_loading = new MovieClip(_atlas.getTextures("loading_"), 18);
+			_loading.width = Main.stageWidth * 0.1;
+			_loading.height = _loading.width;
 			_loading.x = Main.stageWidth * 0.5;
 			_loading.y = Main.stageHeight * 0.5;
 			_loading.alignPivot("center", "center"); 
-			Starling.juggler.add(_loading);
+			
 			addChild(_loading); 
 		}
 	}

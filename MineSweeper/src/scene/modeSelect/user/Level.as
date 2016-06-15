@@ -31,7 +31,12 @@ package scene.modeSelect.user
 		
 		public function release():void
 		{
+			if(_background) { _background.dispose(); _background = null; }
+			if(_expImage) { _expImage.dispose(); _expImage = null; }
+			if(_levelTextField) { _levelTextField = null; }
+			if(_expTextField) { _expTextField = null; }
 			
+			removeChildren();
 		}
 		
 		
@@ -64,7 +69,7 @@ package scene.modeSelect.user
 			_expImage.alignPivot("center", "center");
 			
 			//??? *2를 왜 해야하는가 미스터리
-			var mask:Quad = new Quad(_expImage.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100) * 3.25, _expImage.height * 3.25);
+			var mask:Quad = new Quad(_expImage.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100), _expImage.height);
 			_expImage.mask = mask;
 			
 			addChild(_expImage);

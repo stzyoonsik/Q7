@@ -1,7 +1,5 @@
 package scene
 {
-	import com.freshplanet.ane.AirFacebook.Facebook;
-	
 	import scene.game.Game;
 	import scene.modeSelect.ModeSelect;
 	import scene.modeSelect.popup.custom.CustomPopup;
@@ -12,13 +10,11 @@ package scene
 	
 	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
-	import starling.display.Sprite;
 	import starling.events.Event;
 	
 	import loading.SoundLoader;
 	import loading.SpriteSheetLoader;
 	import util.UserInfo;
-	import util.manager.SceneMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.SceneType;
 	import loading.Loading;
@@ -64,9 +60,6 @@ package scene
 			SwitchActionMgr.instance.addEventListener(SceneType.TITLE, onChangeScene);
 			SwitchActionMgr.instance.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 			SwitchActionMgr.instance.addEventListener(SceneType.GAME, onChangeScene);
-			
-			
-			
 		}	
 		
 		private function onProgressLoading(event:Event):void
@@ -138,19 +131,11 @@ package scene
 					{
 						releaseGame();
 					}
-					
-					//if(!_modeSelect)
-					//{
-						_modeSelect = new ModeSelect();
-						_modeSelect.addEventListener(SceneType.GAME, onChangeScene);
-						_modeSelect.addEventListener(SceneType.TITLE, onChangeScene);
-						addChild(_modeSelect);
-						trace("ModeSelect");
-					//}
-					//trace("모드셀렉트 visible 킴");
-					//_modeSelect.visible = true;
-					
-				
+					_modeSelect = new ModeSelect();
+					_modeSelect.addEventListener(SceneType.GAME, onChangeScene);
+					_modeSelect.addEventListener(SceneType.TITLE, onChangeScene);
+					addChild(_modeSelect);
+					trace("ModeSelect");
 					break;
 				}
 				
@@ -159,8 +144,6 @@ package scene
 					if(_modeSelect)
 					{
 						releaseModeSelect();
-						//trace("모드셀렉트 visible 끔");
-						//_modeSelect.visible = false;
 					}
 				
 					_game = new Game(event.data);
@@ -180,21 +163,11 @@ package scene
 			}
 		}
 		
-//		private function releaseScenes(title:Title, modeSelect:ModeSelect = null, stageSelect:Sprite = null, custom:Sprite = null, game:Sprite = null):void
-//		{
-//			if(title) { releaseTitle; }
-//			if(modeSelect) { releaseModeSelect; }
-//			if(stageSelect) { releaseStageSelect; }
-//			if(custom) { releaseCustom; }
-//			if(game) { releaseGame; }
-//		}
-		
 		private function releaseTitle():void
 		{
 			trace("releaseTitle");
 			_title.release();
 			_title.removeEventListeners();
-			//_title.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 			removeChild(_title);
 			_title = null;
 		}
@@ -202,9 +175,6 @@ package scene
 		private function releaseModeSelect():void
 		{
 			_modeSelect.release();
-			//_modeSelect.removeEventListener(SceneType.STAGE_SELECT, onChangeScene);
-			//_modeSelect.removeEventListener(SceneType.CUSTOM, onChangeScene);
-			//_modeSelect.removeEventListener(SceneType.GAME, onChangeScene);
 			_modeSelect.removeEventListeners();
 			removeChild(_modeSelect);
 			_modeSelect = null;
@@ -214,7 +184,6 @@ package scene
 		{
 			_game.release();
 			_game.removeEventListeners();
-			//_game.removeEventListener(SceneType.MODE_SELECT, onChangeScene);
 			removeChild(_game);
 			_game = null;
 		}
