@@ -48,6 +48,7 @@ package scene.modeSelect
 	import util.UserInfo;
 	import util.manager.AtlasMgr;
 	import util.manager.DisplayObjectMgr;
+	import util.manager.GoogleExtensionMgr;
 	import util.manager.SoundMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.PlatformType;
@@ -284,24 +285,6 @@ package scene.modeSelect
 		
 		private function onCompleteSelectItemOverTime(event:Event):void
 		{
-//			if(event.data != null && !isNaN(Number(event.data)))
-//			{
-//				var currentTime:Number = new Date().getTime();
-//				trace(currentTime, Number(event.data));
-//				if(currentTime > Number(event.data))
-//				{
-//					trace("********아이템 기간 끝**********");
-//					_itemTextField.text = "";
-//					UserInfo.expRatio = 1;
-//					UserDBMgr.instance.updateData(UserInfo.id, "expRatio", UserInfo.expRatio);
-//					UserDBMgr.instance.updateData(UserInfo.id, "itemOverTime", null);
-//				}
-//				
-//				else
-//				{
-//					_itemTextField.text = "경험치 2배";
-//				}
-//			}
 			UserDBMgr.instance.removeEventListener("selectItemOverTime", onCompleteSelectItemOverTime);
 			if(event.data == null)
 			{
@@ -337,7 +320,7 @@ package scene.modeSelect
 			{
 				if(PlatformType.current == PlatformType.GOOGLE)
 				{
-					//AirGooglePlayGames.getInstance().showLeaderboards();
+					GoogleExtensionMgr.instance.showLeaderBoards();
 				}
 				else
 				{
@@ -352,20 +335,9 @@ package scene.modeSelect
 			var touch:Touch = event.getTouch(_achievement, TouchPhase.ENDED);
 			if(touch)
 			{
-				//AirGooglePlayGames.getInstance().showStandardAchievements();
+				GoogleExtensionMgr.instance.showStandardAchievements();
 			}
 		}
-//		
-//		private function onLoadSuccessLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
-//		{
-//			
-//			AirGooglePlayGames.getInstance().showLeaderboards();
-//		}
-//		
-//		private function onLoadFailLeaderBoard(event:AirGooglePlayGamesLeaderboardEvent):void
-//		{
-//			_temp.text = "onLoadFailLeaderBoard" + event.type;
-//		}
 		
 		private function onTouchLogOut(event:TouchEvent):void
 		{
@@ -374,9 +346,8 @@ package scene.modeSelect
 			{
 				if(PlatformType.current == PlatformType.GOOGLE)
 				{
-					//					AirGooglePlayGames.getInstance().signOut();
-					//					Main.userId = "";
-					//					Main.userName = "";
+					GoogleExtensionMgr.instance.logOut();
+					UserInfo.reset();
 				}
 				else
 				{

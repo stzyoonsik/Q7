@@ -32,7 +32,8 @@ package scene.title
 	import util.UserInfo;
 	import util.manager.AtlasMgr;
 	import util.manager.DisplayObjectMgr;
-	import util.manager.FacebookExtensionManager;
+	import util.manager.FacebookExtensionMgr;
+	import util.manager.GoogleExtensionMgr;
 	import util.manager.LoadMgr;
 	import util.manager.SoundMgr;
 	import util.manager.SwitchActionMgr;
@@ -42,7 +43,8 @@ package scene.title
 	public class Title extends DisplayObjectContainer
 	{
 		
-		private var _fb:FacebookExtensionManager;
+		private var _fb:FacebookExtensionMgr;
+		//private var _gg:GoogleExtensionMgr;
 		
 		private var _atlas:TextureAtlas;
 		
@@ -56,8 +58,11 @@ package scene.title
 		{	
 			CONFIG::device
 			{
-				_fb = new FacebookExtensionManager();
+				_fb = new FacebookExtensionMgr();
 				_fb.addEventListener("checkDone", onCheckDone);
+				
+				//_gg = new GoogleExtensionMgr();
+				GoogleExtensionMgr.instance.addEventListener("checkDone", onCheckDone);
 			}
 			
 			SoundMgr.instance.stopAll();
@@ -85,6 +90,7 @@ package scene.title
 			if(_logInGoogle)
 			{
 				_logInGoogle = null;
+				
 			}
 			
 			if(_logInFacebook)
@@ -98,6 +104,7 @@ package scene.title
 				_fb = null;
 				
 			}
+			removeChildren(0, this.numChildren - 1, true);
 		}
 		
 		private function getRandomNum():int
@@ -166,7 +173,7 @@ package scene.title
 		private function initButton():void
 		{
 			_logInGoogle = DisplayObjectMgr.instance.setButton(_logInGoogle, _atlas.getTexture("google"), Main.stageWidth * 1.5, Main.stageHeight * 0.5, Main.stageWidth * 0.5, Main.stageWidth * 0.1); 
-			//_logInGoogle.addEventListener(TouchEvent.TOUCH, onTouchLoginGoogle);
+			_logInGoogle.addEventListener(TouchEvent.TOUCH, onTouchLoginGoogle);
 			addChild(_logInGoogle);
 			
 			_logInFacebook = DisplayObjectMgr.instance.setButton(_logInFacebook, _atlas.getTexture("facebook"), Main.stageWidth * 1.5, Main.stageHeight * 0.7, Main.stageWidth * 0.5, Main.stageWidth * 0.1);
@@ -177,18 +184,15 @@ package scene.title
 			
 		}
 //		
-//		private function onTouchLoginGoogle(event:TouchEvent):void
-//		{
-//			var touch:Touch = event.getTouch(_logInGoogle, TouchPhase.ENDED);
-//			if(touch)
-//			{				
-//				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_IN_SUCCESS, onSignInSuccess);
-//				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_OUT_SUCCESS, onSignOutSuccess);
-//				AirGooglePlayGames.getInstance().addEventListener(AirGooglePlayGamesEvent.ON_SIGN_IN_FAIL, onSignInFail);
-//				AirGooglePlayGames.getInstance().isSignedIn();
-//				AirGooglePlayGames.getInstance().signIn();
-//			}
-//		}
+		private function onTouchLoginGoogle(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_logInGoogle, TouchPhase.ENDED);
+			if(touch)
+			{				
+				_circleLoading.visible = true;
+				GoogleExtensionMgr.instance.logIn();
+			}
+		}
 //		
 		private function onTouchLoginFacebook(event:TouchEvent):void
 		{
@@ -197,14 +201,17 @@ package scene.title
 			{
 				_circleLoading.visible = true;
 				_fb.logIn();
-				//_fb.addEventListener("getObject", onGetObject);
-				//_fb.addEventListener("getToken", onGetToken);
 			}
 		}
 		
 		private function onCheckDone(event:Event):void
 		{
 			_circleLoading.visible = false;
+			
+			if(PlatformType.current == PlatformType.GOOGLE)
+			{
+				GoogleExtensionMgr.instance.removeEventListener("checkDone", onCheckDone);
+			}
 			SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 	}

@@ -292,9 +292,11 @@ package scene.game
 			if(PlatformType.current == PlatformType.GOOGLE)
 			{
 				//기록 등록
-				//LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
+				LeaderBoardMgr.instance.reportScore(_board.isItemMode, _board.difficulty, _time.realTime);
 				//업적 등록
-				//AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+				AchievementMgr.instance.fastClear(_board.difficulty, _time.realTime);
+				
+				updateDatas();
 			}
 			//페북으로 로그인 했으면
 			else
@@ -302,22 +304,9 @@ package scene.game
 				//난이도가 커스텀모드이면 기록 저장 안함
 				if(_board.difficulty != DifficultyType.CUSTOM)
 				{
-					//경험치 보상
-					UserInfo.exp += Reward.getRewardExp(_board.difficulty) * UserInfo.expRatio;				
-					while(LevelSystem.checkLevelUp(UserInfo.level, UserInfo.exp))
-					{					
-						UserInfo.exp -= LevelSystem.getNeedExp(UserInfo.level);
-						UserInfo.level++;
-						UserInfo.levelUpAmount++;
-					}
-					UserInfo.coin += Reward.getRewardCoin(_board.difficulty); 
-					
-					UserDBMgr.instance.updateData(UserInfo.id, "level", UserInfo.level);
-					UserDBMgr.instance.updateData(UserInfo.id, "exp", UserInfo.exp);
-					UserDBMgr.instance.updateData(UserInfo.id, "coin", UserInfo.coin);
-					
+					updateDatas();		
 					UserDBMgr.instance.addEventListener("selectRecord", onSelectRecordComplete);
-					UserDBMgr.instance.selectRecord(UserInfo.id, _board.isItemMode, _board.difficulty);				
+					UserDBMgr.instance.selectRecord(UserInfo.id, _board.isItemMode, _board.difficulty);	
 				}
 			}
 			
@@ -345,6 +334,25 @@ package scene.game
 			
 				
 			_isGameEnded = true;
+		}
+		
+		private function updateDatas():void
+		{
+			//경험치 보상
+			UserInfo.exp += Reward.getRewardExp(_board.difficulty) * UserInfo.expRatio;				
+			while(LevelSystem.checkLevelUp(UserInfo.level, UserInfo.exp))
+			{					
+				UserInfo.exp -= LevelSystem.getNeedExp(UserInfo.level);
+				UserInfo.level++;
+				UserInfo.levelUpAmount++;
+			}
+			UserInfo.coin += Reward.getRewardCoin(_board.difficulty); 
+			
+			UserDBMgr.instance.updateData(UserInfo.id, "level", UserInfo.level);
+			UserDBMgr.instance.updateData(UserInfo.id, "exp", UserInfo.exp);
+			UserDBMgr.instance.updateData(UserInfo.id, "coin", UserInfo.coin);
+			
+			
 		}
 		
 		private function onSelectRecordComplete(event:Event):void

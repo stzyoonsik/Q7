@@ -23,9 +23,8 @@ package util.manager
 	import util.type.PlatformType;
 	import util.type.SceneType;
 
-	public class FacebookExtensionManager extends EventDispatcher
+	public class FacebookExtensionMgr extends EventDispatcher
 	{
-		private var _loadingBg:Quad;
 		
 		
 		CONFIG::device 
@@ -33,7 +32,7 @@ package util.manager
 			private var _fb:FacebookExtension = new FacebookExtension();
 		}	
 		
-		public function FacebookExtensionManager()
+		public function FacebookExtensionMgr()
 		{
 		}
 		
