@@ -4,8 +4,8 @@ package scene
 	
 	import scene.game.Game;
 	import scene.modeSelect.ModeSelect;
-	import scene.modeSelect.custom.CustomPopup;
-	import scene.modeSelect.normal.NormalPopup;
+	import scene.modeSelect.popup.custom.CustomPopup;
+	import scene.modeSelect.popup.normal.NormalPopup;
 	import scene.title.Title;
 	
 	import server.UserDBMgr;
@@ -15,16 +15,23 @@ package scene
 	import starling.display.Sprite;
 	import starling.events.Event;
 	
+	import loading.SoundLoader;
+	import loading.SpriteSheetLoader;
 	import util.UserInfo;
 	import util.manager.SceneMgr;
 	import util.manager.SwitchActionMgr;
 	import util.type.SceneType;
+	import loading.Loading;
 
 	public class Main extends DisplayObjectContainer
 	{
 		private static var _stageWidth:int;
 		private static var _stageHeight:int;
 		
+		private var _isSpriteSheetLoaded:Boolean;
+		private var _isSoundLoaded:Boolean;
+		
+		private var _loading:Loading;
 		private var _title:Title;
 		private var _modeSelect:ModeSelect;
 		private var _stageSelect:NormalPopup;
@@ -40,16 +47,67 @@ package scene
 			_stageWidth = Starling.current.stage.stageWidth;
 			_stageHeight = Starling.current.stage.stageHeight;
 			
+			
+			_loading = new Loading();
+			addChild(_loading);
+			
+			var soundLoader:SoundLoader = new SoundLoader();
+			soundLoader.addEventListener("completeLoadingSound", onCompleteLoadingSound);
+			soundLoader.addEventListener("progressLoading", onProgressLoading);
+			
+			var spriteSheetLoader:SpriteSheetLoader = new SpriteSheetLoader();
+			spriteSheetLoader.addEventListener("completeLoadingSpriteSheet", onCompleteLoadingSpriteSheet);
+			spriteSheetLoader.addEventListener("progressLoading", onProgressLoading);
+			
+			_loading.maxCount = soundLoader.getFileCount() + spriteSheetLoader.getFileCount();
+			
 			SwitchActionMgr.instance.addEventListener(SceneType.TITLE, onChangeScene);
 			SwitchActionMgr.instance.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 			SwitchActionMgr.instance.addEventListener(SceneType.GAME, onChangeScene);
 			
-			_title = new Title();			
-			addChild(_title);
 			
-			_title.addEventListener(SceneType.MODE_SELECT, onChangeScene);
 			
-		}		
+		}	
+		
+		private function onProgressLoading(event:Event):void
+		{
+			_loading.refresh();
+		}
+		
+		private function onCompleteLoadingSound(event:Event):void
+		{		
+			_isSoundLoaded = true;
+			
+			event.currentTarget.removeEventListener("completeLoadingSound", onCompleteLoadingSound);
+			
+			checkDone();
+		}
+		
+		private function onCompleteLoadingSpriteSheet(event:Event):void
+		{
+			_isSpriteSheetLoaded = true;
+			
+			event.currentTarget.removeEventListener("completeLoadingSpriteSheet", onCompleteLoadingSpriteSheet);
+			
+			checkDone();
+		}
+		
+		private function checkDone():void
+		{
+			if(_isSpriteSheetLoaded && _isSoundLoaded)
+			{
+				_loading.release();
+				_loading = null;
+				removeChild(_loading);
+				
+				
+				_title = new Title();			
+				addChild(_title);
+				
+				_title.addEventListener(SceneType.MODE_SELECT, onChangeScene);
+			}
+			
+		}
 
 		private function onChangeScene(event:Event):void
 		{
