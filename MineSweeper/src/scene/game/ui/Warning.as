@@ -6,6 +6,10 @@ package scene.game.ui
 	import starling.text.TextField;
 	import starling.utils.Color;
 
+	/**
+	 * 이어하기에서 데이터가 없을때 띄워주는 클래스
+	 * 
+	 */
 	public class Warning extends Sprite
 	{
 		private var _textField:TextField;

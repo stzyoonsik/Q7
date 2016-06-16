@@ -12,8 +12,8 @@ package scene
 	import starling.display.DisplayObjectContainer;
 	import starling.events.Event;
 	
-	import loading.SoundLoader;
-	import loading.SpriteSheetLoader;
+	import loading.resource.SoundLoader;
+	import loading.resource.SpriteSheetLoader;
 	import util.UserInfo;
 	import util.manager.SwitchActionMgr;
 	import util.type.SceneType;

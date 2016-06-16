@@ -13,6 +13,11 @@ package scene.game.board
 	
 	import util.manager.SoundMgr;
 
+	/**
+	 * 게임 시작 전 3 2 1 세는 카운트다운 클래스 
+	 * @author user
+	 * 
+	 */
 	public class CountDown extends DisplayObjectContainer
 	{
 		private var _background:Quad;
@@ -36,21 +41,37 @@ package scene.game.board
 			SoundMgr.instance.play(_count+".mp3");
 		}		
 		
+		/**
+		 * 타이머 시작 메소드 
+		 * 
+		 */
 		public function start():void
 		{
 			_timer.start();
 		}
 		
+		/**
+		 * 타이머 스톱 메소드 
+		 * 
+		 */
 		public function stop():void
 		{
 			_timer.stop();
 		}
 		
+		/**
+		 * 타이머 리셋 메소드 
+		 * 
+		 */
 		public function reset():void
 		{
 			_timer.reset();
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			trace("CountDown Release");
@@ -73,6 +94,10 @@ package scene.game.board
 			}
 		}
 		
+		/**
+		 * 백그라운드 초기화 메소드 
+		 * 
+		 */
 		private function initBackground():void
 		{
 			_background = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
@@ -80,6 +105,10 @@ package scene.game.board
 			addChild(_background);
 		}
 
+		/**
+		 * 텍스트필드 초기화 메소드 
+		 * 
+		 */
 		private function initTextField():void
 		{
 			_textField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.25);

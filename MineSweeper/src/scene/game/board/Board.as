@@ -11,7 +11,6 @@ package scene.game.board
 	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
@@ -19,7 +18,6 @@ package scene.game.board
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
 	import util.IndexChecker;
 	import util.manager.SoundMgr;
@@ -125,6 +123,10 @@ package scene.game.board
 		
 		
 
+		/**
+		 * 초기화 메소드 
+		 * 
+		 */
 		private function init():void
 		{
 			allocate();
@@ -133,6 +135,10 @@ package scene.game.board
 			addEventListener(TouchEvent.TOUCH, onTouchBlock);
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			//if(_atlas) { _atlas.dispose(); _atlas = null; }
@@ -146,6 +152,11 @@ package scene.game.board
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
+		/**
+		 * 배열 메모리 해제 메소드 
+		 * @param array
+		 * 
+		 */
 		private function releaseArray(array:Array):void
 		{
 			for(var i:int = 0; i < array.length; ++i)
@@ -168,31 +179,8 @@ package scene.game.board
 			
 		}
 		
-		private function printData():void
-		{
-//			for(var y:int = 0; y < _maxCol; ++y)
-//			{
-//				for(var x:int = 0; x < _maxRow; ++x)
-//				{
-//					trace("[data] " + x, y, _datas[y][x]);
-//				}				
-//			}
-		
-		}
-		
-		private function printName():void
-		{
-			for(var y:int = 0; y < _maxCol; ++y)
-			{
-				for(var x:int = 0; x < _maxRow; ++x)
-				{
-					trace("[name] " + x, y, _images[y][x].name);
-				}				
-			}
-		}
-		
 		/**
-		 * 보드를 초기화 시키는 메소드 
+		 * 보드 배열을 초기화 시키는 메소드 
 		 * 
 		 */
 		private function initBoard():void
@@ -221,6 +209,10 @@ package scene.game.board
 			}			
 		}
 		
+		/**
+		 * 이미지의 위치를 초기화 하는 메소드
+		 * 
+		 */
 		private function allocateBlock():void
 		{
 			for(var y:int = 1; y < _maxCol - 1; ++y)
@@ -258,7 +250,6 @@ package scene.game.board
 					if(minePos.indexOf((y * _maxRow) + x) != -1)
 					{
 						_datas[y][x] = -1;
-						//_images[y][x].texture = _atlas.getTexture("mine");
 					}
 					if(itemPos.indexOf(y * _maxRow + x) != -1)
 					{
@@ -350,16 +341,20 @@ package scene.game.board
 			return minePos;
 		}
 		
+		/**
+		 * 지뢰가 아닌 위치에 랜덤하게 아이템을 심을 위치를 리턴하는 메소드 
+		 * @param minePos 지뢰위치
+		 * @return 아이템위치
+		 * 
+		 */
 		private function plantItem(minePos:Vector.<int>):Vector.<int>
 		{
 			var itemPos:Vector.<int> = new Vector.<int>();
-			//var itemPos:Vector.<Point> = new Vector.<Point>();
 			var count:int;
 			trace(_maxMineFinder);
 			while(count < _maxMineFinder)
 			{
 				var random:int = int(Math.random() * _maxRow * _maxCol);
-				//trace(random);
 				for(var y:int = 1; y < _maxCol - 1; ++y)
 				{
 					for(var x:int = 1; x < _maxRow - 1; ++x)
@@ -381,12 +376,9 @@ package scene.game.board
 			
 			trace("생성된 아이템 개수 = " + itemPos.length);
 			return itemPos;
-		}
+		}		
 		
-		private function isItem(inPoint:Point):Boolean
-		{
-			return _items[inPoint.y][inPoint.x] != 0;
-		}
+		
 		/**
 		 * 터치한 지점을 열어주는 메소드
 		 * @param event 터치이벤트
@@ -481,9 +473,6 @@ package scene.game.board
 											removeEventListener(TouchEvent.TOUCH, onTouchBlock);
 										}
 									}
-//									printName();
-									//printData();
-									 
 								}								
 							}							
 						}
@@ -580,17 +569,33 @@ package scene.game.board
 			return _datas[inPoint.y][inPoint.x] != -2 && _datas[inPoint.y][inPoint.x] != -1 && _images[inPoint.y][inPoint.x].name != "opened";				
 		}
 		
+		/**
+		 * 터치한 지점을 열어주는 메소드 
+		 * @param inPoint 터치 좌표
+		 * 
+		 */
 		private function openBlock(inPoint:Point):void
 		{
 			_images[inPoint.y][inPoint.x].name = "opened";
 			_images[inPoint.y][inPoint.x].texture = _atlas.getTexture(_datas[inPoint.y][inPoint.x].toString());
 		}
 		
+		/**
+		 * 현재 지점에 아이템이 있는지 없는지를 리턴하는 메소드 
+		 * @param inPoint 클릭 좌표
+		 * @return 아이템이면 true 아니면 false
+		 * 
+		 */
 		private function checkItem(inPoint:Point):Boolean
 		{
 			return _items[inPoint.y][inPoint.x] != 0;
 		}
 		
+		/**
+		 * 아이템을 획득하는 메소드. 트윈을 통한 애니메이션이 포함됨.
+		 * @param inPoint 터치 좌표
+		 * 
+		 */
 		private function getItem(inPoint:Point):void
 		{
 			_items[inPoint.y][inPoint.x] = 0;
@@ -605,6 +610,12 @@ package scene.game.board
 				onComplete:onCompleteTweenLite, onCompleteParams:[effect]} );
 		}
 		
+		/**
+		 * 아이템 획득 애니메이션 이벤트가 끝나면 호출되는 콜백 메소드 
+		 * 아이템이 정해진 위치로 이동된 후, 스케일을 늘려가며 서서히 사라짐
+		 * @param effect 아이템 이미지
+		 * 
+		 */
 		private function onCompleteTweenLite(effect:Image):void
 		{						
 			SoundMgr.instance.play("getItem.mp3");
@@ -630,6 +641,11 @@ package scene.game.board
 			Starling.juggler.add(tweenText);
 		}
 		
+		/**
+		 * 아이템 획득 효과가 사라지면 호출되는 콜백 메소드 
+		 * @param event 저글러에서 삭제되는 이벤트
+		 * 
+		 */
 		private function onCompleteTweenEffect(event:Event):void
 		{
 			
@@ -643,6 +659,11 @@ package scene.game.board
 			tween = null;
 		}
 		
+		/**
+		 * 아이템 획득 효과가 사라지면 호출되는 콜백 메소드 
+		 * @param event 저글러에서 삭제되는 이벤트
+		 * 
+		 */
 		private function onCompleteTweenText(event:Event):void
 		{
 			var tween:Tween = event.currentTarget as Tween;

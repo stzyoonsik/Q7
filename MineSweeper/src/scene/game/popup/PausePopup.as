@@ -14,6 +14,11 @@ package scene.game.popup
 	
 	import util.manager.DisplayObjectMgr;
 
+	/**
+	 * 게임 중 뒤로가기를 눌렀을때 등장하는 클래스 
+	 * @author user
+	 * 
+	 */
 	public class PausePopup extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
@@ -35,6 +40,10 @@ package scene.game.popup
 			this.visible = false;
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 //			if(_atlas)
@@ -66,6 +75,11 @@ package scene.game.popup
 			removeChildren();
 		}
 		
+		/**
+		 * 버튼을 반투명하고 터치 불가하게 만드는 메소드 
+		 * @param type 어떤 버튼에 적용할지 스트링으로 받음
+		 * 
+		 */
 		public function makeButtonInvisible(type:String):void
 		{
 			switch(type)
@@ -87,6 +101,10 @@ package scene.game.popup
 			}
 		}
 		
+		/**
+		 * 백그라운드 초기화 메소드 
+		 * 
+		 */
 		private function initBackground():void
 		{
 			var background:Image = new Image(_atlas.getTexture("popupBg"));
@@ -98,6 +116,10 @@ package scene.game.popup
 			addChild(background);
 		}
 		
+		/**
+		 * 버튼 초기화 메소드 
+		 * 
+		 */
 		private function initButton():void
 		{			
 			_again = DisplayObjectMgr.instance.setButton(_again, _atlas.getTexture("button"), Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.3, Main.stageWidth * 0.1, "AGAIN", Main.stageWidth * 0.05);
@@ -113,6 +135,10 @@ package scene.game.popup
 			addChild(_resume);
 		}
 		
+		/**
+		 * 텍스트필드 초기화 메소드 
+		 * 
+		 */
 		private function initTextField():void
 		{
 			var text:TextField = new TextField(Main.stageWidth * 0.5 , Main.stageHeight * 0.2,"PAUSE");
@@ -123,6 +149,11 @@ package scene.game.popup
 			addChild(text);
 		}
 		
+		/**
+		 * 다시하기를 눌렀을때 호출되는 콜백메소드 . 게임을 다시 시작하기위해 이벤트를 보냄
+		 * @param event
+		 * 
+		 */
 		private function onTouchAgain(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_again, TouchPhase.ENDED);
@@ -133,6 +164,11 @@ package scene.game.popup
 		}
 		
 		
+		/**
+		 * 나가기를 눌렀을때 호출되는 콜백메소드. 게임에서 나가고 모드셀렉트 씬으로 가기위해 이벤트를 보냄
+		 * @param event
+		 * 
+		 */
 		private function onTouchExit(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_exit, TouchPhase.ENDED);
@@ -142,6 +178,11 @@ package scene.game.popup
 			}
 		}
 		
+		/**
+		 * 재개하기를 눌렀을때 호출되는 콜백메소드. 게임을 계속 진행하기위해 이벤트를 보냄 
+		 * @param event
+		 * 
+		 */
 		private function onTouchResume(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_resume, TouchPhase.ENDED);

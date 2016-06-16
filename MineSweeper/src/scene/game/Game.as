@@ -42,6 +42,10 @@ package scene.game
 	import util.type.PlatformType;
 	import util.type.SceneType;
 	
+	/**
+	 * 게임 씬 클래스 
+	 * 
+	 */
 	public class Game extends Sprite
 	{ 
 		//private var _difficulty:int;
@@ -65,6 +69,8 @@ package scene.game
 		
 		private var _data:Object;
 		
+		private const COUNT_DOWN_COUNT:int = 3;
+		
 		public function Game(data:Object)
 		{
 			_gameAtlas = AtlasMgr.instance.getAtlas("GameSprite");
@@ -81,6 +87,11 @@ package scene.game
 			NativeApplication.nativeApplication.addEventListener(flash.events.Event.ACTIVATE, onActivated);
 		}
 		
+		/**
+		 * 백버튼을 눌렀을때 호출되는 콜백메소드 
+		 * @param event 키보드이벤트
+		 * 
+		 */
 		private function onTouchKeyBoard(event:KeyboardEvent):void
 		{
 			
@@ -97,6 +108,10 @@ package scene.game
 			}
 		}
 		
+		/**
+		 * 백그라운드 초기화 메소드 
+		 * 
+		 */
 		private function initBackground():void
 		{
 			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight * 0.8, Color.SILVER);
@@ -104,6 +119,11 @@ package scene.game
 			addChild(quad);			
 			
 		}
+		/**
+		 * 팝업 초기화 메소드 
+		 * @param atlas 텍스쳐 아틀라스
+		 * 
+		 */
 		private function initPopup(atlas:TextureAtlas):void
 		{
 			_pausePopup = new PausePopup(atlas);
@@ -118,6 +138,11 @@ package scene.game
 			addChild(_clearPopup);
 		}
 		
+		/**
+		 * 카운트다운 초기화 메소드 
+		 * @param count 카운트를 몇부터 시작할지
+		 * 
+		 */
 		private function initCountDown(count:int):void
 		{
 			_countDown = new CountDown(count);
@@ -125,18 +150,25 @@ package scene.game
 			addChild(_countDown);
 		}
 		
+		/**
+		 * 카운트다운이 끝나면 호출되는 콜백메소드 
+		 * @param event 디스패치받은 이벤트
+		 * 
+		 */
 		private function onEndCountDown(event:Event):void
 		{
 			_countDown.removeEventListener("endTimer", onEndCountDown);
 			_countDown.visible = false;
-			//_countDown.release();
-			//_countDown = null;
 			//게임 시작
 			if(_time)
-				_time.start();
-			
+				_time.start();			
 		}
 		
+		/**
+		 * 보드를 초기화하는 메소드 
+		 * @param data 가로 세로 크기, 난이도, 지뢰개수... 등이 담긴 데이터
+		 * 
+		 */
 		private function initBoard(data:Object):void
 		{
 			//새로 시작
@@ -156,7 +188,7 @@ package scene.game
 				initTime(0);
 				initGameOver();
 				
-				initCountDown(3);				
+				initCountDown(COUNT_DOWN_COUNT);				
 			}
 			
 			//이어하기
@@ -180,7 +212,7 @@ package scene.game
 					initTime(int(datas[DataType.TIME]));
 					initGameOver();
 					
-					initCountDown(3);
+					initCountDown(COUNT_DOWN_COUNT);
 				}
 				else
 				{
@@ -201,6 +233,10 @@ package scene.game
 			}
 		}
 		
+		/**
+		 * 게임오버를 초기화하는 메소드 
+		 * 
+		 */
 		private function initGameOver():void
 		{
 			_gameOver = new GameOver();
@@ -208,6 +244,11 @@ package scene.game
 			addChild(_gameOver);
 		}
 		
+		/**
+		 * 아이템을 초기화하는 메소드 
+		 * @param finderNum 시작했을때의 마인파인더의 갯수
+		 * 
+		 */
 		private function initItem(finderNum:int):void
 		{
 			_item = new Item(_gameAtlas, finderNum);
@@ -217,6 +258,11 @@ package scene.game
 			addChild(_item);
 		}
 		
+		/**
+		 * 타이머를 초기화하는 메소드 
+		 * @param time 타이머 시작 시간
+		 * 
+		 */
 		private function initTime(time:int):void
 		{
 			_time = new Time(_gameAtlas, time);
@@ -225,11 +271,20 @@ package scene.game
 			addChild(_time);
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			//if(_gameAtlas) { _gameAtlas = null;	}
 			//if(_modeAtlas) { _modeAtlas = null; }
-			if(_board) { _board.release(); _board = null;	removeChild(_board); }
+			if(_board) { _board.removeEventListener("game_over", onGameOver);
+				_board.removeEventListener("game_clear", onGameClear);
+				_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+				_board.removeEventListener("mineFinder", onTouchMineFinder);
+				_board.removeEventListener("getMineFinder", onGetMineFinder);
+				_board.release(); _board = null;	removeChild(_board); }
 			if(_time) { _time.release(); _time = null; removeChild(_time); }
 			if(_item) {	_item.release(); _item = null; removeChild(_item); }			
 			if(_pausePopup) { _pausePopup.release(); _pausePopup = null; removeChild(_pausePopup); }
@@ -242,39 +297,39 @@ package scene.game
 			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
+		/**
+		 * 게임에 실패했을때 호출되는 콜백메소드 
+		 * 
+		 */
 		public function onGameOver():void
 		{
 			SoundMgr.instance.stopAll();
 			SoundMgr.instance.play("gameClear.mp3", true);
 			SoundMgr.instance.play("defeat.mp3");
 			trace("GAME OVER");
-			_board.removeEventListener("game_over", onGameOver);
-			_board.removeEventListener("game_clear", onGameClear);
-			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
+			
 			
 			_pausePopup.makeButtonInvisible("resume");
-			//아이템 안의 이벤트 제거해야함 release 함수 만들자
-			
-			//타이머 안의 이벤트 제거해야함
 			
 			_time.stop();
 			
-			_gameOver.textField.text = "GAME OVER";
+			_gameOver.setTextField("GAME OVER");
 			_gameOver.visible = true;
 			
 			IOMgr.instance.removeData();
 			_isGameEnded = true;
 		}
 		
+		/**
+		 * 게임에 성공했을때 호출되는 콜백메소드 
+		 * 
+		 */
 		public function onGameClear():void
 		{
 			SoundMgr.instance.stopAll();
 			SoundMgr.instance.play("gameClear.mp3", true);
 			SoundMgr.instance.play("victory.mp3");
 			trace("GAME CLEAR");
-			_board.removeEventListener("game_over", onGameOver);
-			_board.removeEventListener("game_clear", onGameClear);
-			_board.removeEventListener(TouchEvent.TOUCH, onScrollGameBoard);
 			
 			
 			_time.stop();
@@ -305,28 +360,27 @@ package scene.game
 			{
 				_clearPopup.visible = true;
 				var isItem:String = _board.isItemMode == true ? "O" : "X";
-				_clearPopup.textField.text = "이름 : " + UserInfo.name + "\n" 
-											+ "아이템 : " + isItem + "\n"
-											+ "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" 
-											+ "시간 : " + _time.realTime.toString() + "\n" 
-											+ "경험치 : " + (Reward.getRewardExp(_board.difficulty) * UserInfo.expRatio).toString() + "\n" 
-											+ "보상 : " + Reward.getRewardCoin(_board.difficulty).toString() + "코인";
+				var text:String =  "이름 : " + UserInfo.name + "\n" 
+								+ "아이템 : " + isItem + "\n"
+								+ "난이도 : " + DifficultyType.getDifficulty(_board.difficulty) + "\n" 
+								+ "시간 : " + _time.realTime.toString() + "\n" 
+								+ "경험치 : " + (Reward.getRewardExp(_board.difficulty) * UserInfo.expRatio).toString() + "\n" 
+								+ "보상 : " + Reward.getRewardCoin(_board.difficulty).toString() + "코인";
+				_clearPopup.setTextField(text); 
 			}
 			
 			
-			_gameOver.textField.text = "GAME CLEAR";
+			_gameOver.setTextField("GAME CLEAR");
 			_gameOver.visible = true;
 			
 			IOMgr.instance.removeData();
-			
-			
-			
-			
-			
-				
 			_isGameEnded = true;
 		}
 		
+		/**
+		 * 게임 클리어를 통해 받은 보상을 업데이트 하는 메소드 
+		 * 
+		 */
 		private function updateDatas():void
 		{
 			//경험치 보상
@@ -346,9 +400,13 @@ package scene.game
 			
 		}
 		
+		/**
+		 * selectRecord가 끝났을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onSelectRecordComplete(event:Event):void
-		{
-			
+		{			
 			//select로 정보 가져오고, 최고기록인지 확인하고 , 최고기록이면 업데이트
 			if(checkNewRecord(int(event.data), _time.realTime))
 			{
@@ -358,11 +416,11 @@ package scene.game
 			UserDBMgr.instance.removeEventListener("selectRecord", onSelectRecordComplete);
 		}
 		
-		private function insertObject(id:String, name:String, lastLogOut:String, stamina:int):Object
-		{
-			return new Object;
-		}
-		
+		/**
+		 * 보드를 드래그했을때 호출되는 콜백메소드 
+		 * @param event 터치
+		 * 
+		 */
 		private function onScrollGameBoard(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_board);
@@ -407,43 +465,52 @@ package scene.game
 					{
 						_board.y = Main.stageHeight * 0.3 - _board.height;
 					}
-				}
-				
+				}				
 			}
 		}
 		
 		/**
-		 *  
+		 * 마인파인더 아이템을 터치했을때 호출되는 콜백메소드
 		 * @param event
 		 * 
 		 */
 		private function onTouchMineFinder(event:Event):void
 		{
-			_item.mineFinder.text = _board.numberOfMineFinder.toString();
+			_item.setMineFinderText(_board.numberOfMineFinder.toString());
 			if(_board.numberOfMineFinder > 0)
 			{							
 				_board.isMineFinderSelected = _item.isMineFinderSelected;
 				if(_item.isMineFinderSelected)
 				{
-					_item.mineFinder.alpha = 0.5;	
+					_item.setMineFinderAlpha(0.5);
 				}
 				else
 				{
-					_item.mineFinder.alpha = 1;			
+					_item.setMineFinderAlpha(1);		
 				}
 			}
 			else 
 			{
-				_item.mineFinder.alpha = 1;				
+				_item.setMineFinderAlpha(1);			
 				_board.isMineFinderSelected = false;
 			}
 		}
 		
+		/**
+		 * 보드에서 마인파인더 아이템을 획득했을때 호출되는 콜백메소드 
+		 * @param event 디스패치 받은 이벤트
+		 * 
+		 */
 		private function onGetMineFinder(event:Event):void
 		{
-			_item.mineFinder.text = _board.numberOfMineFinder.toString();
+			_item.setMineFinderText(_board.numberOfMineFinder.toString());
 		}
 		
+		/**
+		 * 나가기 버튼을 클릭했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onExit(event:Event):void
 		{
 			//게임이 끝나지 않은 상태라면 데이터를 저장 (이어하기를 위함)
@@ -457,14 +524,16 @@ package scene.game
 				IOMgr.instance.removeData();
 			}
 			
-			//dispatchEvent(new Event(SceneType.MODE_SELECT));
 			SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.MODE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 		}
 		
+		/**
+		 * 재게하기 버튼을 클릭했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onResume(event:Event):void
 		{
-//			if(_time)
-//				_time.timer.start();
 		
 			if(_countDown)
 			{
@@ -511,15 +580,24 @@ package scene.game
 			
 		}
 		
+		/**
+		 * 이전기록과 비교하여 더 나은 기록인지를 검사하는 메소드 
+		 * @param preTime 이전 시간
+		 * @param curTime 현재 시간
+		 * @return 현재 시간이 이전 시간보다 더 작으면 true 아니면 false
+		 * 
+		 */
 		private function checkNewRecord(preTime:int, curTime:int):Boolean
-		{
-			if(!preTime)
-				return true;
-			
+		{			
 			return curTime < preTime;
 		}
 
 		
+		/**
+		 * 윈도우에서 어플리케이션이 내려갔을때 호출되는 콜백메소드. 카운트다운 또는 시간을 정지시킴
+		 * @param event
+		 * 
+		 */
 		private function onDeactivated(event:flash.events.Event):void   
 		{  			
 			if(_countDown)
@@ -535,6 +613,11 @@ package scene.game
 			}
 		}  
 		
+		/**
+		 * 윈도우에 어플리케이션이 돌아왔을떄 호출되는 콜백메소드. 재게시킴. 
+		 * @param event
+		 * 
+		 */
 		private function onActivated(event:flash.events.Event):void 
 		{			
 			if(_countDown)

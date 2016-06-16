@@ -3,6 +3,7 @@ package scene.modeSelect.popup.custom
 	import flash.utils.Dictionary;
 	
 	import scene.Main;
+	import scene.modeSelect.popup.Popup;
 	
 	import starling.animation.Transitions;
 	import starling.display.Button;
@@ -23,11 +24,9 @@ package scene.modeSelect.popup.custom
 	import util.type.DifficultyType;
 	import util.type.SceneType;
 
-	public class CustomPopup extends DisplayObjectContainer
+	public class CustomPopup extends Popup
 	{
-		private var _atlas:TextureAtlas;
-		
-		private var _close:Button;
+		private var _atlas:TextureAtlas;		
 		
 		private var _slider:Slider;
 		private var _radioItem:Image;
@@ -40,20 +39,22 @@ package scene.modeSelect.popup.custom
 		{
 			_atlas = atlas;
 			
-			initBackground();
-			
+			initBackground(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth, Main.stageHeight * 0.85);
+			 
 			_slider = new Slider(_atlas);
 			addChild(_slider);
 			
 			initButton();	
+			initClose(Main.stageWidth * 0.95, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 		}
 		
-		public function release():void
+		public override function release():void
 		{
+			super.release();
+			
 			//if(_atlas) { _atlas.dispose(); _atlas = null; }
 			if(_start) { _start.removeEventListener(TouchEvent.TOUCH, onTouchStart); _start.dispose(); _start = null;	}
-			if(_slider)	{ _slider.release(); _slider = null; }
-			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchClose); _close.dispose(); _close = null; }
+			if(_slider)	{ _slider.release(); _slider = null; }			
 			if(_radioItem) { _radioItem.removeEventListener(TouchEvent.TOUCH, onTouchRadioItem); _radioItem.dispose(); _radioItem = null; }
 //			if(_data)
 //			{
@@ -67,20 +68,20 @@ package scene.modeSelect.popup.custom
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
-		private function initBackground():void
-		{
-			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
-			quad.alpha = 0.5;
-			addChild(quad);
-			
-			var background:Image = new Image(_atlas.getTexture("popupBg"));
-			background.width = Main.stageWidth;
-			background.height = Main.stageHeight * 0.85;
-			background.x = Main.stageWidth * 0.5;
-			background.y = Main.stageHeight * 0.5;			
-			background.alignPivot("center","center");
-			addChild(background);
-		}
+//		private function initBackground():void
+//		{
+//			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
+//			quad.alpha = 0.5;
+//			addChild(quad);
+//			
+//			var background:Image = new Image(_atlas.getTexture("popupBg"));
+//			background.width = Main.stageWidth;
+//			background.height = Main.stageHeight * 0.85;
+//			background.x = Main.stageWidth * 0.5;
+//			background.y = Main.stageHeight * 0.5;			
+//			background.alignPivot("center","center");
+//			addChild(background);
+//		}
 		
 		private function initButton():void
 		{
@@ -107,10 +108,10 @@ package scene.modeSelect.popup.custom
 			_start.addEventListener(TouchEvent.TOUCH, onTouchStart);
 			addChild(_start);
 			
-			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
-				Main.stageWidth * 0.95, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
-			addChild(_close);
+//			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
+//				Main.stageWidth * 0.95, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
+//			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
+//			addChild(_close);
 		}
 		
 		private function onTouchClose(event:TouchEvent):void

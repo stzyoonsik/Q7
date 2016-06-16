@@ -8,6 +8,7 @@ package scene.modeSelect.user
 	import starling.text.TextField;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Align;
+	import starling.utils.Color;
 	
 	import util.LevelSystem;
 	import util.UserInfo;
@@ -15,8 +16,10 @@ package scene.modeSelect.user
 	public class Level extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
-		private var _background:Image;
-		private var _expImage:Image;
+		//private var _background:Image;
+		//private var _expImage:Image;
+		private var _background:Quad;
+		private var _expImage:Quad;
 		
 		private var _levelTextField:TextField;
 		private var _expTextField:TextField;
@@ -40,18 +43,23 @@ package scene.modeSelect.user
 		}
 		
 		
-		public function refreshExp():void
-		{
-			_expImage.width = UserInfo.exp;
-		}
+//		public function refreshExp():void
+//		{
+//			_expImage.width = UserInfo.exp;
+//		}
 		
 		private function initBackground():void
 		{
-			_background = new Image(_atlas.getTexture("expBg"));
+//			_background = new Image(_atlas.getTexture("expBg"));
+//			_background.x = Main.stageWidth * 0.55;
+//			_background.y = Main.stageHeight * 0.1;
+//			_background.width = Main.stageWidth * 0.3;
+//			_background.height = _background.width * 0.1;
+//			_background.alignPivot("center", "center");
+//			addChild(_background);
+			_background = new Quad(Main.stageWidth * 0.3, Main.stageWidth * 0.03, Color.SILVER);
 			_background.x = Main.stageWidth * 0.55;
 			_background.y = Main.stageHeight * 0.1;
-			_background.width = Main.stageWidth * 0.3;
-			_background.height = _background.width * 0.1;
 			_background.alignPivot("center", "center");
 			addChild(_background);
 		}
@@ -61,17 +69,21 @@ package scene.modeSelect.user
 			if(LevelSystem.getPercent(UserInfo.level, UserInfo.exp) == 0)
 				return;
 			
-			_expImage = new Image(_atlas.getTexture("exp"));
-			_expImage.x = Main.stageWidth * 0.55;
+//			_expImage = new Image(_atlas.getTexture("exp"));
+//			_expImage.x = Main.stageWidth * 0.55;
+//			_expImage.y = Main.stageHeight * 0.1;
+//			_expImage.width = _background.width * 0.98;
+//			_expImage.height = _background.height * 0.9;
+//			_expImage.alignPivot("center", "center");
+//			
+//			var mask:Quad = new Quad(_expImage.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100), _expImage.height);
+//			_expImage.mask = mask;
+//			
+//			addChild(_expImage);
+			_expImage = new Quad(_background.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100), Main.stageWidth * 0.03, Color.LIME);
+			_expImage.x = Main.stageWidth * 0.55 - (_background.width / 2);
 			_expImage.y = Main.stageHeight * 0.1;
-			_expImage.width = _background.width * 0.98;
-			_expImage.height = _background.height * 0.9;
-			_expImage.alignPivot("center", "center");
-			
-			//??? *2를 왜 해야하는가 미스터리
-			var mask:Quad = new Quad(_expImage.width * (LevelSystem.getPercent(UserInfo.level, UserInfo.exp) / 100), _expImage.height);
-			_expImage.mask = mask;
-			
+			_expImage.alignPivot("left", "center");
 			addChild(_expImage);
 		}
 		

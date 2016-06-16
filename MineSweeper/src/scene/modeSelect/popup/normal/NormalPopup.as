@@ -3,20 +3,17 @@ package scene.modeSelect.popup.normal
 	import flash.utils.Dictionary;
 	
 	import scene.Main;
-	
+	import scene.modeSelect.popup.Popup;
 	
 	import starling.animation.Transitions;
 	import starling.display.Button;
 	import starling.display.DisplayObject;
-	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.Quad;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
 	import util.UserInfo;
 	import util.manager.DisplayObjectMgr;
@@ -24,7 +21,7 @@ package scene.modeSelect.popup.normal
 	import util.type.DataType;
 	import util.type.SceneType;
 
-	public class NormalPopup extends DisplayObjectContainer
+	public class NormalPopup extends Popup
 	{
 		private var _atlas:TextureAtlas;
 		
@@ -37,8 +34,6 @@ package scene.modeSelect.popup.normal
 		private var _hard:Button;
 		private var _veryHard:Button;
 		
-		private var _close:Button;
-		
 		private var _maxRow:int;
 		private var _maxCol:int;
 		private var _numberOfMine:int;
@@ -50,21 +45,24 @@ package scene.modeSelect.popup.normal
 		public function NormalPopup(atlas:TextureAtlas)
 		{
 			_atlas = atlas;
-			initBackground();
+			initBackground(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.9, Main.stageHeight * 0.85);
 			initButton();
 			initLock();
+			initClose(Main.stageWidth * 0.9, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 		}		
 		
 		
-		public function release():void
+		public override function release():void
 		{	
+			super.release();
+			
 			if(_radioItem) { _radioItem.removeEventListener(TouchEvent.TOUCH, onTouchRadioItem); _radioItem.dispose(); _radioItem = null; }
 			if(_veryEasy) { _veryEasy.removeEventListener(TouchEvent.TOUCH, onTouchVeryEasy); _veryEasy.dispose(); _veryEasy = null; }
 			if(_easy) { _easy.removeEventListener(TouchEvent.TOUCH, onTouchEasy); _easy.dispose(); _easy = null; }
 			if(_normal) { _normal.removeEventListener(TouchEvent.TOUCH, onTouchNormal); _normal.dispose(); _normal = null; }
 			if(_hard) { _hard.removeEventListener(TouchEvent.TOUCH, onTouchHard); _hard.dispose(); _hard = null; }
 			if(_veryHard) { _veryHard.removeEventListener(TouchEvent.TOUCH, onTouchVeryHard); _veryHard.dispose(); _veryHard = null; }
-			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchClose); _close.dispose(); _close = null; }
+			
 //			if(_data)
 //			{
 //				for(var key:String in _data)
@@ -76,21 +74,6 @@ package scene.modeSelect.popup.normal
 //			}
 			
 			removeChildren(0, this.numChildren - 1, true);
-		}
-		
-		private function initBackground():void			
-		{
-			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
-			quad.alpha = 0.5;
-			addChild(quad);
-			
-			var background:Image = new Image(_atlas.getTexture("popupBg"));
-			background.width = Main.stageWidth * 0.9;
-			background.height = Main.stageHeight * 0.85;
-			background.x = Main.stageWidth * 0.5;
-			background.y = Main.stageHeight * 0.5;				
-			background.alignPivot("center","center");
-			addChild(background);
 		}
 		
 		private function initButton():void
@@ -130,12 +113,6 @@ package scene.modeSelect.popup.normal
 			addChild(_normal);
 			addChild(_hard);
 			addChild(_veryHard);
-			
-			
-			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
-				Main.stageWidth * 0.9, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
-			addChild(_close);
 			
 		}
 		
@@ -179,14 +156,6 @@ package scene.modeSelect.popup.normal
 			} 
 		}
 		
-		private function onTouchClose(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_close, TouchPhase.ENDED);
-			if(touch)
-			{
-				this.visible = false;
-			}
-		}
 		
 		/**
 		 * 

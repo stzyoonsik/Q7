@@ -6,6 +6,10 @@ package scene.game.ui
 	import starling.text.TextField;
 	import starling.utils.Color;
 
+	/**
+	 * 게임에 실패했을때 표시하기 위한 클래스 
+	 * 
+	 */
 	public class GameOver extends Sprite
 	{
 		private var _textField:TextField;
@@ -21,6 +25,10 @@ package scene.game.ui
 			addChild(_textField);
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			if(_textField)
@@ -29,15 +37,15 @@ package scene.game.ui
 				removeChild(_textField);
 			}
 		}
-
-		public function get textField():TextField
+		
+		/**
+		 * 텍스트필드의 텍스트를 set하는 메소드 
+		 * @param text 텍스트
+		 * 
+		 */
+		public function setTextField(text:String):void
 		{
-			return _textField;
-		}
-
-		public function set textField(value:TextField):void
-		{
-			_textField = value;
+			_textField.text = text;
 		}
 
 	}

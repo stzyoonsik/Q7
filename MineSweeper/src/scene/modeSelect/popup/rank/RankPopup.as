@@ -10,13 +10,12 @@ package scene.modeSelect.popup.rank
 	import loading.CircleLoading;
 	
 	import scene.Main;
+	import scene.modeSelect.popup.Popup;
 	
 	import server.UserDBMgr;
 	
 	import starling.display.Button;
-	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -26,13 +25,12 @@ package scene.modeSelect.popup.rank
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Align;
-	import starling.utils.Color;
 	
 	import util.manager.DisplayObjectMgr;
 	import util.manager.SoundMgr;
 	import util.type.DifficultyType;
 	 
-	public class RankPopup extends DisplayObjectContainer
+	public class RankPopup extends Popup
 	{
 		private var _atlas:TextureAtlas;
 		
@@ -62,7 +60,6 @@ package scene.modeSelect.popup.rank
 		private var _veryHard:Button;
 				
 		private var _back:Button;
-		private var _close:Button;
 		
 		private var _isItemMode:Boolean;
 		private var _difficulty:int;
@@ -73,15 +70,17 @@ package scene.modeSelect.popup.rank
 		{
 			_atlas = atlas;
 			
-			initBackground();
+			initBackground(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.8, Main.stageHeight * 0.8);
 			initSpr();
 			initButton();
+			initClose(Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 			initLoading();
 			
 		}
 		
-		public function release():void
+		public override function release():void
 		{
+			super.release();
 			//if(_atlas) { _atlas = null; }
 			if(_isItemModeSpr) { _isItemModeSpr.dispose(); _isItemModeSpr.removeChildren(); _isItemModeSpr.dispose(); _isItemModeSpr = null; removeChild(_isItemModeSpr); }
 			if(_difficultySpr) { _difficultySpr.dispose(); _difficultySpr.removeChildren(); _difficultySpr.dispose(); _difficultySpr = null; removeChild(_difficultySpr); }
@@ -143,21 +142,6 @@ package scene.modeSelect.popup.rank
 				
 		}
 		
-		private function initBackground():void
-		{
-			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
-			quad.alpha = 0.5;
-			addChild(quad);
-			
-			var background:Image = new Image(_atlas.getTexture("popupBg"));
-			background.width = Main.stageWidth * 0.8;
-			background.height = Main.stageHeight * 0.8;
-			background.x = Main.stageWidth * 0.5;
-			background.y = Main.stageHeight * 0.5;
-			background.alignPivot("center", "center");
-			
-			addChild(background);
-		}
 		
 		private function initSpr():void
 		{
@@ -218,14 +202,9 @@ package scene.modeSelect.popup.rank
 		{
 			_back = DisplayObjectMgr.instance.setButton(_back, _atlas.getTexture("back"), 
 				Main.stageWidth * 0.2, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_back.addEventListener(TouchEvent.TOUCH, onTouchBack);
-			
-			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
-				Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
+			_back.addEventListener(TouchEvent.TOUCH, onTouchBack);			
 			
 			addChild(_back);
-			addChild(_close);
 			
 			
 			_prev = DisplayObjectMgr.instance.setButton(_prev, _atlas.getTexture("prev"), 
@@ -318,15 +297,6 @@ package scene.modeSelect.popup.rank
 				}
 			}
 		}
-				
-		private function onTouchClose(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_close, TouchPhase.ENDED);
-			if(touch)
-			{
-				this.visible = false;
-			}
-		}
 		
 		private function onTouchItemMode(event:TouchEvent):void
 		{
@@ -414,7 +384,7 @@ package scene.modeSelect.popup.rank
 		{
 			if(event.data)
 			{
-				_circleLoading.visible = true;
+				_circleLoading.startLoading();
 				var data:Object = JSON.parse(event.data as String);
 				
 				showRanking(data);			
@@ -439,7 +409,7 @@ package scene.modeSelect.popup.rank
 			trace("받아온 사람 수 : " + _data.length);
 			if(_data.length == 0)
 			{
-				_circleLoading.visible = false;
+				_circleLoading.stopLoading();
 				return;
 			}
 			_currentCount = 0;

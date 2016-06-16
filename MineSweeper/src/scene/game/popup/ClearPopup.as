@@ -11,13 +11,15 @@ package scene.game.popup
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
-	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.Align;
-	import starling.utils.Color;
 	
 	import util.manager.DisplayObjectMgr;
 
+	/**
+	 * 게임 클리어시 등장하는 팝업 클래스 
+	 * 
+	 */
 	public class ClearPopup extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
@@ -27,8 +29,6 @@ package scene.game.popup
 		private var _again:Button;
 		private var _exit:Button;
 		
-		public function get textField():TextField {	return _textField; }
-		public function set textField(value:TextField):void	{ _textField = value; }
 		
 		public function ClearPopup(atlas:TextureAtlas)
 		{
@@ -42,6 +42,10 @@ package scene.game.popup
 			this.visible = false;
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 //			if(_atlas)
@@ -73,6 +77,16 @@ package scene.game.popup
 			removeChildren(0, this.numChildren, true);
 		}
 		
+		/**
+		 * 텍스트 필드의 텍스트를 set하는 메소드 
+		 * @param text 텍스트
+		 * 
+		 */
+		public function setTextField(text:String):void
+		{
+			_textField.text = text;
+		}
+		
 		
 
 		/** 백그라운드 초기화 메소드	 */
@@ -100,6 +114,10 @@ package scene.game.popup
 			addChild(_exit);
 		}
 		
+		/**
+		 * 텍스트필드 초기화 메소드 
+		 * 
+		 */
 		private function initTextField():void
 		{
 			_textField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.375, "");

@@ -1,31 +1,21 @@
 package scene.modeSelect.popup.reward
 {
 	import scene.Main;
+	import scene.modeSelect.popup.Popup;
 	
 	import server.UserDBMgr;
-	
-	import starling.display.Button;
-	import starling.display.DisplayObjectContainer;
-	import starling.display.Image;
-	import starling.display.Quad;
-	import starling.events.Touch;
-	import starling.events.TouchEvent;
-	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
 	import util.UserInfo;
 	import util.manager.DisplayObjectMgr;
 
-	public class RewardPopup extends DisplayObjectContainer
+	public class RewardPopup extends Popup
 	{
 		
 		private var _atlas:TextureAtlas;
 		
 		private var _textField:TextField;
-		
-		private var _close:Button;
 		
 		private var _how:String;
 		private var _reward:String;
@@ -40,15 +30,16 @@ package scene.modeSelect.popup.reward
 		public function RewardPopup(atlas:TextureAtlas )
 		{
 			_atlas = atlas;
-			initBackground();
+			initBackground(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.8, Main.stageHeight * 0.4);
 			initTextField();
-			initButton();
+			initClose(Main.stageWidth * 0.825, Main.stageHeight * 0.35, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 		}
 		
-		public function release():void
+		public override function release():void
 		{
+			super.release();
+			
 			if(_textField) { _textField = null; } 
-			if(_close) { addEventListener(TouchEvent.TOUCH, onTouchClose); }
 			
 			removeChildren(0, this.numChildren - 1, true);
 		}
@@ -100,21 +91,6 @@ package scene.modeSelect.popup.reward
 			_textField.text = how + " 보상으로 " + reward + " " + amount + "개 획득";
 		}
 		
-		private function initBackground():void			
-		{
-			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
-			quad.alpha = 0.5;
-			addChild(quad);
-			
-			var background:Image = new Image(_atlas.getTexture("popupBg"));
-			background.width = Main.stageWidth * 0.8;
-			background.height = Main.stageHeight * 0.4;
-			background.x = Main.stageWidth * 0.5;
-			background.y = Main.stageHeight * 0.5;				
-			background.alignPivot("center","center");
-			addChild(background);
-		}
-		
 		private function initTextField():void
 		{
 			_textField = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.5, Main.stageHeight * 0.5,
@@ -122,23 +98,6 @@ package scene.modeSelect.popup.reward
 			_textField.format.size = Main.stageWidth * 0.05;
 			
 			addChild(_textField);
-		}
-		
-		private function initButton():void
-		{
-			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
-				Main.stageWidth * 0.825, Main.stageHeight * 0.35, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
-			addChild(_close);
-		}
-		
-		private function onTouchClose(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_close, TouchPhase.ENDED);
-			if(touch)
-			{
-				this.visible = false;
-			}
 		}
 		
 	}

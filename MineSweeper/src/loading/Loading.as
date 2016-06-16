@@ -1,15 +1,16 @@
 package loading
 {
-	import starling.display.Canvas;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.display.Quad;
-	import starling.display.Sprite;
-	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.utils.Color;
 	import scene.Main;
 
+	/**
+	 * 막대형 그래프로 로딩 프로그레스를 보여주는 클래스
+	 * 
+	 */
 	public class Loading extends DisplayObjectContainer
 	{
 		[Embed(source="../background.png")]
@@ -31,6 +32,10 @@ package loading
 			initLoading();
 		}
 		
+		/**
+		 * 로딩 정보가 갱신될때마다 이미지의 넓이를 바꿔주는 메소드 
+		 * 
+		 */
 		public function refresh():void
 		{			
 			_loadingGauge.width = Number(++_currentCount / _maxCount) * Main.stageWidth * 0.8;
@@ -45,6 +50,10 @@ package loading
 		
 		
 
+		/**
+		 * 배경을 임베드 된 이미지로 채우는 메소드 
+		 * 
+		 */
 		private function initBackground():void
 		{
 			_background = new Image(Texture.fromEmbeddedAsset(Background));
@@ -53,6 +62,10 @@ package loading
 			addChild(_background);
 		}
 		
+		/**
+		 * 로딩 프로그레스를 시각화하여 보여주기 위해 초기화 하는 메소드 
+		 * 
+		 */
 		private function initLoading():void
 		{
 			_loadingBar = new Quad(Main.stageWidth * 0.8, Main.stageWidth * 0.025, Color.SILVER);

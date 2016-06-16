@@ -89,7 +89,7 @@ package scene.modeSelect.popup.shop
 				switch(_num)
 				{
 					case 0:						
-						if(UserInfo.coin >= HEART_PRICE && UserInfo.heart < 10)
+						if(UserInfo.coin >= HEART_PRICE && UserInfo.heart < UserInfo.MAX_HEART)
 						{
 							SoundMgr.instance.play("buyItem.mp3");
 							UserInfo.heart += 1;
@@ -101,7 +101,7 @@ package scene.modeSelect.popup.shop
 						
 						break;
 					case 1:
-						if(UserInfo.coin >= HEART_X5_PRICE && UserInfo.heart < 10)
+						if(UserInfo.coin >= HEART_X5_PRICE && UserInfo.heart < UserInfo.MAX_HEART)
 						{
 							SoundMgr.instance.play("buyItem.mp3");
 							UserInfo.heart += 5;

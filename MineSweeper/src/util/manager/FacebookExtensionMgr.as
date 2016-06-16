@@ -129,7 +129,9 @@ package util.manager
 			UserInfo.remainHeartTime = 300;
 			UserInfo.level = 1;
 			UserInfo.exp = 0;
+			UserInfo.expRatio = 1;
 			UserInfo.coin = 1000;
+			UserInfo.lastDate = new Date().getTime();
 			
 			
 			checkDone();

@@ -1,24 +1,18 @@
 package scene.modeSelect.popup.shop
 {	
 	import scene.Main;
+	import scene.modeSelect.popup.Popup;
 	
 	import starling.display.Button;
-	import starling.display.DisplayObjectContainer;
-	import starling.display.Image;
-	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.events.Touch;
-	import starling.events.TouchEvent;
-	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
 	import util.manager.DisplayObjectMgr;
 	
-	public class ShopPopup extends DisplayObjectContainer
+	public class ShopPopup extends Popup
 	{
 		private var _atlas:TextureAtlas;
 		
@@ -31,30 +25,19 @@ package scene.modeSelect.popup.shop
 		{
 			_atlas = atlas;
 			
-			initBackground();
+			initBackground(Main.stageWidth * 0.5, Main.stageHeight * 0.5, Main.stageWidth * 0.8, Main.stageHeight * 0.8);
 			initTextField();
 			initSpr();
-			initButton();
+			initClose(Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 		}
 		
-		public function release():void
+		public override function release():void
 		{
-			if(_close) { _close.removeEventListener(TouchEvent.TOUCH, onTouchClose); _close.dispose(); _close = null; }
+			super.release();
+			
 			if(_itemSpr) { _itemSpr.dispose(); _itemSpr = null; }
 			
 			removeChildren(0, this.numChildren - 1, true);
-		}
-		
-		private function initBackground():void
-		{			
-			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
-			quad.alpha = 0.5;
-			addChild(quad);
-			
-			var background:Image = DisplayObjectMgr.instance.setImage(_atlas.getTexture("popupBg"), Main.stageWidth * 0.5, Main.stageHeight * 0.5,
-				Main.stageWidth * 0.8, Main.stageHeight * 0.8, "center", "center");
-			
-			addChild(background);
 		}
 		
 		private function initTextField():void
@@ -70,14 +53,6 @@ package scene.modeSelect.popup.shop
 				Main.stageWidth * 0.3, Main.stageHeight * 0.1, "가격", "center", "center");
 			price.format.size = Main.stageWidth * 0.05;
 			addChild(price);
-		}
-		
-		private function initButton():void
-		{
-			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
-				Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
-			addChild(_close);
 		}
 		
 		private function initSpr():void
@@ -112,19 +87,10 @@ package scene.modeSelect.popup.shop
 		{
 			return new ShopItem(num, goods, price, value, buy);
 		}
-		 
-		private function onTouchClose(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_close, TouchPhase.ENDED);
-			if(touch)
-			{
-				this.visible = false;
-			}
-		}
 		
 		private function onBoughtHeart(event:Event):void
 		{
-			dispatchEvent(new Event("boughtItem"));
+			dispatchEvent(new Event("boughtHeart"));
 		}
 		
 		private function onBoughtExpBoost(event:Event):void
