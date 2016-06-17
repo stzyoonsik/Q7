@@ -38,6 +38,10 @@ package scene.modeSelect
 	import util.type.PlatformType;
 	import util.type.SceneType;
 
+	/**
+	 * 게임, 타이틀을 제외한 모든 부분을 관리하는 클래스
+	 * 
+	 */
 	public class ModeSelect extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
@@ -84,9 +88,12 @@ package scene.modeSelect
 			
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
-			
 			//if(_atlas) { _atlas = null; }
 			if(_normalPopup) { _normalPopup.release(); _normalPopup = null;	removeChild(_normalPopup); }
 			if(_customPopup) { _customPopup.release(); _customPopup = null;	removeChild(_customPopup); }
@@ -111,6 +118,10 @@ package scene.modeSelect
 			
 		}
 		
+		/**
+		 * 백그라운드 초기화 메소드 
+		 * 
+		 */
 		private function initBackground():void
 		{
 			var image:Image = DisplayObjectMgr.instance.setImage(_atlas.getTexture("background"), 0, 0, 
@@ -118,6 +129,11 @@ package scene.modeSelect
 			addChild(image);
 		}
 		
+		/**
+		 * 유저 정보를 초기화하는 메소드
+		 * 프로필 이미지, 이름, 하트, 코인, 레벨 정보를 초기화함 
+		 * 
+		 */
 		private function initUser():void
 		{
 			if(PlatformType.current == PlatformType.FACEBOOK)
@@ -161,6 +177,10 @@ package scene.modeSelect
 		}
 		
 		
+		/**
+		 * 버튼 초기화 메소드 
+		 * 로그아웃, 랭킹, 업적, 상점, 이어하기, 일반, 커스텀
+		 */
 		private function initButton():void
 		{			
 			_logOut = DisplayObjectMgr.instance.setButton(_logOut, _atlas.getTexture("button"), Main.stageWidth * 0.8, Main.stageHeight * 0.9, Main.stageWidth * 0.2, Main.stageHeight * 0.075, "로그아웃", Main.stageWidth * 0.03);
@@ -211,6 +231,10 @@ package scene.modeSelect
 			addChild(_custom);
 		}
 		
+		/**
+		 * 팝업 초기화 메소드 
+		 * 상점팝업, 랭크팝업, 일반팝업, 커스텀팝업, 보상팝업
+		 */
 		private function initPopup():void
 		{
 			_shopPopup = new ShopPopup(_atlas);
@@ -244,12 +268,21 @@ package scene.modeSelect
 			}
 		}
 		
+		/**
+		 *  경험치 부스트의 시간이 끝났는지 검사하기위해 select문을 보내는 메소드
+		 * 
+		 */
 		private function checkItemOver():void
 		{
 			UserDBMgr.instance.selectItemOverTime(UserInfo.id);
 			UserDBMgr.instance.addEventListener("selectItemOverTime", onCompleteSelectItemOverTime);
 		}
 		
+		/**
+		 * 시간 체크가 끝났을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onCompleteSelectItemOverTime(event:Event):void
 		{
 			UserDBMgr.instance.removeEventListener("selectItemOverTime", onCompleteSelectItemOverTime);
@@ -280,6 +313,11 @@ package scene.modeSelect
 		}
 		
 		
+		/**
+		 * 랭킹 버튼을 클릭했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchRanking(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_ranking, TouchPhase.ENDED);
@@ -297,6 +335,11 @@ package scene.modeSelect
 			}
 		}
 		
+		/**
+		 * 업적버튼을 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchAchievement(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_achievement, TouchPhase.ENDED);
@@ -306,6 +349,11 @@ package scene.modeSelect
 			}
 		}
 		
+		/**
+		 * 로그아웃버튼을 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchLogOut(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_logOut, TouchPhase.ENDED);
@@ -314,13 +362,12 @@ package scene.modeSelect
 				if(PlatformType.current == PlatformType.GOOGLE)
 				{
 					GoogleExtensionMgr.instance.logOut();
-					UserInfo.reset();
+					
 				}
-				else
-				{
-					UserInfo.reset();	
+				UserDBMgr.instance.updateData(UserInfo.id, "heartTime", UserInfo.remainHeartTime);
+				UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime());
+				UserInfo.reset();
 				
-				}	
 				trace("로그아웃********************************");
 				//_temp.text = "";
 				SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.TITLE, false, null, 0.5, Transitions.EASE_OUT);
@@ -328,6 +375,11 @@ package scene.modeSelect
 			}
 		}
 		
+		/**
+		 * 상점 버튼을 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchShop(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_shop, TouchPhase.ENDED);
@@ -337,6 +389,11 @@ package scene.modeSelect
 			}
 		}
 		 
+		/**
+		 * 이어하기 / 일반 / 커스텀 버튼을 터치했을때 호출되는 콜백메소드
+		 * @param event
+		 * 
+		 */
 		private function onTouchMode(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_resume, TouchPhase.ENDED);
@@ -349,19 +406,22 @@ package scene.modeSelect
 			touch = event.getTouch(_normal, TouchPhase.ENDED);
 			if(touch)
 			{
-				//SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.STAGE_SELECT, false, null, 0.5, Transitions.EASE_OUT);
 				_normalPopup.visible = true;
 			}
 			
 			touch = event.getTouch(_custom, TouchPhase.ENDED);
 			if(touch)
-			{
-				//SwitchActionMgr.instance.switchSceneFadeOut(this, SceneType.CUSTOM, false, null, 0.5, Transitions.EASE_OUT);
+			{				
 				_customPopup.visible = true;
 			}			
 			
 		}
 		
+		/**
+		 * 하트 구매를 했을때 호출되는 콜백메소드 
+		 * @param event 디스패치된 이벤트
+		 * 
+		 */
 		private function onBoughtHeart(event:Event):void
 		{
 			trace("아이템 삼");
@@ -370,6 +430,11 @@ package scene.modeSelect
 			_coin.refresh();
 		}
 		
+		/**
+		 * 경험치 부스트 아이템을 구매했을떄 호출되는 콜백메소드
+		 * @param event 디스패치된 이벤트
+		 * 
+		 */
 		private function onBoughtExpBoost(event:Event):void
 		{
 			trace("경험치 부스트 삼");
@@ -377,6 +442,11 @@ package scene.modeSelect
 			_coin.refresh();
 		}
 		
+		/**
+		 * 뒤로가기 버튼을 터치했을떄 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchKeyBoard(event:KeyboardEvent):void
 		{
 			
@@ -404,14 +474,8 @@ package scene.modeSelect
 				if(_shopPopup.visible)
 				{
 					_shopPopup.visible = false;
-				}
-				
-				
-				
+				}				
 			}
-		}		
-		
-	
-		
+		}	
 	}
 }
