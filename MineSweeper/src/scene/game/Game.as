@@ -589,6 +589,9 @@ package scene.game
 		 */
 		private function checkNewRecord(preTime:int, curTime:int):Boolean
 		{			
+			if(!preTime)
+				return true;
+			
 			return curTime < preTime;
 		}
 
