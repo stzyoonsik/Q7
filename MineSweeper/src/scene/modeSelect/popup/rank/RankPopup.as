@@ -30,6 +30,10 @@ package scene.modeSelect.popup.rank
 	import util.manager.SoundMgr;
 	import util.type.DifficultyType;
 	 
+	/**
+	 * 랭킹을 보여주는 팝업 클래스
+	 * 
+	 */
 	public class RankPopup extends Popup
 	{
 		private var _atlas:TextureAtlas;
@@ -78,6 +82,10 @@ package scene.modeSelect.popup.rank
 			
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public override function release():void
 		{
 			super.release();
@@ -120,6 +128,10 @@ package scene.modeSelect.popup.rank
 			
 		}
 		
+		/**
+		 * 팝업을 닫았다가 다시 열었을때 랭크팝업의 처음 부분부터 다시 나타내기 위한 메소드 
+		 * 
+		 */
 		public function reset():void
 		{
 			_isItemModeSpr.visible = true;
@@ -143,6 +155,10 @@ package scene.modeSelect.popup.rank
 		}
 		
 		
+		/**
+		 * 스프라이트를 초기화 하는 메소드 
+		 * 
+		 */
 		private function initSpr():void
 		{
 			_isItemModeSpr = new Sprite();
@@ -198,6 +214,10 @@ package scene.modeSelect.popup.rank
 			addChild(_rankingSpr);
 		}
 		
+		/**
+		 * 버튼 초기화 메소드 
+		 * 
+		 */
 		private function initButton():void
 		{
 			_back = DisplayObjectMgr.instance.setButton(_back, _atlas.getTexture("back"), 
@@ -227,12 +247,22 @@ package scene.modeSelect.popup.rank
 			_rankingSpr.addChild(_page);			
 		}
 		
+		/**
+		 * 서버로부터 데이터를 받아오고, 이미지를 로딩하고 띄우는 동안 로딩이미지를 띄워주기 위해 초기화하는 메소드 
+		 * 
+		 */
 		private function initLoading():void
 		{
 			_circleLoading = new CircleLoading();
 			addChild(_circleLoading);
 		}
 		
+		/**
+		 * prev 버튼을 터치했을때 호출되는 콜백메소드.
+		 * 페이지가 뒤로 이동함 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchPrev(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_prev, TouchPhase.ENDED);
@@ -247,12 +277,18 @@ package scene.modeSelect.popup.rank
 			}
 		}
 		 
+		/**
+		 * next버튼을 터치했을때 호출되는 콜백메소드
+		 * 페이지가 앞으로 이동함 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchNext(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_next, TouchPhase.ENDED);
 			if(touch)
 			{
-				if(_pageNum < _spriteVector.length / 5)
+				if(_pageNum < _spriteVector.length - 1)
 				{
 					trace(_pageNum.toString(), _spriteVector.length);
 					_pageNum++;
@@ -262,6 +298,12 @@ package scene.modeSelect.popup.rank
 			}
 		}
 		
+		/**
+		 * 뒤로가기 버튼을 터치했을때 호출되는 콜백메소드
+		 * ( 아이템모드인지 선택 - 난이도 선택 - 랭킹 보여줌  ) 중 현재 페이지에서 뒤로 가게 된다
+		 * @param event
+		 * 
+		 */
 		private function onTouchBack(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_back, TouchPhase.ENDED);
@@ -298,6 +340,11 @@ package scene.modeSelect.popup.rank
 			}
 		}
 		
+		/**
+		 * 아이템전 랭킹인지 노템전 랭킹인지를 선택하면 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchItemMode(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_noItem, TouchPhase.ENDED);
@@ -317,6 +364,11 @@ package scene.modeSelect.popup.rank
 			}
 		}
 		
+		/**
+		 * 난이도를 선택하면 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchDifficulty(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_veryEasy, TouchPhase.ENDED);
@@ -380,6 +432,11 @@ package scene.modeSelect.popup.rank
 			}
 		}
 		
+		/**
+		 * 선택된 난이도의 랭킹 데이터를 서버로부터 받았을떄 호출되는 콜백메소드 
+		 * @param event 디스패치 받은 이벤트
+		 * 
+		 */
 		private function onSelectRecords(event:starling.events.Event):void
 		{
 			if(event.data)
@@ -387,21 +444,29 @@ package scene.modeSelect.popup.rank
 				_circleLoading.startLoading();
 				var data:Object = JSON.parse(event.data as String);
 				
-				showRanking(data);			
-				
-				
+				showRanking(data);	
 				
 				UserDBMgr.instance.removeEventListener("selectRecords", onSelectRecords);
 			}			
 			
 		}
 		
+		/**
+		 * 랭킹을 보여주기 위한 메소드 
+		 * @param data
+		 * 
+		 */
 		private function showRanking(data:Object):void
 		{
 			_data = data;
 			loadPicture(data);			
 		}
 		
+		/**
+		 * 서버로부터 받은 id를 통해 이미지를 로드하는 메소드 
+		 * @param data 서버로부터 받은 json 데이터
+		 * 
+		 */
 		private function loadPicture(data:Object):void
 		{
 			_pictures = new Dictionary();
@@ -427,6 +492,12 @@ package scene.modeSelect.popup.rank
 			
 		}
 		
+		/**
+		 * 이미지 로딩이 끝났을떄 호출되는 콜백메소드 
+		 * 한페이지에 5명 단위로 시간이 낮은 순서대로 나타냄 
+		 * @param event complete 이벤트
+		 * 
+		 */
 		private function onLoadImageComplete(event:flash.events.Event):void
 		{
 			var loaderInfo:LoaderInfo = event.target as LoaderInfo;
@@ -510,6 +581,10 @@ package scene.modeSelect.popup.rank
 			}			
 		}
 		
+		/**
+		 * 현재 페이지를 보여주는 메소드 
+		 * 
+		 */
 		private function showCurrentpage():void
 		{
 			for(var i:int = 0; i < _spriteVector.length; ++i)
