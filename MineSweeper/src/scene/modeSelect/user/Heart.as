@@ -29,6 +29,10 @@ package scene.modeSelect.user
 		
 		private var _remainHeartTime:int;
 		
+		/**
+		 * 사용자의 하트 정보를 관리하는 클래스 
+		 * 
+		 */
 		public function Heart(atlas:TextureAtlas)
 		{
 			_atlas = atlas;
@@ -42,6 +46,10 @@ package scene.modeSelect.user
 		public function get remainHeartTime():int {	return _remainHeartTime; }
 		public function set remainHeartTime(value:int):void { _remainHeartTime = value; }
 
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			if(_heartCountTextField) { _heartCountTextField = null; }
@@ -57,6 +65,10 @@ package scene.modeSelect.user
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
+		/**
+		 * 변경된 하트 데이터를 반영시켜 화면에 새로고침하는 메소드 
+		 * 
+		 */
 		public function refresh():void
 		{
 			if(_heartCountTextField)
@@ -77,12 +89,21 @@ package scene.modeSelect.user
 			}
 		}
 		
+		/**
+		 * 마지막 접속 시간을 가져오는 메소드 
+		 * 
+		 */
 		private function getLastDateTime():void
 		{
 			UserDBMgr.instance.selectData(UserInfo.id, "lastDate");
 			UserDBMgr.instance.addEventListener("selectData", onSelectLastDateComplete);
 		}
 		
+		/**
+		 * 마지막 접속 시간을 가져오는것이 완료됬을떄 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onSelectLastDateComplete(event:Event):void
 		{
 			UserDBMgr.instance.removeEventListener("selectData", onSelectLastDateComplete);
@@ -93,6 +114,11 @@ package scene.modeSelect.user
 			UserDBMgr.instance.selectData(UserInfo.id, "heartTime");
 			UserDBMgr.instance.addEventListener("selectData", onSelectHeartTimeComplete);
 		}
+		/**
+		 * 하트 남은시간 데이터를 가져오는것이 완료됬을떄 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onSelectHeartTimeComplete(event:Event):void
 		{			
 			UserDBMgr.instance.removeEventListener("selectData", onSelectHeartTimeComplete);
@@ -161,6 +187,11 @@ package scene.modeSelect.user
 		}
 		
 		
+		/**
+		 * 마지막으로 접속한 시간과 현재 시간을 비교하여 총 비활동 시간을 계산하는 메소드 
+		 * @return 비활동 시간
+		 * 
+		 */
 		private function getInactiveTime():Number
 		{
 			if(!isNaN(_lastDate))
@@ -172,6 +203,10 @@ package scene.modeSelect.user
 		}
 
 		
+		/**
+		 * 이미지 초기화 메소드 
+		 * 
+		 */
 		private function initImage():void
 		{
 			_heart = DisplayObjectMgr.instance.setImage(_atlas.getTexture("heart"), 
@@ -181,6 +216,10 @@ package scene.modeSelect.user
 			addChild(_heart);
 		}
 		
+		/**
+		 * 텍스트필드 초기화 메소드 
+		 * 
+		 */
 		private function initTextField():void
 		{
 			_heartCountTextField = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.275, Main.stageHeight * 0.04,
@@ -194,6 +233,11 @@ package scene.modeSelect.user
 			addChild(_remainTime);			
 		}
 		
+		/**
+		 * 1초마다 호출되는 콜백 메소드. 하트 재생의 남은 시간을 변경해줌 
+		 * @param event
+		 * 
+		 */
 		private function onTimer(event:TimerEvent):void
 		{
 			_remainHeartTime = _timer.repeatCount - _timer.currentCount;
@@ -202,6 +246,11 @@ package scene.modeSelect.user
 			
 		}
 		
+		/**
+		 * 타이머가 종료됬을떄 호출되는 콜백메소드. 하트를 1개 늘려주고, 세팅된 처음시간으로 다시 타이머를 시작함 
+		 * @param event
+		 * 
+		 */
 		private function onTimerComplete(event:TimerEvent):void
 		{
 			if(UserInfo.heart < UserInfo.MAX_HEART)

@@ -7,15 +7,12 @@ package scene.modeSelect.popup.custom
 	
 	import starling.animation.Transitions;
 	import starling.display.Button;
-	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.Quad;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.TextureAtlas;
-	import starling.utils.Color;
 	
 	import util.UserInfo;
 	import util.manager.DisplayObjectMgr;
@@ -35,6 +32,11 @@ package scene.modeSelect.popup.custom
 		private var _data:Dictionary;
 		private var _start:Button;
 		
+		/**
+		 * 커스텀 모드를 터치했을때 나타나는 팝업 클래스 
+		 * @param atlas
+		 * 
+		 */
 		public function CustomPopup(atlas:TextureAtlas)
 		{
 			_atlas = atlas;
@@ -48,6 +50,10 @@ package scene.modeSelect.popup.custom
 			initClose(Main.stageWidth * 0.95, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public override function release():void
 		{
 			super.release();
@@ -68,21 +74,10 @@ package scene.modeSelect.popup.custom
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
-//		private function initBackground():void
-//		{
-//			var quad:Quad = new Quad(Main.stageWidth, Main.stageHeight, Color.BLACK);
-//			quad.alpha = 0.5;
-//			addChild(quad);
-//			
-//			var background:Image = new Image(_atlas.getTexture("popupBg"));
-//			background.width = Main.stageWidth;
-//			background.height = Main.stageHeight * 0.85;
-//			background.x = Main.stageWidth * 0.5;
-//			background.y = Main.stageHeight * 0.5;			
-//			background.alignPivot("center","center");
-//			addChild(background);
-//		}
-		
+		/**
+		 * 버튼 초기화 메소드 
+		 * 
+		 */
 		private function initButton():void
 		{
 			var textField:TextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.2);
@@ -107,22 +102,14 @@ package scene.modeSelect.popup.custom
 				Main.stageWidth * 0.5, Main.stageWidth * 0.15, "시작하기", Main.stageWidth * 0.05);
 			_start.addEventListener(TouchEvent.TOUCH, onTouchStart);
 			addChild(_start);
-			
-//			_close = DisplayObjectMgr.instance.setButton(_close, _atlas.getTexture("close"), 
-//				Main.stageWidth * 0.95, Main.stageHeight * 0.1, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
-//			_close.addEventListener(TouchEvent.TOUCH, onTouchClose);
-//			addChild(_close);
 		}
 		
-		private function onTouchClose(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_close, TouchPhase.ENDED);
-			if(touch)
-			{
-				this.visible = false;
-			}
-		}
-		
+				
+		/**
+		 * 아이템 모드 버튼을 터치했을때 호출되는 콜백메소드		 * 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchRadioItem(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_radioItem, TouchPhase.ENDED);
@@ -144,6 +131,12 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * 스타트 버튼을 터치했을때 호출되는 콜백메소드
+		 * 현재까지 설정된 데이터들을 게임 씬 쪽으로 보냄
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchStart(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_start, TouchPhase.ENDED);

@@ -21,6 +21,10 @@ package scene.modeSelect.popup.normal
 	import util.type.DataType;
 	import util.type.SceneType;
 
+	/**
+	 * 일반 버튼을 선택했을때 나타나는 팝업 클래스
+	 * 
+	 */
 	public class NormalPopup extends Popup
 	{
 		private var _atlas:TextureAtlas;
@@ -52,6 +56,10 @@ package scene.modeSelect.popup.normal
 		}		
 		
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public override function release():void
 		{	
 			super.release();
@@ -76,6 +84,10 @@ package scene.modeSelect.popup.normal
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
+		/**
+		 * 버튼 초기화 메소드
+		 * 
+		 */
 		private function initButton():void
 		{
 			var textField:TextField = new TextField(Main.stageWidth * 0.5, Main.stageHeight * 0.2);
@@ -116,6 +128,11 @@ package scene.modeSelect.popup.normal
 			
 		}
 		
+		/**
+		 * 버튼을 잠구는 이미지를 씌우고 터치를 불가능하게 하는 메소드 
+		 * @param target
+		 * 
+		 */
 		private function lockButton(target:DisplayObject):void
 		{
 			var image:Image = DisplayObjectMgr.instance.setImage(_atlas.getTexture("lockedButton"), target.x, target.y, 
@@ -130,6 +147,10 @@ package scene.modeSelect.popup.normal
 			target.touchable = false;
 		}
 		
+		/**
+		 * 사용자의 레벨에 따라 버튼을 잠구는 초기화 메소드 
+		 * 
+		 */
 		private function initLock():void
 		{
 			if(UserInfo.level < 2)
@@ -158,13 +179,13 @@ package scene.modeSelect.popup.normal
 		
 		
 		/**
-		 * 
+		 * 난이도에 따라 데이터들을 게임 씬으로 넘겨주기 위해 set하는 메소드
 		 * @param difficulty 0 : veryEasy, 1 : easy, 2 : normal, 3 : hard, 4 : veryHard 5 : custom
-		 * @param row
-		 * @param col
-		 * @param mineNum
-		 * @param itemNum
-		 * @param chance
+		 * @param row 가로
+		 * @param col 세로
+		 * @param mineNum 지뢰갯수
+		 * @param itemNum 시작아이템갯수
+		 * @param chance 아이템획득확률
 		 * 
 		 */		
 		private function setData(itemMode:Boolean, difficulty:int, row:int, col:int, mineNum:int, itemNum:int, chance:int):void
@@ -185,6 +206,11 @@ package scene.modeSelect.popup.normal
 			_data[DataType.CHANCE] = chance;
 		}
 		
+		/**
+		 * 아이템  버튼을 선택했을때 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchRadioItem(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_radioItem, TouchPhase.ENDED);
@@ -203,6 +229,11 @@ package scene.modeSelect.popup.normal
 			}
 		}
 				
+		/**
+		 * 매우 쉬움 버튼을 클릭했을때 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchVeryEasy(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_veryEasy, TouchPhase.ENDED);
@@ -218,6 +249,11 @@ package scene.modeSelect.popup.normal
 			
 		}
 		
+		/**
+		 * 쉬움 버튼을 클릭했을때 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchEasy(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_easy, TouchPhase.ENDED);
@@ -233,6 +269,11 @@ package scene.modeSelect.popup.normal
 			
 		}
 		
+		/**
+		 * 보통 버튼을 선택했을때 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchNormal(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_normal, TouchPhase.ENDED);
@@ -248,6 +289,11 @@ package scene.modeSelect.popup.normal
 			
 		}
 		
+		/**
+		 * 어려움 버튼을 선택했을때 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchHard(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_hard, TouchPhase.ENDED);
@@ -263,6 +309,11 @@ package scene.modeSelect.popup.normal
 			
 		}
 		
+		/**
+		 * 매우 어려움 버튼을 선택했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchVeryHard(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_veryHard, TouchPhase.ENDED);

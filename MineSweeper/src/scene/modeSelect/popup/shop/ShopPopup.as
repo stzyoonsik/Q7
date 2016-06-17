@@ -12,6 +12,10 @@ package scene.modeSelect.popup.shop
 	
 	import util.manager.DisplayObjectMgr;
 	
+	/**
+	 * 상점 버튼을 터치했을때 열리는 상점 클래스 
+	 * 
+	 */
 	public class ShopPopup extends Popup
 	{
 		private var _atlas:TextureAtlas;
@@ -31,6 +35,10 @@ package scene.modeSelect.popup.shop
 			initClose(Main.stageWidth * 0.8, Main.stageHeight * 0.175, Main.stageWidth * 0.1, Main.stageWidth * 0.1);
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public override function release():void
 		{
 			super.release();
@@ -40,6 +48,10 @@ package scene.modeSelect.popup.shop
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
+		/**
+		 * 텍스트필드 조기화 메소드 
+		 * 
+		 */
 		private function initTextField():void
 		{
 			var goods:TextField = DisplayObjectMgr.instance.setTextField(Main.stageWidth * 0.25, Main.stageHeight * 0.2,
@@ -55,6 +67,10 @@ package scene.modeSelect.popup.shop
 			addChild(price);
 		}
 		
+		/**
+		 * 상점에 아이템을 등록하는 메소드 
+		 * 
+		 */
 		private function initSpr():void
 		{
 			_itemSpr = new Sprite();
@@ -83,16 +99,36 @@ package scene.modeSelect.popup.shop
 			addChild(_itemSpr);
 		}
 		
+		/**
+		 *  
+		 * @param num   아이템 번호
+		 * @param goods 판매할 물품
+		 * @param price 구매할 재화
+		 * @param value 판매할 가격
+		 * @param buy   구입 버튼
+		 * @return  
+		 * 
+		 */
 		private function addItem(num:int, goods:Texture, price:Texture, value:int, buy:Texture):ShopItem
 		{
 			return new ShopItem(num, goods, price, value, buy);
 		}
 		
+		/**
+		 * 하트 구입을 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onBoughtHeart(event:Event):void
 		{
 			dispatchEvent(new Event("boughtHeart"));
 		}
 		
+		/**
+		 * 경험치 부스트 구입을 터치했을떄 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onBoughtExpBoost(event:Event):void
 		{
 			dispatchEvent(new Event("boughtExpBoost"));

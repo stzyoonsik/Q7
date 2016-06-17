@@ -17,6 +17,10 @@ package scene.modeSelect.popup.shop
 	import util.UserInfo;
 	import util.manager.SoundMgr;
 
+	/**
+	 * 상점에 등록할 아이템들의 정보를 담는 클래스 
+	 * 
+	 */
 	public class ShopItem extends Sprite
 	{		
 		private var _goods:Image;
@@ -44,6 +48,11 @@ package scene.modeSelect.popup.shop
 			setBuy(buy);
 		}
 		
+		/**
+		 * 판매하는 물품의 이미지를 세팅하는 메소드 
+		 * @param texture 
+		 * 
+		 */
 		private function setGoods(texture:Texture):void
 		{
 			_goods = new Image(texture);
@@ -53,6 +62,11 @@ package scene.modeSelect.popup.shop
 			addChild(_goods);
 		}
 		
+		/**
+		 * 구매할 재화의 이미지을 세팅하는 메소드 
+		 * @param texture
+		 * 
+		 */
 		private function setPrice(texture:Texture):void
 		{
 			_price = new Image(texture);
@@ -62,6 +76,11 @@ package scene.modeSelect.popup.shop
 			addChild(_price);
 		}
 		
+		/**
+		 * 구매할 가격을 세팅하는 메소드 
+		 * @param value
+		 * 
+		 */
 		private function setValue(value:int):void
 		{
 			_value = new TextField(Main.stageWidth * 0.2, Main.stageHeight * 0.1, value.toString());
@@ -70,6 +89,11 @@ package scene.modeSelect.popup.shop
 			addChild(_value);
 		}
 		
+		/**
+		 * 구입 버튼 
+		 * @param texture
+		 * 
+		 */
 		private function setBuy(texture:Texture):void
 		{
 			_buy = new Button(texture, "구입");
@@ -81,6 +105,11 @@ package scene.modeSelect.popup.shop
 			addChild(_buy);
 		}
 		
+		/**
+		 * 구입 버튼을 터치했을때 호출되는 콜백메소드 
+		 * @param event 터치이벤트
+		 * 
+		 */
 		private function onTouchBuy(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_buy, TouchPhase.ENDED);

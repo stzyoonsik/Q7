@@ -52,12 +52,13 @@ package util.manager
 			return image;
 		}
 		
-		public function setTextField(x:Number, y:Number, width:Number, height:Number, text:String = null, horiAlign:String = "left", vertiAlign:String = "top"):TextField
+		public function setTextField(x:Number, y:Number, width:Number, height:Number, text:String = null, horiAlign:String = "left", vertiAlign:String = "top", border:Boolean = false):TextField
 		{
 			var textField:TextField = new TextField(width, height, text);
 			textField.x = x;
 			textField.y = y;
 			textField.alignPivot(horiAlign, vertiAlign);
+			textField.border = border;
 			return textField;
 		}
 	}

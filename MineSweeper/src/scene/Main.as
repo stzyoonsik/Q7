@@ -151,8 +151,8 @@ package scene
 					addChild(_game);
 					trace("Game");
 					
-					
-					UserDBMgr.instance.updateData(UserInfo.id, "lastDate", new Date().getTime().toString());
+					UserInfo.lastDate = new Date().getTime();
+					UserDBMgr.instance.updateData(UserInfo.id, "lastDate", UserInfo.lastDate);
 					UserDBMgr.instance.updateData(UserInfo.id, "heartTime", UserInfo.remainHeartTime);
 					UserInfo.heart--;
 					UserDBMgr.instance.updateData(UserInfo.id, "heart", UserInfo.heart);

@@ -10,7 +10,7 @@ package scene.title
 	import loading.CircleLoading;
 	
 	import scene.Main;
-		
+	
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
 	import starling.core.Starling;
@@ -33,6 +33,11 @@ package scene.title
 	import util.type.PlatformType;
 	import util.type.SceneType;
 
+	/**
+	 * 게임에 진입했을때 처음 나타나는 타이틀 씬을 관리하는 클래스
+	 * @author user
+	 * 
+	 */
 	public class Title extends DisplayObjectContainer
 	{
 		private var _atlas:TextureAtlas;
@@ -75,6 +80,10 @@ package scene.title
 			
 					
 		}
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			if(_logInGoogle) { _logInGoogle.addEventListener(TouchEvent.TOUCH, onTouchLoginGoogle); _logInGoogle.dispose(); _logInGoogle = null; removeChild(_logInGoogle);}
@@ -84,31 +93,37 @@ package scene.title
 			NativeApplication.nativeApplication.removeEventListener(KeyboardEvent.KEY_DOWN, onTouchKeyBoard);
 		}
 		
+		/**
+		 * 로그인 정보를 얻어오는 동안 로딩을 시작하는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onStartLoading(event:Event):void
 		{
 			_circleLoading.startLoading();
 		}
 		
-		private function getRandomNum():int
+		/**
+		 * 0 부터 정해진 숫자보다 1 작은 숫자 중 랜덤한 숫자를 생성하는 메소드 
+		 * @param max 정해진 값
+		 * @return 0~정해진값 -1 중 랜덤
+		 * 
+		 */
+		private function getRandomNum(max:int):int
 		{
-			var random:Number = Math.random();
-			if(random < 0.3333)
-			{
-				return 0;
-			}
-			else if(random < 0.6666)
-			{
-				return 1;
-			}
-			else
-			{
-				return 2;
-			}
+			var random:Number = Math.random() * Math.pow(max, 2);
+			var result:int = int(random % max);
+			return result;
 		}
 		
+		/**
+		 * 정해진 bgm들 중 랜덤한 bgm을 재생하는 메소드
+		 * @param args
+		 * 
+		 */
 		private function playRandomBgm(...args):void
 		{
-			SoundMgr.instance.play(args[getRandomNum()], true);
+			SoundMgr.instance.play(args[getRandomNum(args.length)], true);
 		}
 		
 		

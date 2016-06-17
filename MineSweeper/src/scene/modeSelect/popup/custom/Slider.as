@@ -16,6 +16,10 @@ package scene.modeSelect.popup.custom
 	
 	import util.manager.DisplayObjectMgr;
 
+	/**
+	 * 커스텀 모드에서 슬라이더로 값을 조정하기 위한 클래스 
+	 * 
+	 */
 	public class Slider extends Sprite
 	{
 		private var _atlas:TextureAtlas;
@@ -85,10 +89,14 @@ package scene.modeSelect.popup.custom
 			_maxItemNum = setMaxItemNum(_row, _col);
 			
 			
-			initQuad();
+			initSlider();
 			initTextField();
 		}
 		
+		/**
+		 * 메모리 해제 메소드 
+		 * 
+		 */
 		public function release():void
 		{
 			if(_rowText) { _rowText = null; }
@@ -118,6 +126,12 @@ package scene.modeSelect.popup.custom
 			removeChildren(0, this.numChildren - 1, true);
 		}
 		
+		/**
+		 * 아이템 모드가 true일때 시작 아이템 갯수와 아이템 획득 확률을 보여주고
+		 * false 일때 보여주지 않는 메소드 
+		 * @param value
+		 * 
+		 */
 		public function blockItem(value:Boolean):void
 		{
 			_itemNumValue.visible = value;
@@ -133,7 +147,11 @@ package scene.modeSelect.popup.custom
 		
 		
 
-		private function initQuad():void
+		/**
+		 * 슬라이더 부분 초기화 메소드 
+		 * 
+		 */
+		private function initSlider():void
 		{
 			_rowBar = DisplayObjectMgr.instance.setImage(_atlas.getTexture("bar"), Main.stageWidth * 0.5, Main.stageHeight * 0.3,
 														Main.stageWidth * 0.5, Main.stageWidth * 0.05, "center", "center");
@@ -177,6 +195,10 @@ package scene.modeSelect.popup.custom
 			_chanceSlider.addEventListener(TouchEvent.TOUCH, onTouchChanceSlider);
 		}
 		
+		/**
+		 * 텍스트필드 초기화 메소드 
+		 * 
+		 */
 		private function initTextField():void
 		{
 			_rowText     = setTextField(_rowText, Main.stageWidth * 0.125, Main.stageHeight * 0.3, Main.stageWidth * 0.15, Main.stageHeight * 0.05, "가로", Main.stageWidth * 0.025, true);
@@ -212,6 +234,19 @@ package scene.modeSelect.popup.custom
 			addChild(_chanceValue);
 		}
 		
+		/**
+		 * 텍스트필드 셋 메소드
+		 * @param textField
+		 * @param x 좌표
+		 * @param y	좌표
+		 * @param width	넓이
+		 * @param height 높이
+		 * @param text 텍스트 글자
+		 * @param textSize 글자크기
+		 * @param border 외곽선
+		 * @return 
+		 * 
+		 */
 		private function setTextField(textField:TextField, x:int, y:int, width:int, height:int, text:String, textSize:int, border:Boolean):TextField
 		{
 			var tf:TextField = textField;
@@ -229,6 +264,11 @@ package scene.modeSelect.popup.custom
 		
 		 
 		
+		/**
+		 * Row슬라이더를 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchRowSlider(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_rowSlider, TouchPhase.MOVED);
@@ -248,6 +288,11 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * Col슬라이더를 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchColSlider(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_colSlider, TouchPhase.MOVED);
@@ -265,6 +310,11 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * 지뢰갯수 슬라이더를 터치했을떄 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchMineSlider(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_mineSlider, TouchPhase.MOVED);
@@ -276,6 +326,11 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * 아이템 갯수 슬라이더를 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchItemSlider(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_itemSlider, TouchPhase.MOVED);
@@ -287,6 +342,11 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * 아이템 획득 확률 슬라이더를 터치했을때 호출되는 콜백메소드 
+		 * @param event
+		 * 
+		 */
 		private function onTouchChanceSlider(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_chanceSlider, TouchPhase.MOVED);
@@ -298,6 +358,12 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * 슬라이더를 드래그 앤 드롭했을때 좌표를 이동시키는 메소드 
+		 * @param touch 터치 좌표
+		 * @param target 어떤 타겟을 움직일지
+		 * 
+		 */
 		private function moveSlider(touch:Touch, target:DisplayObject):void
 		{
 			var currentPos:Point = touch.getLocation(parent);
@@ -317,16 +383,38 @@ package scene.modeSelect.popup.custom
 			}
 		}
 		
+		/**
+		 * 지뢰의 최대 갯수를 정하는 메소드 
+		 * @param row 가로
+		 * @param col 세로
+		 * @return 가로x세로 -1
+		 * 
+		 */
 		private function setMaxMineNum(row:int, col:int):int
 		{
 			return (row * col) - 1;
 		}
 		
+		/**
+		 * 시작 아이템 갯수의 최대값을 정하는 메소드
+		 * @param row 가로
+		 * @param col 세로
+		 * @return 가로 * 세로 / 20
+		 * 
+		 */
 		private function setMaxItemNum(row:int, col:int):int
 		{
 			return (row * col) / 20;
 		}
 		
+		/**
+		 * 최대값이 변할때 그 값을 지정해주는 메소드 
+		 * @param target 타겟
+		 * @param min 최소값
+		 * @param max 최대값
+		 * @return 
+		 * 
+		 */
 		private function changeValue(target:DisplayObject, min:int, max:int):int
 		{			
 			var value:Number = (target.x - Main.stageWidth * 0.25) / Main.stageWidth * 2;
@@ -335,6 +423,15 @@ package scene.modeSelect.popup.custom
 			return value;
 		}
 		
+		/**
+		 * 슬라이더의 위치를 자동으로 움직여주는 메소드 
+		 * @param target 타겟
+		 * @param value  값
+		 * @param min    최소값
+		 * @param max    최대값
+		 * @return 
+		 * 
+		 */
 		private function replaceSlider(target:DisplayObject, value:int, min:int, max:int):Number
 		{
 			var result:Number = value / max;
@@ -343,6 +440,10 @@ package scene.modeSelect.popup.custom
 			return result;	
 		}
 		
+		/**
+		 * 정해진 최대 범위를 넘어서는지 체크하는 메소드 
+		 * 
+		 */
 		private function checkMineNumAndItemNum():void
 		{
 			if(_mineNum > _maxMineNum)
